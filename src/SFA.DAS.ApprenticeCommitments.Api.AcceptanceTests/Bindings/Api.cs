@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
@@ -29,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
                     { "ApplicationSettings:DbConnectionString", _context.DatabaseConnectionString }
                 };
 
-                Factory = new LocalWebApplicationFactory<Startup>(config);
+                Factory = new LocalWebApplicationFactory<Startup>(config, _context);
                 Client = new ApprenticeCommitmentsApi(Factory.CreateClient());
             }
 
