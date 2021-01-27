@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -60,11 +61,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             errors.Count.Should().BeGreaterOrEqualTo(1);
         }
 
-
         [Then(@"the result should return accepted")]
         public void ThenTheResultShouldReturnAccepted()
         {
             _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+        }
+
+        [Then(@"the registration exists in database")]
+        public void ThenTheRegistrationExistsInDatabase()
+        {
+            var registration = _context.DbContext.Registrations.FirstOrDefault();
+            registration.Should().NotBeNull();
+            registration.Email.Should().Be(_createApprenticeshipRequest.Email);
+            registration.ApprenticeshipId.Should().Be(_createApprenticeshipRequest.ApprenticeshipId);
         }
     }
 }

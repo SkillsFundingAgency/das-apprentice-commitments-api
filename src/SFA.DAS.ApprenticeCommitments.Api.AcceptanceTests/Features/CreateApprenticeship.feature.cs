@@ -21,6 +21,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("CreateApprenticeship")]
+    [NUnit.Framework.CategoryAttribute("database")]
     [NUnit.Framework.CategoryAttribute("api")]
     public partial class CreateApprenticeshipFeature
     {
@@ -28,6 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
         private string[] _featureTags = new string[] {
+                "database",
                 "api"};
         
 #line 1 "CreateApprenticeship.feature"
@@ -38,6 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
             TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "CreateApprenticeship", "\tAs a application user\r\n\tI want to create a valid apprenticeship in the database", ProgrammingLanguage.CSharp, new string[] {
+                        "database",
                         "api"});
             testRunner.OnFeatureStart(featureInfo);
         }
@@ -83,7 +86,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Trying to create an apprenticeship with invalid values", null, tagsOfScenario, argumentsOfScenario);
-#line 7
+#line 8
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -103,16 +106,16 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 8
+#line 9
  testRunner.Given("we have an invalid apprenticeship request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 9
+#line 10
  testRunner.When("the apprenticeship is posted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 10
+#line 11
  testRunner.Then("the result should return bad request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 11
+#line 12
  testRunner.And("the content should contain error list", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -126,7 +129,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Trying to create an apprenticeship with valid values", null, tagsOfScenario, argumentsOfScenario);
-#line 13
+#line 14
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -146,14 +149,17 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 14
+#line 15
  testRunner.Given("we have a valid apprenticeship request", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 15
+#line 16
  testRunner.When("the apprenticeship is posted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 16
+#line 17
  testRunner.Then("the result should return accepted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 18
+ testRunner.And("the registration exists in database", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

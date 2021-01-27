@@ -1,16 +1,9 @@
-﻿using System;
-using System.Data.Common;
-using System.IO;
+﻿using System.IO;
 using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
-using SFA.DAS.ApprenticeCommitments.Data.Models;
 
-namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Database
+namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
-
-    public static class CreateAcceptanceTestData
+    public static class AcceptanceTestsData
     {
         public const string AcceptanceTestsDatabaseName = "AcceptanceTestsDb";
 
@@ -61,7 +54,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Database
                 );
             ", connection);
             outBoxDataCommand.ExecuteNonQuery();
-
 
             connection.Close();
         }

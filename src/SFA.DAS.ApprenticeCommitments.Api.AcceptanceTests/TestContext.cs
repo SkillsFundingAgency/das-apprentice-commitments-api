@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Database;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
@@ -11,11 +11,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         public TestContext()
         {
             isDisposed = false;
-            DatabaseConnectionString = $"Data Source={CreateAcceptanceTestData.AcceptanceTestsDatabaseName}";
+            DatabaseConnectionString = $"Data Source={AcceptanceTestsData.AcceptanceTestsDatabaseName}";
         }
         public ApprenticeCommitmentsApi Api { get; set; }
         public string DatabaseConnectionString { get; set; }
-
+        public ApprenticeCommitmentsDbContext DbContext { get; set; }
         public Action<DbContext> PopulateData { get; set; }
 
         public void Dispose()
