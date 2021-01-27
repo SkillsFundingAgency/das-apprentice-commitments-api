@@ -1,17 +1,17 @@
 ﻿@api
 
 Feature: HealthCheck
-	In order to check if the api is working
+	When the database is not on line
 	As a application monitor
-	I want to be told the status of the api
+	I want to be told the status of the api is unhealthy
 
-Scenario: Checking Api is pingable
+Scenario: Ping returns an unhealthy state
 	Given the api has started
+	And the database is offline
 	When the ping endpoint is called
-	Then the result should be return okay
+	Then the result should not be healthy
 
-
-Scenario: Checking Api is not healthy
+Scenario: Health return an unhealthy status
 	Given the database is offline
 	When the health endpoint is called
 	Then the result should not be healthy
