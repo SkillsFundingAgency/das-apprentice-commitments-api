@@ -11,12 +11,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
     public class LocalWebApplicationFactory<TEntryPoint> : WebApplicationFactory<TEntryPoint> where TEntryPoint : class
     {
         private readonly Dictionary<string, string> _config;
-        private readonly TestContext _context;
 
-        public LocalWebApplicationFactory(Dictionary<string, string> config, TestContext context)
+        public LocalWebApplicationFactory(Dictionary<string, string> config)
         {
             _config = config;
-            _context = context;
         }
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

@@ -8,9 +8,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
     [Scope(Tag = "database")]
     public class Database
     {
-        public static ApprenticeCommitmentsApi Client { get; set; }
-        public static LocalWebApplicationFactory<Startup> Factory { get; set; }
-
         private readonly TestContext _context;
 
         public Database(TestContext context)

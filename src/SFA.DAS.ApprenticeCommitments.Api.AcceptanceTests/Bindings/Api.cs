@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
                     { "ApplicationSettings:DbConnectionString", _context.DatabaseConnectionString }
                 };
 
-                Factory = new LocalWebApplicationFactory<Startup>(config, _context);
+                Factory = new LocalWebApplicationFactory<Startup>(config);
                 Client = new ApprenticeCommitmentsApi(Factory.CreateClient());
             }
 
