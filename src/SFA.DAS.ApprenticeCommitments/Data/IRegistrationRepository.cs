@@ -6,5 +6,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     public interface IRegistrationRepository
     {
         public Task Add(RegistrationModel model);
+        public Task<bool> RegistrationsExist();
     }
 }

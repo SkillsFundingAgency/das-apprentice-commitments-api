@@ -16,9 +16,19 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             _registrationRepository = registrationRepository;
         }
 
-        public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(HealthCheckResult.Healthy(HealthCheckResultsDescription)); //, new Dictionary<string, object>());
+            var dbConnectionHealthy = true;
+            try
+            {
+                await _registrationRepository.RegistrationsExist();
+            }
+            catch
+            {
+                dbConnectionHealthy = false;
+            }
+
+            return dbConnectionHealthy ? HealthCheckResult.Healthy(HealthCheckResultsDescription) : HealthCheckResult.Unhealthy(HealthCheckResultsDescription);
         }
     }
 }
