@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Net.Http;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings

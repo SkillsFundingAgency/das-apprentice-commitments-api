@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Net.Http;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
@@ -10,10 +10,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         public TestContext()
         {
             isDisposed = false;
-            DatabaseConnectionString = "Data Source=InMemoryDb;Mode=Memory;Cache=Shared";
+            DatabaseConnectionString = $"Data Source={AcceptanceTestsData.AcceptanceTestsDatabaseName}";
         }
         public ApprenticeCommitmentsApi Api { get; set; }
         public string DatabaseConnectionString { get; set; }
+        public ApprenticeCommitmentsDbContext DbContext { get; set; }
 
         public void Dispose()
         {
