@@ -1,18 +1,17 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 {
     [Binding]
-    [Scope(Feature = "HealthCheck")]
-    public class HealthCheckSteps
+    [Scope(Feature = "NegativeHealthCheck")]
+    public class NegativeHealthCheckSteps
     {
         private readonly TestContext _context;
 
-        public HealthCheckSteps(TestContext context)
+        public NegativeHealthCheckSteps(TestContext context)
         {
             _context = context;
         }

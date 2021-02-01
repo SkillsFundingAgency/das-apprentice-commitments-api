@@ -1,6 +1,6 @@
 ﻿@api
 
-Feature: HealthCheck
+Feature: NegativeHealthCheck
 	When the database is not on line
 	As a application monitor
 	I want to be told the status of the api is unhealthy
