@@ -38,12 +38,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             await _context.Api.Get("health");
         }
 
-        [Then(@"the result should be return okay")]
-        public void ThenTheResultShouldBeReturnOkay()
-        {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.OK);
-        }
-
         [Then(@"the result should not be healthy")]
         public async Task ThenTheResultShouldNotBeHealthy()
         {
