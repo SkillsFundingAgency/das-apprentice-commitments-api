@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
@@ -108,6 +108,11 @@ To ensure that we are testing against the real database schema used in productio
 
 Instead, manually deploy the database using the `SFA.DAS.ApprenticeCommitments.Database` project, targetting `SFA.DAS.ApprenticeCommitments.AcceptanceTests`");
             }
+
+            dbContext.Database.ExecuteSqlRaw("truncate table Apprenticeship");
+            dbContext.Database.ExecuteSqlRaw("truncate table ApprenticeEmailAddressHistory");
+            dbContext.Database.ExecuteSqlRaw("truncate table Registration");
+            dbContext.Database.ExecuteSqlRaw("delete from Apprentice");
         }
 
         public void EnsureDeleted(ApprenticeCommitmentsDbContext dbContext)
