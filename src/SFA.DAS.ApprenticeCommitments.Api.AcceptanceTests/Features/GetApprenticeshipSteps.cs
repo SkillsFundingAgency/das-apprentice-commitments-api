@@ -24,7 +24,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _apprentice = _fixture.Build<Apprentice>().Create();
 
             var startDate = new System.DateTime(2000, 01, 01);
-            _fixture.Inject(new CourseDetails("", 1, null,
+            _fixture.Register(() => new CourseDetails(
+                _fixture.Create("CourseName"), 1, null,
                 startDate, startDate.AddMonths(32)));
 
             _apprenticeship = _fixture.Build<Apprenticeship>()
@@ -38,6 +39,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
+            _apprentice.AddApprenticeship(_apprenticeship);
+            _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given("many apprenticeships exists and are associated with this apprentice")]
+        public async Task GivenManyApprenticeshipExistsAndAreAssociatedWithThisApprentice()
+        {
+            _apprentice.AddApprenticeship(_fixture.Create<Apprenticeship>());
+            _apprentice.AddApprenticeship(_fixture.Create<Apprenticeship>());
             _apprentice.AddApprenticeship(_apprenticeship);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();

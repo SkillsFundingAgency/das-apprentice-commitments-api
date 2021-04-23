@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable enable
 
@@ -32,6 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool? ApprenticeshipConfirmed { get; private set; }
+        public DateTime CreatedOn { get; private set; } = DateTime.Now;
 
         public void ConfirmTrainingProvider(bool trainingProviderCorrect)
         {
