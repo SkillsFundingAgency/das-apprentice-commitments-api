@@ -54,6 +54,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             await _context.DbContext.SaveChangesAsync();
         }
 
+        [Given("the apprenticeships exists, has many commitment statements, and is associated with this apprentice")]
+        public async Task GivenTheApprenticeshipsExistsHasManyCommitmentStatementsAndIsAssociatedWithThisApprentice()
+        {
+            _apprentice.AddApprenticeship(_apprenticeship);
+            _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _apprenticeship = _apprenticeship.RenewCommitment(_fixture.Create<ApprenticeshipDetails>());
+            _apprentice.AddApprenticeship(_apprenticeship);
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+
         [Given(@"there is no apprenticeship")]
         public void GivenThereIsNoApprenticeship()
         {

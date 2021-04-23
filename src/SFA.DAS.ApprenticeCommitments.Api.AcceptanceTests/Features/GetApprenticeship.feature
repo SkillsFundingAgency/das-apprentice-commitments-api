@@ -25,3 +25,9 @@ Scenario: When multiple apprenticeships for a given apprentice exists
 	When we try to retrieve the apprenticeship
 	Then the result should return ok
 	And the response should match the expected apprenticeship values
+
+Scenario: When an apprenticeship with multiple commitment statements for a given apprentice exists
+	Given the apprenticeships exists, has many commitment statements, and is associated with this apprentice
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the response should match the expected apprenticeship values

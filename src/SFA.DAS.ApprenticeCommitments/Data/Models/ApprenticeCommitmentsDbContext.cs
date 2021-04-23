@@ -48,8 +48,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             });
 
-            modelBuilder.Entity<Apprenticeship>()
-                .HasKey(a => a.Id);
+            modelBuilder.Entity<Apprenticeship>(a =>
+            {
+                a.Property(typeof(long), "UniqueId");
+                a.HasKey("UniqueId");
+            });
 
             modelBuilder.Entity<Apprenticeship>()
                 .OwnsOne(e => e.Details, details =>
