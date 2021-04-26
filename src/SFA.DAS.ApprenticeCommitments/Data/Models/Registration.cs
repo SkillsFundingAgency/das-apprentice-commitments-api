@@ -20,11 +20,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public Registration(
             Guid apprenticeId,
             long apprenticeshipId,
+            DateTime approvedOn,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
             ApprenticeId = apprenticeId;
             ApprenticeshipId = apprenticeshipId;
+            ApprovedOn = approvedOn;
             Email = email;
             Apprenticeship = apprenticeship;
         }
@@ -34,6 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public MailAddress Email { get; private set; }
         public Guid? UserIdentityId { get; private set; }
         public ApprenticeshipDetails Apprenticeship { get; private set; }
+        public DateTime ApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
@@ -87,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             var apprentice = new Apprentice(
                 ApprenticeId, firstName, lastName, emailAddress, dateOfBirth);
 
-            apprentice.AddApprenticeship(new Apprenticeship(ApprenticeshipId, Apprenticeship));
+            apprentice.AddApprenticeship(new Apprenticeship(ApprenticeshipId, ApprovedOn, Apprenticeship));
 
             return apprentice;
         }

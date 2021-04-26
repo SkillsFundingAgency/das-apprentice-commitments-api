@@ -112,4 +112,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="PlannedEndDate" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="ae4ba87f-74c6-4107-8fb0-73137b01738a" ChangeDateTime="04/26/2021 05:11:29">
+    <Property Name="ElementName" Value="[dbo].[Apprenticeship].[CreatedOn]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Apprenticeship]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ApprovedOn" />
+  </Operation>
 </Operations>

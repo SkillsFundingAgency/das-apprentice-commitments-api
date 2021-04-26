@@ -4,6 +4,7 @@ CREATE TABLE [dbo].[Apprenticeship]
 	[Id] BIGINT NOT NULL,
 	[ApprenticeId] UNIQUEIDENTIFIER NOT NULL, 
     [CommitmentsApprenticeshipId] BIGINT NOT NULL,
+    [ApprovedOn] DATETIME2 NOT NULL DEFAULT GetUtcDate(), 
 	[EmployerAccountLegalEntityId] BIGINT NOT NULL,
 	[EmployerName] NVARCHAR(100) NOT NULL, 
     [TrainingProviderId] BIGINT NOT NULL, 
@@ -19,8 +20,8 @@ CREATE TABLE [dbo].[Apprenticeship]
     [ApprenticeshipDetailsCorrect] bit NULL,
     [HowApprenticeshipDeliveredCorrect] BIT NULL, 
     [ApprenticeshipConfirmed] bit NULL,
-    [CreatedOn] DATETIME2 NOT NULL DEFAULT GetUtcDate(), 
     CONSTRAINT PK_Apprenticeship_UniqueId PRIMARY KEY CLUSTERED ([UniqueId]),
+    CONSTRAINT PK_Apprenticeship_ID_CommitmentsApprenticeshipId_CreatedOn UNIQUE ([Id], [CommitmentsApprenticeshipId], [ApprovedOn]),
 	CONSTRAINT FK_Apprenticeship_ApprenticeId FOREIGN KEY ([ApprenticeId]) REFERENCES [dbo].[Apprentice] ([Id])
 )
 

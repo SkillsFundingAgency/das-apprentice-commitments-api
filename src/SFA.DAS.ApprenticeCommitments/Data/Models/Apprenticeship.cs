@@ -17,9 +17,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         }
 
         public Apprenticeship(long commitmentsApprenticeshipId,
+            DateTime approvedOn,
             ApprenticeshipDetails details)
         {
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
+            ApprovedOn = approvedOn;
             Details = details;
         }
 
@@ -34,7 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool? ApprenticeshipConfirmed { get; private set; }
-        public DateTime CreatedOn { get; private set; } = DateTime.Now;
+        public DateTime ApprovedOn { get; private set; }
 
         public void ConfirmTrainingProvider(bool trainingProviderCorrect)
         {
@@ -66,12 +68,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             ApprenticeshipConfirmed = apprenticeshipCorrect;
         }
 
-        public Apprenticeship RenewCommitment(ApprenticeshipDetails updatedDetails)
+        public Apprenticeship RenewCommitment(ApprenticeshipDetails updatedDetails, DateTime approvedOn)
         {
             return new Apprenticeship
             {
                 Id = Id,
                 CommitmentsApprenticeshipId = CommitmentsApprenticeshipId,
+                ApprovedOn = approvedOn,
                 Details = updatedDetails,
             };
         }
