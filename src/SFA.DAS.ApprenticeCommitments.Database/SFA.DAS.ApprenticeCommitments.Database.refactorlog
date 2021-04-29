@@ -140,4 +140,32 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="[CommitmentStatement]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="687beb24-4fd9-4b2a-8dec-1ba1551c377d" ChangeDateTime="04/29/2021 15:33:59">
+    <Property Name="ElementName" Value="[dbo].[PK_Apprenticeship_UniqueId]" />
+    <Property Name="ElementType" Value="SqlPrimaryKeyConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[CommitmentStatement]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PK_CommitmentStatement_Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f9e3f93e-d3b2-4ca0-a5f4-ccffa5124ac7" ChangeDateTime="04/29/2021 15:34:26">
+    <Property Name="ElementName" Value="[dbo].[PK_Apprenticeship_ID_CommitmentsApprenticeshipId_CreatedOn]" />
+    <Property Name="ElementType" Value="SqlUniqueConstraint" />
+    <Property Name="ParentElementName" Value="[dbo].[CommitmentStatement]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PK_CommitmentStatement_ApprenticeshipId_CommitmentsApprenticeshipId_ApprovedOn" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="65daa77f-7de3-4a41-b562-324907813389" ChangeDateTime="04/29/2021 15:34:36">
+    <Property Name="ElementName" Value="[dbo].[FK_Apprenticeship_ApprenticeId]" />
+    <Property Name="ElementType" Value="SqlForeignKeyConstraint" />
+    <Property Name="ParentElementName" Value="" />
+    <Property Name="ParentElementType" Value="" />
+    <Property Name="NewName" Value="FK_CommitmentStatement_ApprenticeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e9674bda-ba71-493a-8f42-29a981766200" ChangeDateTime="04/29/2021 15:34:47">
+    <Property Name="ElementName" Value="[dbo].[CommitmentStatement].[IX_Apprenticeship_ApprenticeId]" />
+    <Property Name="ElementType" Value="SqlIndex" />
+    <Property Name="ParentElementName" Value="[dbo].[CommitmentStatement]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[IX_CommitmentStatement_ApprenticeId]" />
+  </Operation>
 </Operations>

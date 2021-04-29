@@ -20,14 +20,14 @@ CREATE TABLE [dbo].[CommitmentStatement]
     [ApprenticeshipDetailsCorrect] bit NULL,
     [HowApprenticeshipDeliveredCorrect] BIT NULL, 
     [ApprenticeshipConfirmed] bit NULL,
-    CONSTRAINT PK_Apprenticeship_UniqueId PRIMARY KEY CLUSTERED ([Id]),
-    CONSTRAINT PK_Apprenticeship_ID_CommitmentsApprenticeshipId_CreatedOn UNIQUE ([ApprenticeshipId], [CommitmentsApprenticeshipId], [ApprovedOn]),
-	CONSTRAINT FK_Apprenticeship_ApprenticeId FOREIGN KEY ([ApprenticeId]) REFERENCES [dbo].[Apprentice] ([Id])
+    CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
+    CONSTRAINT PK_CommitmentStatement_ApprenticeshipId_CommitmentsApprenticeshipId_ApprovedOn UNIQUE ([ApprenticeshipId], [CommitmentsApprenticeshipId], [ApprovedOn]),
+	CONSTRAINT FK_CommitmentStatement_ApprenticeId FOREIGN KEY ([ApprenticeId]) REFERENCES [dbo].[Apprentice] ([Id])
 )
 
 GO
 
-CREATE NONCLUSTERED INDEX [IX_Apprenticeship_ApprenticeId] ON [dbo].[CommitmentStatement]
+CREATE NONCLUSTERED INDEX [IX_CommitmentStatement_ApprenticeId] ON [dbo].[CommitmentStatement]
 (
 	[ApprenticeId] ASC
 )

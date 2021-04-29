@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
-        private CommitmentStatement _apprenticeship;
+        private CommitmentStatement _commitmentStatement;
 
         public GetApprenticeshipSteps(TestContext context)
         {
@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _fixture.Create("CourseName"), 1, null,
                 startDate, startDate.AddMonths(32)));
 
-            _apprenticeship = _fixture.Build<CommitmentStatement>()
+            _commitmentStatement = _fixture.Build<CommitmentStatement>()
                 .Do(a => a.ConfirmTrainingProvider(true))
                 .Do(a => a.ConfirmEmployer(true))
                 .Do(a => a.ConfirmApprenticeshipDetails(true))
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_apprenticeship);
+            _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
         }
@@ -50,11 +50,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             // Ensure previous approvals happened before the one we will later assert on, so 
             // the GetApprenticeship feature finds our one as the latest approval
-            _fixture.Register((int i) => _apprenticeship.ApprovedOn.AddDays(-i));
+            _fixture.Register((int i) => _commitmentStatement.ApprovedOn.AddDays(-i));
             
             _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
             _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
-            _apprentice.AddApprenticeship(_apprenticeship);
+            _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
         }
@@ -62,14 +62,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given("the apprenticeships exists, has many commitment statements, and is associated with this apprentice")]
         public async Task GivenTheApprenticeshipsExistsHasManyCommitmentStatementsAndIsAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_apprenticeship);
+            _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _apprenticeship = _apprenticeship.RenewCommitment(
+            _commitmentStatement = _commitmentStatement.RenewCommitment(
                 _fixture.Create<ApprenticeshipDetails>(),
-                _apprenticeship.ApprovedOn.AddDays(1));
-            _apprentice.AddApprenticeship(_apprenticeship);
+                _commitmentStatement.ApprovedOn.AddDays(1));
+            _apprentice.AddApprenticeship(_commitmentStatement);
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -83,7 +83,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task GivenTheApprenticeshipExistsButItSAssociatedWithAnotherApprentice()
         {
             var anotherApprentice = _fixture.Create<Apprentice>();
-            anotherApprentice.AddApprenticeship(_apprenticeship);
+            anotherApprentice.AddApprenticeship(_commitmentStatement);
 
             _context.DbContext.Apprentices.Add(anotherApprentice);
             _context.DbContext.Apprentices.Add(_apprentice);
@@ -93,7 +93,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"we try to retrieve the apprenticeship")]
         public async Task WhenWeTryToRetrieveTheApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.ApprenticeshipId}");
+            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}");
         }
 
         [Then(@"the result should return ok")]
@@ -108,20 +108,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
-            a.Id.Should().Be(_apprenticeship.ApprenticeshipId);
-            a.CommitmentsApprenticeshipId.Should().Be(_apprenticeship.CommitmentsApprenticeshipId);
-            a.EmployerName.Should().Be(_apprenticeship.Details.EmployerName);
-            a.EmployerAccountLegalEntityId.Should().Be(_apprenticeship.Details.EmployerAccountLegalEntityId);
-            a.TrainingProviderName.Should().Be(_apprenticeship.Details.TrainingProviderName);
-            a.TrainingProviderCorrect.Should().Be(_apprenticeship.TrainingProviderCorrect);
-            a.EmployerCorrect.Should().Be(_apprenticeship.EmployerCorrect);
-            a.ApprenticeshipDetailsCorrect.Should().Be(_apprenticeship.ApprenticeshipDetailsCorrect);
-            a.HowApprenticeshipDeliveredCorrect.Should().Be(_apprenticeship.HowApprenticeshipDeliveredCorrect);
-            a.CourseName.Should().Be(_apprenticeship.Details.Course.Name);
-            a.CourseLevel.Should().Be(_apprenticeship.Details.Course.Level);
-            a.CourseOption.Should().Be(_apprenticeship.Details.Course.Option);
-            a.PlannedStartDate.Should().Be(_apprenticeship.Details.Course.PlannedStartDate);
-            a.PlannedEndDate.Should().Be(_apprenticeship.Details.Course.PlannedEndDate);
+            a.Id.Should().Be(_commitmentStatement.ApprenticeshipId);
+            a.CommitmentsApprenticeshipId.Should().Be(_commitmentStatement.CommitmentsApprenticeshipId);
+            a.EmployerName.Should().Be(_commitmentStatement.Details.EmployerName);
+            a.EmployerAccountLegalEntityId.Should().Be(_commitmentStatement.Details.EmployerAccountLegalEntityId);
+            a.TrainingProviderName.Should().Be(_commitmentStatement.Details.TrainingProviderName);
+            a.TrainingProviderCorrect.Should().Be(_commitmentStatement.TrainingProviderCorrect);
+            a.EmployerCorrect.Should().Be(_commitmentStatement.EmployerCorrect);
+            a.ApprenticeshipDetailsCorrect.Should().Be(_commitmentStatement.ApprenticeshipDetailsCorrect);
+            a.HowApprenticeshipDeliveredCorrect.Should().Be(_commitmentStatement.HowApprenticeshipDeliveredCorrect);
+            a.CourseName.Should().Be(_commitmentStatement.Details.Course.Name);
+            a.CourseLevel.Should().Be(_commitmentStatement.Details.Course.Level);
+            a.CourseOption.Should().Be(_commitmentStatement.Details.Course.Option);
+            a.PlannedStartDate.Should().Be(_commitmentStatement.Details.Course.PlannedStartDate);
+            a.PlannedEndDate.Should().Be(_commitmentStatement.Details.Course.PlannedEndDate);
             a.DurationInMonths.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
 
@@ -131,7 +131,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
             apprentice.Apprenticeships
                 .Should().NotBeEmpty()
-                .And.OnlyContain(a => a.ApprenticeshipId == _apprenticeship.ApprenticeshipId);
+                .And.OnlyContain(a => a.ApprenticeshipId == _commitmentStatement.ApprenticeshipId);
         }
 
         [Then(@"the result should return NotFound")]
