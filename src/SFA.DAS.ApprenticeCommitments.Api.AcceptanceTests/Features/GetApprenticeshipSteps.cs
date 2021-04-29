@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -49,6 +48,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given("many apprenticeships exists and are associated with this apprentice")]
         public async Task GivenManyApprenticeshipExistsAndAreAssociatedWithThisApprentice()
         {
+            // Ensure previous approvals happened before the one we will later assert on, so 
+            // the GetApprenticeship feature finds our one as the latest approval
+            _fixture.Register((int i) => _apprenticeship.ApprovedOn.AddDays(-i));
+            
             _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
             _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
             _apprentice.AddApprenticeship(_apprenticeship);
