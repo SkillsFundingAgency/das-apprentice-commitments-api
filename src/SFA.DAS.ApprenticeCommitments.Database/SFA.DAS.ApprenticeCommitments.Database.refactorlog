@@ -133,4 +133,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Id" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c0956a66-2dd2-4a0c-9e78-08765538c841" ChangeDateTime="04/29/2021 05:23:15">
+    <Property Name="ElementName" Value="[dbo].[Apprenticeship]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="[CommitmentStatement]" />
+  </Operation>
 </Operations>

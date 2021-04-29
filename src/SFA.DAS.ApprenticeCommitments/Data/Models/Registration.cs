@@ -90,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             var apprentice = new Apprentice(
                 ApprenticeId, firstName, lastName, emailAddress, dateOfBirth);
 
-            apprentice.AddApprenticeship(new Apprenticeship(ApprenticeshipId, ApprovedOn, Apprenticeship));
+            apprentice.AddApprenticeship(new CommitmentStatement(ApprenticeshipId, ApprovedOn, Apprenticeship));
 
             return apprentice;
         }

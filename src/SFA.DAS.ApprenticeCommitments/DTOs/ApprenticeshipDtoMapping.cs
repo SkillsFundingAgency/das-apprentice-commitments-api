@@ -6,7 +6,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
     public static class ApprenticeshipDtoMapping
     {
-        public static ApprenticeshipDto? MapToApprenticeshipDto(this Apprenticeship? apprenticeship)
+        public static ApprenticeshipDto? MapToApprenticeshipDto(this CommitmentStatement? apprenticeship)
         {
             if (apprenticeship == null) return null;
 

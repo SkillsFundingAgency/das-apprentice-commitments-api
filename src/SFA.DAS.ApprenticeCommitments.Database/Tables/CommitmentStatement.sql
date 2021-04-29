@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[Apprenticeship]
+CREATE TABLE [dbo].[CommitmentStatement]
 (
     [Id] BIGINT IDENTITY(1,1) NOT NULL, 
 	[ApprenticeshipId] BIGINT NOT NULL CONSTRAINT DF_Apprenticeship_Id default next value for ApprenticeshipIdNumbers,
@@ -27,7 +27,7 @@ CREATE TABLE [dbo].[Apprenticeship]
 
 GO
 
-CREATE NONCLUSTERED INDEX [IX_Apprenticeship_ApprenticeId] ON [dbo].[Apprenticeship]
+CREATE NONCLUSTERED INDEX [IX_Apprenticeship_ApprenticeId] ON [dbo].[CommitmentStatement]
 (
 	[ApprenticeId] ASC
 )

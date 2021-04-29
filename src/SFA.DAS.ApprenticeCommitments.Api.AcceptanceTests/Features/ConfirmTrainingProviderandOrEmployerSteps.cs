@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly Apprenticeship _apprenticeship;
+        private readonly CommitmentStatement _apprenticeship;
         private bool? TrainingProviderCorrect { get; set; }
         private bool? EmployerCorrect { get; set; }
         private bool? ApprenticeshipDetailsCorrect { get; set; }
@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
 
             _apprentice = _fixture.Create<Apprentice>();
-            _apprenticeship = _fixture.Create<Apprenticeship>();
+            _apprenticeship = _fixture.Create<CommitmentStatement>();
             _apprentice.AddApprenticeship(_apprenticeship);
         }
 

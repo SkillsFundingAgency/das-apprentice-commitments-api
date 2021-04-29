@@ -10,17 +10,17 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Data
 {
-    public interface IApprenticeshipContext : IEntityContext<Apprenticeship>
+    public interface IApprenticeshipContext : IEntityContext<CommitmentStatement>
     {
-        internal async Task<List<Apprenticeship>> FindByApprenticeId(Guid apprenticeId)
+        internal async Task<List<CommitmentStatement>> FindByApprenticeId(Guid apprenticeId)
             => await Entities.Where(a => a.Apprentice.Id == apprenticeId).ToListAsync();
 
-        internal async Task<Apprenticeship> GetById(Guid apprenticeId, long apprenticeshipId)
+        internal async Task<CommitmentStatement> GetById(Guid apprenticeId, long apprenticeshipId)
             => (await Find(apprenticeId, apprenticeshipId))
                 ?? throw new DomainException(
                     $"Apprenticeship {apprenticeshipId} for {apprenticeId} not found");
 
-        internal async Task<Apprenticeship?> Find(Guid apprenticeId, long apprenticeshipId)
+        internal async Task<CommitmentStatement?> Find(Guid apprenticeId, long apprenticeshipId)
             => await Entities
                 .Where(
                     a => a.ApprenticeshipId == apprenticeshipId &&

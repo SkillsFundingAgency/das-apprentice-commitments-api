@@ -5,17 +5,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    [Table("Apprenticeship")]
-    public class Apprenticeship
+    [Table("CommitmentStatement")]
+    public class CommitmentStatement
     {
 #pragma warning disable CS8618 // Constructor for Entity Framework
 
-        private Apprenticeship()
+        private CommitmentStatement()
 #pragma warning restore CS8618
         {
         }
 
-        public Apprenticeship(long commitmentsApprenticeshipId,
+        public CommitmentStatement(long commitmentsApprenticeshipId,
             DateTime approvedOn,
             ApprenticeshipDetails details)
         {
@@ -67,9 +67,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             ApprenticeshipConfirmed = apprenticeshipCorrect;
         }
 
-        public Apprenticeship RenewCommitment(ApprenticeshipDetails updatedDetails, DateTime approvedOn)
+        public CommitmentStatement RenewCommitment(ApprenticeshipDetails updatedDetails, DateTime approvedOn)
         {
-            return new Apprenticeship
+            return new CommitmentStatement
             {
                 ApprenticeshipId = ApprenticeshipId,
                 CommitmentsApprenticeshipId = CommitmentsApprenticeshipId,

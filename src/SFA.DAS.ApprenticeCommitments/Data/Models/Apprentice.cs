@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid Id { get; private set; }
 
-        public void AddApprenticeship(Apprenticeship apprenticeship)
+        public void AddApprenticeship(CommitmentStatement apprenticeship)
         {
             Apprenticeships.Add(apprenticeship);
         }
@@ -34,8 +34,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public ICollection<ApprenticeEmailAddressHistory> PreviousEmailAddresses { get; private set; }
         public DateTime DateOfBirth { get; private set; }
 
-        public ICollection<Apprenticeship> Apprenticeships { get; private set; }
-            = new List<Apprenticeship>();
+        public ICollection<CommitmentStatement> Apprenticeships { get; private set; }
+            = new List<CommitmentStatement>();
 
         public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
 

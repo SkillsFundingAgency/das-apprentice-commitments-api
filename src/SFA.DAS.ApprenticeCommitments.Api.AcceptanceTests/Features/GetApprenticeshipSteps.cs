@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
-        private Apprenticeship _apprenticeship;
+        private CommitmentStatement _apprenticeship;
 
         public GetApprenticeshipSteps(TestContext context)
         {
@@ -30,7 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _fixture.Create("CourseName"), 1, null,
                 startDate, startDate.AddMonths(32)));
 
-            _apprenticeship = _fixture.Build<Apprenticeship>()
+            _apprenticeship = _fixture.Build<CommitmentStatement>()
                 .Do(a => a.ConfirmTrainingProvider(true))
                 .Do(a => a.ConfirmEmployer(true))
                 .Do(a => a.ConfirmApprenticeshipDetails(true))
@@ -49,8 +49,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given("many apprenticeships exists and are associated with this apprentice")]
         public async Task GivenManyApprenticeshipExistsAndAreAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_fixture.Create<Apprenticeship>());
-            _apprentice.AddApprenticeship(_fixture.Create<Apprenticeship>());
+            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
+            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
             _apprentice.AddApprenticeship(_apprenticeship);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();

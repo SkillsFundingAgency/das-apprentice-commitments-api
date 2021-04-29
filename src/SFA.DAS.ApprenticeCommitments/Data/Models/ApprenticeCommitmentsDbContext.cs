@@ -16,11 +16,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public virtual DbSet<Registration> Registrations { get; set; }
         public virtual DbSet<Apprentice> Apprentices { get; set; }
-        public virtual DbSet<Apprenticeship> Apprenticeships { get; set; }
+        public virtual DbSet<CommitmentStatement> Apprenticeships { get; set; }
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
-        DbSet<Apprenticeship> IEntityContext<Apprenticeship>.Entities => Apprenticeships;
+        DbSet<CommitmentStatement> IEntityContext<CommitmentStatement>.Entities => Apprenticeships;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -48,14 +48,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             });
 
-            modelBuilder.Entity<Apprenticeship>(a =>
+            modelBuilder.Entity<CommitmentStatement>(a =>
             {
                 a.Property(typeof(long), "Id");
                 a.HasKey("Id");
                 a.Property(e => e.ApprenticeshipId).HasDefaultValue(0);
             });
 
-            modelBuilder.Entity<Apprenticeship>()
+            modelBuilder.Entity<CommitmentStatement>()
                 .OwnsOne(e => e.Details, details =>
                 {
                     details.Property(p => p.EmployerAccountLegalEntityId).HasColumnName("EmployerAccountLegalEntityId");
