@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -89,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"we try to retrieve the apprenticeship")]
         public async Task WhenWeTryToRetrieveTheApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.Id}");
+            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.ApprenticeshipId}");
         }
 
         [Then(@"the result should return ok")]
@@ -104,7 +105,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
-            a.Id.Should().Be(_apprenticeship.Id);
+            a.Id.Should().Be(_apprenticeship.ApprenticeshipId);
             a.CommitmentsApprenticeshipId.Should().Be(_apprenticeship.CommitmentsApprenticeshipId);
             a.EmployerName.Should().Be(_apprenticeship.Details.EmployerName);
             a.EmployerAccountLegalEntityId.Should().Be(_apprenticeship.Details.EmployerAccountLegalEntityId);
@@ -127,7 +128,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
             apprentice.Apprenticeships
                 .Should().NotBeEmpty()
-                .And.OnlyContain(a => a.Id == _apprenticeship.Id);
+                .And.OnlyContain(a => a.ApprenticeshipId == _apprenticeship.ApprenticeshipId);
         }
 
         [Then(@"the result should return NotFound")]

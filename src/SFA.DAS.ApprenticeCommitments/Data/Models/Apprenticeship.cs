@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Details = details;
         }
 
-        public long Id { get; private set; } = 0;
+        public long ApprenticeshipId { get; private set; } = 0;
         public long CommitmentsApprenticeshipId { get; private set; }
         public Apprentice Apprentice { get; private set; }
         public ApprenticeshipDetails Details { get; private set; }
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
             return new Apprenticeship
             {
-                Id = Id,
+                ApprenticeshipId = ApprenticeshipId,
                 CommitmentsApprenticeshipId = CommitmentsApprenticeshipId,
                 ApprovedOn = approvedOn,
                 Details = updatedDetails,

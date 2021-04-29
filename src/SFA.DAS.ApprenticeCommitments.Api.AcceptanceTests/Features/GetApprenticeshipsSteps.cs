@@ -60,7 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var response = JsonConvert.DeserializeObject<List<ApprenticeshipDto>>(content);
             response.Should().BeEquivalentTo(_apprentice.Apprenticeships.Select(a => new
             {
-                a.Id,
+                Id = a.ApprenticeshipId,
                 a.CommitmentsApprenticeshipId,
             }));
         }

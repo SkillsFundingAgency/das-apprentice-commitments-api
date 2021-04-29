@@ -131,7 +131,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task WhenWeSendTheConfirmation()
         {
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.Id}/{endpoint}",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.ApprenticeshipId}/{endpoint}",
                 command);
         }
 
@@ -152,7 +152,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Apprenticeships.Should().ContainEquivalentOf(new
             {
-                _apprenticeship.Id,
+                _apprenticeship.ApprenticeshipId,
                 TrainingProviderCorrect,
                 EmployerCorrect,
                 ApprenticeshipDetailsCorrect,

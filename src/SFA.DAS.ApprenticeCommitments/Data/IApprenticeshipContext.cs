@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
         internal async Task<Apprenticeship?> Find(Guid apprenticeId, long apprenticeshipId)
             => await Entities
                 .Where(
-                    a => a.Id == apprenticeshipId &&
+                    a => a.ApprenticeshipId == apprenticeshipId &&
                     a.Apprentice.Id == apprenticeId)
                 .OrderByDescending(x => x.ApprovedOn)
                 .FirstOrDefaultAsync();

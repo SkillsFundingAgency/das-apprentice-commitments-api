@@ -50,9 +50,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             modelBuilder.Entity<Apprenticeship>(a =>
             {
-                a.Property(typeof(long), "UniqueId");
-                a.HasKey("UniqueId");
-                a.Property(e => e.Id).HasDefaultValue(0);
+                a.Property(typeof(long), "Id");
+                a.HasKey("Id");
+                a.Property(e => e.ApprenticeshipId).HasDefaultValue(0);
             });
 
             modelBuilder.Entity<Apprenticeship>()

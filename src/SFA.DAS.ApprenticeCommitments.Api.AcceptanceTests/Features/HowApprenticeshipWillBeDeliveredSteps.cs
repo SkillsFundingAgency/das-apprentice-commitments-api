@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.Id}/howapprenticeshipwillbedeliveredconfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.ApprenticeshipId}/howapprenticeshipwillbedeliveredconfirmation",
                 new HowApprenticeshipWillBeDeliveredRequest
                 {
                     HowApprenticeshipDeliveredCorrect = (bool)HowApprenticeshipDeliveredCorrect,
@@ -75,7 +75,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Apprenticeships.Should().ContainEquivalentOf(new
             {
-                _apprenticeship.Id,
+                _apprenticeship.ApprenticeshipId,
                 HowApprenticeshipDeliveredCorrect
             });
         }

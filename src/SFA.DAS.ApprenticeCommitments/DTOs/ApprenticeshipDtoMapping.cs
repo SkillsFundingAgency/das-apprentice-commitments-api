@@ -12,7 +12,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 
             return new ApprenticeshipDto
             {
-                Id = apprenticeship.Id,
+                Id = apprenticeship.ApprenticeshipId,
                 CommitmentsApprenticeshipId = apprenticeship.CommitmentsApprenticeshipId,
                 EmployerName = apprenticeship.Details.EmployerName,
                 EmployerAccountLegalEntityId = apprenticeship.Details.EmployerAccountLegalEntityId,
