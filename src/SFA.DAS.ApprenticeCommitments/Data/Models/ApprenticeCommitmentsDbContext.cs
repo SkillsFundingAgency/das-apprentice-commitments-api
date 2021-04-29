@@ -52,6 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 a.Property(typeof(long), "UniqueId");
                 a.HasKey("UniqueId");
+                a.Property(e => e.Id).HasDefaultValue(0);
             });
 
             modelBuilder.Entity<Apprenticeship>()
@@ -74,7 +75,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             modelBuilder.Entity<Registration>(entity =>
             {
                 entity.HasKey(e => e.ApprenticeId);
-                
+
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity.Property(e => e.Email)
                     .HasConversion(
@@ -84,7 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             modelBuilder.Entity<Registration>(entity =>
             {
-                entity.Property(e=>e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+                entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity.OwnsOne(e => e.Apprenticeship, apprenticeship =>
                 {
                     apprenticeship.Property(p => p.EmployerAccountLegalEntityId)

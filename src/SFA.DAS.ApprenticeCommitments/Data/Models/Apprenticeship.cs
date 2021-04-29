@@ -8,7 +8,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
     [Table("Apprenticeship")]
     public class Apprenticeship
     {
-        private static long TempSequenceNumber = 10_000;
 #pragma warning disable CS8618 // Constructor for Entity Framework
 
         private Apprenticeship()
@@ -25,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Details = details;
         }
 
-        public long Id { get; private set; } = TempSequenceNumber++;
+        public long Id { get; private set; } = 0;
         public long CommitmentsApprenticeshipId { get; private set; }
         public Apprentice Apprentice { get; private set; }
         public ApprenticeshipDetails Details { get; private set; }

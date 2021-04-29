@@ -31,3 +31,4 @@ Scenario: When an apprenticeship with multiple commitment statements for a given
 	When we try to retrieve the apprenticeship
 	Then the result should return ok
 	And the response should match the expected apprenticeship values
+	And all commitment statements should have the same apprenticeship ID

@@ -3,6 +3,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -118,6 +119,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.PlannedStartDate.Should().Be(_apprenticeship.Details.Course.PlannedStartDate);
             a.PlannedEndDate.Should().Be(_apprenticeship.Details.Course.PlannedEndDate);
             a.DurationInMonths.Should().Be(32 + 1); // Duration is inclusive of start and end months
+        }
+
+        [Then("all commitment statements should have the same apprenticeship ID")]
+        public async Task ThenAllCommitmentStatementsShouldHaveTheSameApprenticeshipID()
+        {
+            var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
+            apprentice.Apprenticeships
+                .Should().NotBeEmpty()
+                .And.OnlyContain(a => a.Id == _apprenticeship.Id);
         }
 
         [Then(@"the result should return NotFound")]

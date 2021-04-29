@@ -1,7 +1,7 @@
 CREATE TABLE [dbo].[Apprenticeship]
 (
     [UniqueId] BIGINT IDENTITY(1,1) NOT NULL, 
-	[Id] BIGINT NOT NULL,
+	[Id] BIGINT NOT NULL CONSTRAINT DF_Apprenticeship_Id default next value for ApprenticeshipIdNumbers,
 	[ApprenticeId] UNIQUEIDENTIFIER NOT NULL, 
     [CommitmentsApprenticeshipId] BIGINT NOT NULL,
     [ApprovedOn] DATETIME2 NOT NULL DEFAULT GetUtcDate(), 
