@@ -25,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                 .Where(
                     a => a.ApprenticeshipId == apprenticeshipId &&
                     a.Apprenticeship.Apprentice.Id == apprenticeId)
-                .OrderByDescending(x => x.ApprovedOn)
+                .OrderByDescending(x => x.CommitmentsApprovedOn)
                 .FirstOrDefaultAsync();
     }
 }

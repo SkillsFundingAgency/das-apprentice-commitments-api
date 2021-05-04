@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[CommitmentStatement]
     [Id] BIGINT IDENTITY(1,1) NOT NULL, 
 	[ApprenticeshipId] BIGINT NOT NULL,
     [CommitmentsApprenticeshipId] BIGINT NOT NULL,
-    [ApprovedOn] DATETIME2 NOT NULL DEFAULT GetUtcDate(), 
+    [CommitmentsApprovedOn] DATETIME2 NOT NULL, 
 	[EmployerAccountLegalEntityId] BIGINT NOT NULL,
 	[EmployerName] NVARCHAR(100) NOT NULL, 
     [TrainingProviderId] BIGINT NOT NULL, 
@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[CommitmentStatement]
     [HowApprenticeshipDeliveredCorrect] BIT NULL, 
     [ApprenticeshipConfirmed] bit NULL,
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
-    CONSTRAINT FK_CommitmentStatement_Apprenticeship_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
+    CONSTRAINT FK_CommitmentStatement_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )
 
 GO

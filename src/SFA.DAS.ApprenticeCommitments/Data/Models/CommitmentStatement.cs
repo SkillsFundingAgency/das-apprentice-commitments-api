@@ -17,15 +17,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             ApprenticeshipDetails details)
         {
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
-            ApprovedOn = approvedOn;
+            CommitmentsApprovedOn = approvedOn;
             Details = details;
         }
 
         public long Id { get; private set; }
         public long ApprenticeshipId { get; private set; } = 0;
-        public long CommitmentsApprenticeshipId { get; private set; }
         public ApprenticeshipDetails Details { get; private set; } = null!;
-        public DateTime ApprovedOn { get; private set; }
+        public long CommitmentsApprenticeshipId { get; private set; }
+        public DateTime CommitmentsApprovedOn { get; private set; }
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
         public bool? TrainingProviderCorrect { get; private set; }
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 ApprenticeshipId = ApprenticeshipId,
                 CommitmentsApprenticeshipId = CommitmentsApprenticeshipId,
-                ApprovedOn = approvedOn,
+                CommitmentsApprovedOn = approvedOn,
                 Details = updatedDetails,
             };
         }

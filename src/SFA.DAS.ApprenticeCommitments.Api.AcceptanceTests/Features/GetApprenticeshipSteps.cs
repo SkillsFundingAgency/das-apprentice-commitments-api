@@ -51,7 +51,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             // Ensure previous approvals happened before the one we will later assert on, so 
             // the GetApprenticeship feature finds our one as the latest approval
-            _fixture.Register((int i) => _commitmentStatement.ApprovedOn.AddDays(-i));
+            _fixture.Register((int i) => _commitmentStatement.CommitmentsApprovedOn.AddDays(-i));
             
             _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
             _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
@@ -69,7 +69,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 
             _commitmentStatement.RenewCommitment(
                 _fixture.Create<ApprenticeshipDetails>(),
-                _commitmentStatement.ApprovedOn.AddDays(1));
+                _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
             await _context.DbContext.SaveChangesAsync();
         }
 
