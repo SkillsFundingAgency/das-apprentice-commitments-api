@@ -1,8 +1,7 @@
 CREATE TABLE [dbo].[CommitmentStatement]
 (
     [Id] BIGINT IDENTITY(1,1) NOT NULL, 
-	[ApprenticeshipId] BIGINT NOT NULL CONSTRAINT DF_Apprenticeship_Id default next value for ApprenticeshipIdNumbers,
-	[ApprenticeId] UNIQUEIDENTIFIER NOT NULL, 
+	[ApprenticeshipId] BIGINT NOT NULL,
     [CommitmentsApprenticeshipId] BIGINT NOT NULL,
     [ApprovedOn] DATETIME2 NOT NULL DEFAULT GetUtcDate(), 
 	[EmployerAccountLegalEntityId] BIGINT NOT NULL,
@@ -21,13 +20,10 @@ CREATE TABLE [dbo].[CommitmentStatement]
     [HowApprenticeshipDeliveredCorrect] BIT NULL, 
     [ApprenticeshipConfirmed] bit NULL,
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
-    CONSTRAINT PK_CommitmentStatement_ApprenticeshipId_CommitmentsApprenticeshipId_ApprovedOn UNIQUE ([ApprenticeshipId], [CommitmentsApprenticeshipId], [ApprovedOn]),
-	CONSTRAINT FK_CommitmentStatement_ApprenticeId FOREIGN KEY ([ApprenticeId]) REFERENCES [dbo].[Apprentice] ([Id])
+    CONSTRAINT FK_CommitmentStatement_Apprenticeship_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )
 
 GO
 
-CREATE NONCLUSTERED INDEX [IX_CommitmentStatement_ApprenticeId] ON [dbo].[CommitmentStatement]
-(
-	[ApprenticeId] ASC
-)
+CREATE INDEX [IX_CommitmentStatement_ApprenticeshipId] ON [CommitmentStatement] ([ApprenticeshipId]);
+GO

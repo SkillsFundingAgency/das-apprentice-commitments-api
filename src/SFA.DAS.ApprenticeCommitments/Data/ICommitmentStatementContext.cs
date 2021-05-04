@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Data
 {
-    public interface IApprenticeshipContext : IEntityContext<CommitmentStatement>
+    public interface ICommitmentStatementContext : IEntityContext<CommitmentStatement>
     {
         internal async Task<List<CommitmentStatement>> FindByApprenticeId(Guid apprenticeId)
-            => await Entities.Where(a => a.Apprentice.Id == apprenticeId).ToListAsync();
+            => await Entities.Where(a => a.Apprenticeship.Apprentice.Id == apprenticeId).ToListAsync();
 
         internal async Task<CommitmentStatement> GetById(Guid apprenticeId, long apprenticeshipId)
             => (await Find(apprenticeId, apprenticeshipId))
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
             => await Entities
                 .Where(
                     a => a.ApprenticeshipId == apprenticeshipId &&
-                    a.Apprentice.Id == apprenticeId)
+                    a.Apprenticeship.Apprentice.Id == apprenticeId)
                 .OrderByDescending(x => x.ApprovedOn)
                 .FirstOrDefaultAsync();
     }

@@ -8,10 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
     [Table("CommitmentStatement")]
     public class CommitmentStatement
     {
-#pragma warning disable CS8618 // Constructor for Entity Framework
-
         private CommitmentStatement()
-#pragma warning restore CS8618
         {
         }
 
@@ -24,10 +21,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Details = details;
         }
 
+        public long Id { get; private set; }
         public long ApprenticeshipId { get; private set; } = 0;
         public long CommitmentsApprenticeshipId { get; private set; }
-        public Apprentice Apprentice { get; private set; }
-        public ApprenticeshipDetails Details { get; private set; }
+        public ApprenticeshipDetails Details { get; private set; } = null!;
+        public DateTime ApprovedOn { get; private set; }
+        public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
         public bool? TrainingProviderCorrect { get; private set; }
         public bool? EmployerCorrect { get; private set; }
@@ -35,7 +34,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool? ApprenticeshipConfirmed { get; private set; }
-        public DateTime ApprovedOn { get; private set; }
 
         public void ConfirmTrainingProvider(bool trainingProviderCorrect)
         {

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -66,10 +67,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _commitmentStatement = _commitmentStatement.RenewCommitment(
+            _commitmentStatement.RenewCommitment(
                 _fixture.Create<ApprenticeshipDetails>(),
                 _commitmentStatement.ApprovedOn.AddDays(1));
-            _apprentice.AddApprenticeship(_commitmentStatement);
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenAllCommitmentStatementsShouldHaveTheSameApprenticeshipID()
         {
             var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
-            apprentice.Apprenticeships
+            apprentice.Apprenticeships.SelectMany(x => x.CommitmentStatements)
                 .Should().NotBeEmpty()
                 .And.OnlyContain(a => a.ApprenticeshipId == _commitmentStatement.ApprenticeshipId);
         }

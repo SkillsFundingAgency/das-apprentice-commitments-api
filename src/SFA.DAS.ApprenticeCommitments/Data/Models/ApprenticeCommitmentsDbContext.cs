@@ -4,7 +4,7 @@ using System.Net.Mail;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class ApprenticeCommitmentsDbContext : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext
+    public class ApprenticeCommitmentsDbContext : DbContext, IRegistrationContext, IApprenticeContext, ICommitmentStatementContext
     {
         public ApprenticeCommitmentsDbContext()
         {
@@ -16,11 +16,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public virtual DbSet<Registration> Registrations { get; set; }
         public virtual DbSet<Apprentice> Apprentices { get; set; }
-        public virtual DbSet<CommitmentStatement> Apprenticeships { get; set; }
+        public virtual DbSet<CommitmentStatement> CommitmentStatements { get; set; }
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
-        DbSet<CommitmentStatement> IEntityContext<CommitmentStatement>.Entities => Apprenticeships;
+        DbSet<CommitmentStatement> IEntityContext<CommitmentStatement>.Entities => CommitmentStatements;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -50,9 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             modelBuilder.Entity<CommitmentStatement>(a =>
             {
-                a.Property(typeof(long), "Id");
                 a.HasKey("Id");
-                a.Property(e => e.ApprenticeshipId).HasDefaultValue(0);
             });
 
             modelBuilder.Entity<CommitmentStatement>()

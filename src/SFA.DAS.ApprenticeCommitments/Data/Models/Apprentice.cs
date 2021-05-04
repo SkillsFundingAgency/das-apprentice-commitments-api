@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
@@ -25,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void AddApprenticeship(CommitmentStatement apprenticeship)
         {
-            Apprenticeships.Add(apprenticeship);
+            Apprenticeships.Add(new Apprenticeship(apprenticeship));
         }
 
         public string FirstName { get; private set; }
@@ -34,8 +35,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public ICollection<ApprenticeEmailAddressHistory> PreviousEmailAddresses { get; private set; }
         public DateTime DateOfBirth { get; private set; }
 
-        public ICollection<CommitmentStatement> Apprenticeships { get; private set; }
-            = new List<CommitmentStatement>();
+        public ICollection<Apprenticeship> Apprenticeships { get; private set; }
+            = new List<Apprenticeship>();
 
         public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
 

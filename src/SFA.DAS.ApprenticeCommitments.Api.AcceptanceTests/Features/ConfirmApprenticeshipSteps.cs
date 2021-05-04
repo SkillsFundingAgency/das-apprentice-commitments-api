@@ -62,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated to show confirmed")]
         public void ThenTheApprenticeshipRecordIsUpdatedToShoConfirmed()
         {
-            _context.DbContext.Apprenticeships.Should().ContainEquivalentOf(new
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
                 ApprenticeshipConfirmed,
