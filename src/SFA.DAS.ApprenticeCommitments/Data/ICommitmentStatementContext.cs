@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
@@ -10,6 +10,13 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Data
 {
+    public interface IApprenticeshipContext : IEntityContext<Apprenticeship>
+    {
+        internal Task<Apprenticeship> FindByCommitmentsApprenticeshipId(long apprenticeshipId)
+            => Entities.Include(x => x.CommitmentStatements)
+                .FirstOrDefaultAsync(x => x.CommitmentStatements.Any(y =>
+                    y.CommitmentsApprenticeshipId == apprenticeshipId));
+    }
     public interface ICommitmentStatementContext : IEntityContext<CommitmentStatement>
     {
         internal async Task<List<CommitmentStatement>> FindByApprenticeId(Guid apprenticeId)
