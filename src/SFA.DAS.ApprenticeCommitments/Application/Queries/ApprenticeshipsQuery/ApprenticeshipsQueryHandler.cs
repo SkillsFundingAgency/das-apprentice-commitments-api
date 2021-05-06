@@ -4,25 +4,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using SFA.DAS.ApprenticeCommitments.Data;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
+
+#nullable enable
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
 {
     public class ApprenticeshipsQueryHandler
         : IRequestHandler<ApprenticeshipsQuery, List<ApprenticeshipDto>>
     {
-        private ICommitmentStatementContext _apprenticeshipRepository;
+        private IApprenticeshipContext _apprenticeshipRepository;
 
-        public ApprenticeshipsQueryHandler(ICommitmentStatementContext apprenticeshipRepository)
+        public ApprenticeshipsQueryHandler(IApprenticeshipContext apprenticeshipRepository)
             => _apprenticeshipRepository = apprenticeshipRepository;
 
         public async Task<List<ApprenticeshipDto>> Handle(
             ApprenticeshipsQuery request,
             CancellationToken cancellationToken)
         {
-            var apprenticeships = await _apprenticeshipRepository
+            List<Apprenticeship> apprenticeships = await _apprenticeshipRepository
                 .FindAllForApprentice(request.ApprenticeId);
-            return apprenticeships
+
+            return apprenticeships.SelectMany(x => x.CommitmentStatements)
                 .Select(ApprenticeshipDtoMapping.MapToApprenticeshipDto)
                 .ToList();
         }

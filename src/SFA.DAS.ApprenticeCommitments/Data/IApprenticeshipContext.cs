@@ -17,6 +17,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                 .FirstOrDefaultAsync(x => x.CommitmentStatements.Any(y =>
                     y.CommitmentsApprenticeshipId == apprenticeshipId));
 
+        internal async Task<List<Apprenticeship>> FindAllForApprentice(Guid apprenticeId)
+            => await Entities.Where(a => a.Apprentice.Id == apprenticeId).ToListAsync();
+
         internal async Task<Apprenticeship> GetById(Guid apprenticeId, long apprenticeshipId)
             => (await FindForApprentice(apprenticeId, apprenticeshipId))
                 ?? throw new DomainException(
@@ -29,11 +32,5 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                     a => a.Id == apprenticeshipId &&
                     a.Apprentice.Id == apprenticeId)
                 .FirstOrDefaultAsync();
-    }
-
-    public interface ICommitmentStatementContext : IEntityContext<CommitmentStatement>
-    {
-        internal async Task<List<CommitmentStatement>> FindAllForApprentice(Guid apprenticeId)
-            => await Entities.Where(a => a.Apprenticeship.Apprentice.Id == apprenticeId).ToListAsync();
     }
 }

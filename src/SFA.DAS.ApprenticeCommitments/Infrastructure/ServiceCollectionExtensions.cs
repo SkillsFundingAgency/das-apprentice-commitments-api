@@ -41,7 +41,6 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             services.AddTransient<IConnectionFactory, SqlServerConnectionFactory>();
             services.AddScoped<IRegistrationContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
-            services.AddScoped<ICommitmentStatementContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeshipContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
 
             return services;
