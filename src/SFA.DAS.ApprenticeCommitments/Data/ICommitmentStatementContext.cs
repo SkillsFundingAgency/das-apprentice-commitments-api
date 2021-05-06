@@ -17,7 +17,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                 .FirstOrDefaultAsync(x => x.CommitmentStatements.Any(y =>
                     y.CommitmentsApprenticeshipId == apprenticeshipId));
 
-        internal async Task<Apprenticeship?> FindLatestForApprentice(Guid apprenticeId, long apprenticeshipId)
+        internal async Task<Apprenticeship> GetById(Guid apprenticeId, long apprenticeshipId)
+            => (await FindForApprentice(apprenticeId, apprenticeshipId))
+                ?? throw new DomainException(
+                    $"Apprenticeship {apprenticeshipId} for {apprenticeId} not found");
+
+        internal async Task<Apprenticeship?> FindForApprentice(Guid apprenticeId, long apprenticeshipId)
             => await Entities
                 .Include(a => a.CommitmentStatements)
                 .Where(
@@ -30,18 +35,5 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     {
         internal async Task<List<CommitmentStatement>> FindAllForApprentice(Guid apprenticeId)
             => await Entities.Where(a => a.Apprenticeship.Apprentice.Id == apprenticeId).ToListAsync();
-
-        internal async Task<CommitmentStatement> GetById(Guid apprenticeId, long apprenticeshipId)
-            => (await FindLatestForApprentice(apprenticeId, apprenticeshipId))
-                ?? throw new DomainException(
-                    $"Apprenticeship {apprenticeshipId} for {apprenticeId} not found");
-
-        internal async Task<CommitmentStatement?> FindLatestForApprentice(Guid apprenticeId, long apprenticeshipId)
-            => await Entities
-                .Where(
-                    a => a.ApprenticeshipId == apprenticeshipId &&
-                    a.Apprenticeship.Apprentice.Id == apprenticeId)
-                .OrderByDescending(x => x.CommitmentsApprovedOn)
-                .FirstOrDefaultAsync();
     }
 }

@@ -26,9 +26,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmRolesAndResp
     public class ConfirmRolesAndResponsibilitiesCommandHandler
         : IRequestHandler<ConfirmRolesAndResponsibilitiesCommand>
     {
-        private readonly ICommitmentStatementContext _apprenticeships;
+        private readonly IApprenticeshipContext _apprenticeships;
 
-        public ConfirmRolesAndResponsibilitiesCommandHandler(ICommitmentStatementContext apprenticeships)
+        public ConfirmRolesAndResponsibilitiesCommandHandler(IApprenticeshipContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
         public async Task<Unit> Handle(ConfirmRolesAndResponsibilitiesCommand request, CancellationToken _)
