@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
@@ -16,18 +16,27 @@ namespace SFA.DAS.ApprenticeCommitments.Data
             => Entities.Include(x => x.CommitmentStatements)
                 .FirstOrDefaultAsync(x => x.CommitmentStatements.Any(y =>
                     y.CommitmentsApprenticeshipId == apprenticeshipId));
+
+        internal async Task<Apprenticeship?> FindLatestForApprentice(Guid apprenticeId, long apprenticeshipId)
+            => await Entities
+                .Include(a => a.CommitmentStatements)
+                .Where(
+                    a => a.Id == apprenticeshipId &&
+                    a.Apprentice.Id == apprenticeId)
+                .FirstOrDefaultAsync();
     }
+
     public interface ICommitmentStatementContext : IEntityContext<CommitmentStatement>
     {
-        internal async Task<List<CommitmentStatement>> FindByApprenticeId(Guid apprenticeId)
+        internal async Task<List<CommitmentStatement>> FindAllForApprentice(Guid apprenticeId)
             => await Entities.Where(a => a.Apprenticeship.Apprentice.Id == apprenticeId).ToListAsync();
 
         internal async Task<CommitmentStatement> GetById(Guid apprenticeId, long apprenticeshipId)
-            => (await Find(apprenticeId, apprenticeshipId))
+            => (await FindLatestForApprentice(apprenticeId, apprenticeshipId))
                 ?? throw new DomainException(
                     $"Apprenticeship {apprenticeshipId} for {apprenticeId} not found");
 
-        internal async Task<CommitmentStatement?> Find(Guid apprenticeId, long apprenticeshipId)
+        internal async Task<CommitmentStatement?> FindLatestForApprentice(Guid apprenticeId, long apprenticeshipId)
             => await Entities
                 .Where(
                     a => a.ApprenticeshipId == apprenticeshipId &&

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 #nullable enable
 
@@ -21,5 +23,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public ICollection<CommitmentStatement> CommitmentStatements { get; private set; }
             = new List<CommitmentStatement>();
+
+        public CommitmentStatement LatestCommitmentStatement
+            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault();
+
+        internal void RenewCommitment(ApprenticeshipDetails details, DateTime approvedOn)
+        {
+            var ns = CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First().RenewCommitment(details, approvedOn);
+            CommitmentStatements.Add(ns);
+        }
     }
 }

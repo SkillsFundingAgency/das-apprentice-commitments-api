@@ -21,7 +21,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
             CancellationToken cancellationToken)
         {
             var apprenticeships = await _apprenticeshipRepository
-                .FindByApprenticeId(request.ApprenticeId);
+                .FindAllForApprentice(request.ApprenticeId);
             return apprenticeships
                 .Select(ApprenticeshipDtoMapping.MapToApprenticeshipDto)
                 .ToList();
