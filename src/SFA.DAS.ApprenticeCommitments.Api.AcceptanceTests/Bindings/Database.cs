@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using SFA.DAS.ApprenticeCommitments.Extensions;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
@@ -10,7 +9,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
     public class Database
     {
         private readonly TestContext _context;
-        private TestsDbConnectionFactory dbFactory = new TestsDbConnectionFactory();
+        private static TestsDbConnectionFactory dbFactory = new TestsDbConnectionFactory();
 
         public Database(TestContext context)
         {
@@ -20,14 +19,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
         [BeforeScenario()]
         public void Initialise()
         {
+            _context.DbContext = CreateDbContext();
+        }
+
+        public static ApprenticeCommitmentsDbContext CreateDbContext()
+        {
             var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>();
             var options = dbFactory
                 .AddConnection(optionsBuilder)
                 .EnableSensitiveDataLogging()
                 .Options;
-            _context.DbContext = new UntrackedApprenticeCommitmentsDbContext(options);
+            var context = new UntrackedApprenticeCommitmentsDbContext(options);
 
-            dbFactory.EnsureCreated(_context.DbContext);
+            dbFactory.EnsureCreated(context);
+
+            return context;
         }
 
         [AfterScenario()]

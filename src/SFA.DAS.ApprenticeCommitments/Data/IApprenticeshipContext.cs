@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                     y.CommitmentsApprenticeshipId == apprenticeshipId));
 
         internal async Task<List<Apprenticeship>> FindAllForApprentice(Guid apprenticeId)
-            => await Entities.Where(a => a.Apprentice.Id == apprenticeId).ToListAsync();
+            => await Entities.Include(x => x.CommitmentStatements).Where(a => a.Apprentice.Id == apprenticeId).ToListAsync();
 
         internal async Task<Apprenticeship> GetById(Guid apprenticeId, long apprenticeshipId)
             => (await FindForApprentice(apprenticeId, apprenticeshipId))
