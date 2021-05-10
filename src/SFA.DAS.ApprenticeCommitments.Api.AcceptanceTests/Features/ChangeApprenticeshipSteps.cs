@@ -4,6 +4,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCom
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -28,30 +29,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an existing apprenticeship")]
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
-            var _apprentice = _fixture.Create<Apprentice>();
-            _apprentice.AddApprenticeship(_commitmentStatement);
+            var apprentice = _fixture.Create<Apprentice>();
+            apprentice.AddApprenticeship(_commitmentStatement);
 
-            _context.DbContext.Apprentices.Add(_apprentice);
+            _context.DbContext.Apprentices.Add(apprentice);
             await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given("we do not have an existing apprenticeship")]
+        public void GivenWeDoNotHaveAnExistingApprenticeship()
+        {
         }
 
         [Given("we have an update apprenticeship request")]
         public void GivenWeHaveAnUpdateApprenticeshipRequest()
         {
-            _request = new ChangeApprenticeshipCommand
-            {
-                ApprenticeshipId = _commitmentStatement.CommitmentsApprenticeshipId,
-                Email = "changed@example.com",
-                EmployerAccountLegalEntityId = 91111,
-                EmployerName = "Changed Employer",
-                TrainingProviderId = 92222,
-                TrainingProviderName = "Changed provider",
-                CourseName = "Changed course",
-                CourseLevel = 95555,
-                CourseOption = "",
-                PlannedStartDate = new DateTime(2091, 03, 20),
-                PlannedEndDate = new DateTime(2093, 07, 15),
-            };
+            var start = _fixture.Create<DateTime>();
+            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+                .With(x => x.ApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
+                .With(x => x.Email, (MailAddress email) => email.ToString())
+                .With(x => x.PlannedStartDate, start)
+                .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
+                .Create();
         }
 
         [When("the update is posted")]
@@ -66,14 +65,47 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.Accepted);
         }
 
-        [Then("the registration exists in database")]
+        [Then("the result should return Not Found")]
+        public void ThenTheResultShouldReturnNotFound()
+        {
+            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Then("the new commitment statement exists in database")]
         public void ThenTheRegistrationExistsInDatabase()
         {
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.CommitmentsApprenticeshipId,
                 CommitmentsApprovedOn = _request.ApprovedOn,
+                Details = new
+                {
+                    _request.EmployerAccountLegalEntityId,
+                    _request.EmployerName,
+                    _request.TrainingProviderId,
+                    _request.TrainingProviderName,
+                    Course = new
+                    {
+                        Name = _request.CourseName,
+                        Level = _request.CourseLevel,
+                        Option = _request.CourseOption,
+                        _request.PlannedStartDate,
+                        _request.PlannedEndDate,
+                    },
+                },
+                TrainingProviderCorrect = (bool?)null,
+                EmployerCorrect = (bool?)null,
+                RolesAndResponsibilitiesCorrect = (bool?)null,
+                ApprenticeshipDetailsCorrect = (bool?)null,
+                HowApprenticeshipDeliveredCorrect = (bool?)null,
+                ApprenticeshipConfirmed = (bool?)null,
             });
+        }
+
+        [Then("there should be no commitment statements in the database")]
+        public void ThenThereShouldBeNoCommitmentStatementsInTheDatabase()
+        {
+            _context.DbContext.CommitmentStatements.Should().BeEmpty();
         }
     }
 }
