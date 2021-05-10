@@ -64,7 +64,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             (r3, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
             r3.Should().Be(HttpStatusCode.OK);
-            apprenticeships.Should().HaveCount(2);
+
+            apprenticeships
+                .Should().HaveCount(2)
+                .And.ContainEquivalentOf(new
+                {
+                    CommitmentsApprenticeshipId = change.ApprenticeshipId,
+                    change.CourseName,
+                });
         }
     }
 }
