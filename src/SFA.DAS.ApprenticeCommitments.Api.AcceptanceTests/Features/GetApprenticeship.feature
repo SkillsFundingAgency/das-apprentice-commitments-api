@@ -19,3 +19,16 @@ Scenario: When the apprenticeship exists, but not for this apprentice
 	Given the apprenticeship exists, but it's associated with another apprentice
 	When we try to retrieve the apprenticeship
 	Then the result should return NotFound
+
+Scenario: When multiple apprenticeships for a given apprentice exists
+	Given many apprenticeships exists and are associated with this apprentice
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the response should match the expected apprenticeship values
+
+Scenario: When an apprenticeship with multiple commitment statements for a given apprentice exists
+	Given the apprenticeships exists, has many commitment statements, and is associated with this apprentice
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the response should match the expected apprenticeship values
+	And all commitment statements should have the same apprenticeship ID

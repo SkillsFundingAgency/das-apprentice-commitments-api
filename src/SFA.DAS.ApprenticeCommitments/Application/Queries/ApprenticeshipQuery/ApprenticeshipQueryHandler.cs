@@ -8,9 +8,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery
 {
     public class ApprenticeshipQueryHandler : IRequestHandler<ApprenticeshipQuery, ApprenticeshipDto>
     {
-        private readonly IApprenticeshipContext _apprenticeshipRepository;
+        private readonly ICommitmentStatementContext _apprenticeshipRepository;
 
-        public ApprenticeshipQueryHandler(IApprenticeshipContext apprenticeshipRepository)
+        public ApprenticeshipQueryHandler(ICommitmentStatementContext apprenticeshipRepository)
             => _apprenticeshipRepository = apprenticeshipRepository;
 
         public async Task<ApprenticeshipDto> Handle(

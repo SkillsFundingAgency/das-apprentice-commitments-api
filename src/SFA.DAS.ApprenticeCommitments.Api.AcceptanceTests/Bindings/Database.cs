@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Extensions;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
@@ -22,6 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
             var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>();
             var options = dbFactory
                 .AddConnection(optionsBuilder)
+                .EnableSensitiveDataLogging()
                 .Options;
             _context.DbContext = new UntrackedApprenticeCommitmentsDbContext(options);
 

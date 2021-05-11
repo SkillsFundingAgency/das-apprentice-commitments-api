@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
@@ -23,9 +24,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid Id { get; private set; }
 
-        public void AddApprenticeship(Apprenticeship apprenticeship)
+        public void AddApprenticeship(CommitmentStatement apprenticeship)
         {
-            Apprenticeships.Add(apprenticeship);
+            Apprenticeships.Add(new Apprenticeship(apprenticeship));
         }
 
         public string FirstName { get; private set; }

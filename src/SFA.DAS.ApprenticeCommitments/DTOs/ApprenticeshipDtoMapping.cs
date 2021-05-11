@@ -6,13 +6,13 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
     public static class ApprenticeshipDtoMapping
     {
-        public static ApprenticeshipDto? MapToApprenticeshipDto(this Apprenticeship? apprenticeship)
+        public static ApprenticeshipDto? MapToApprenticeshipDto(this CommitmentStatement? apprenticeship)
         {
             if (apprenticeship == null) return null;
 
             return new ApprenticeshipDto
             {
-                Id = apprenticeship.Id,
+                Id = apprenticeship.ApprenticeshipId,
                 CommitmentsApprenticeshipId = apprenticeship.CommitmentsApprenticeshipId,
                 EmployerName = apprenticeship.Details.EmployerName,
                 EmployerAccountLegalEntityId = apprenticeship.Details.EmployerAccountLegalEntityId,

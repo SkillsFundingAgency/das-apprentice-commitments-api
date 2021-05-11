@@ -25,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 
             _apprentice = _fixture.Build<Apprentice>()
                 .Create();
-            _apprentice.AddApprenticeship(_fixture.Create<Apprenticeship>());
+            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
         }
 
         [Given("there is one apprenticeship")]
@@ -61,7 +61,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             response.Should().BeEquivalentTo(_apprentice.Apprenticeships.Select(a => new
             {
                 a.Id,
-                a.CommitmentsApprenticeshipId,
+                a.CommitmentStatements.OrderByDescending(b => b.Id).First().CommitmentsApprenticeshipId
             }));
         }
 
