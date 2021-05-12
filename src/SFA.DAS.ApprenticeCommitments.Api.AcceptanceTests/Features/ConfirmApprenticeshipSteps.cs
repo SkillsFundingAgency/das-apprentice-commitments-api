@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly Apprenticeship _apprenticeship;
+        private readonly CommitmentStatement _commitmentStatement;
         private bool? ApprenticeshipConfirmed { get; set; }
 
         public ConfirmApprenticeshipSteps(TestContext context)
@@ -23,8 +23,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
 
             _apprentice = _fixture.Create<Apprentice>();
-            _apprenticeship = _fixture.Create<Apprenticeship>();
-            _apprentice.AddApprenticeship(_apprenticeship);
+            _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _apprentice.AddApprenticeship(_commitmentStatement);
         }
 
         [Given("we have an apprenticeship waiting to be confirmed")]
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.Id}/ApprenticeshipConfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/ApprenticeshipConfirmation",
                 command);
         }
 
@@ -62,9 +62,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated to show confirmed")]
         public void ThenTheApprenticeshipRecordIsUpdatedToShoConfirmed()
         {
-            _context.DbContext.Apprenticeships.Should().ContainEquivalentOf(new
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
-                _apprenticeship.Id,
+                _commitmentStatement.ApprenticeshipId,
                 ApprenticeshipConfirmed,
             });
         }

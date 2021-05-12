@@ -26,9 +26,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.HowApprenticeshipWi
     public class HowApprenticeshipWillBeDeliveredCommandHandler
         : IRequestHandler<HowApprenticeshipWillBeDeliveredCommand>
     {
-        private readonly IApprenticeshipContext _apprenticeships;
+        private readonly ICommitmentStatementContext _apprenticeships;
 
-        public HowApprenticeshipWillBeDeliveredCommandHandler(IApprenticeshipContext apprenticeships)
+        public HowApprenticeshipWillBeDeliveredCommandHandler(ICommitmentStatementContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
         public async Task<Unit> Handle(HowApprenticeshipWillBeDeliveredCommand request, CancellationToken _)

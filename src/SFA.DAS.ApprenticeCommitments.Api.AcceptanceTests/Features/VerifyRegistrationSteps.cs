@@ -121,10 +121,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenAnApprenticeshipRecordIsCreated()
         {
             var apprentice = _context.DbContext
-                .Apprentices.Include(x => x.Apprenticeships)
+                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.CommitmentStatements)
                 .FirstOrDefault(x => x.Id == _command.ApprenticeId);
 
-            apprentice.Apprenticeships.Should().ContainEquivalentOf(new
+            apprentice.Apprenticeships.SelectMany(a => a.CommitmentStatements)
+                .Should().ContainEquivalentOf(new
             {
                 CommitmentsApprenticeshipId = _registration.ApprenticeshipId,
                 Details = new

@@ -15,15 +15,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly Apprenticeship _apprenticeship;
+        private readonly CommitmentStatement _commitmentStatement;
         private bool? HowApprenticeshipDeliveredCorrect { get; set; }
 
         public HowApprenticeshipWillBeDeliveredSteps(TestContext context)
         {
             _context = context;
             _apprentice = _fixture.Create<Apprentice>();
-            _apprenticeship = _fixture.Create<Apprenticeship>();
-            _apprentice.AddApprenticeship(_apprenticeship);
+            _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _apprentice.AddApprenticeship(_commitmentStatement);
         }
 
         [Given(@"we have an apprenticeship waiting to be confirmed")]
@@ -48,7 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had HowMyApprenticeshipWillBeDelivered positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadHowMyApprenticeshipWillBeDeliveredPositivelyConfirmed()
         {
-            _apprenticeship.ConfirmHowApprenticeshipWillBeDelivered(true);
+            _commitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(true);
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.Id}/howapprenticeshipwillbedeliveredconfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/howapprenticeshipwillbedeliveredconfirmation",
                 new HowApprenticeshipWillBeDeliveredRequest
                 {
                     HowApprenticeshipDeliveredCorrect = (bool)HowApprenticeshipDeliveredCorrect,
@@ -73,9 +73,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated")]
         public void ThenTheApprenticeshipRecordIsUpdated()
         {
-            _context.DbContext.Apprenticeships.Should().ContainEquivalentOf(new
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
-                _apprenticeship.Id,
+                _commitmentStatement.ApprenticeshipId,
                 HowApprenticeshipDeliveredCorrect
             });
         }
@@ -89,9 +89,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record remains unchanged")]
         public void ThenTheApprenticeshipRecordRemainsUnchanged()
         {
-            _context.DbContext.Apprenticeships
-                .Should().ContainEquivalentOf(_apprenticeship,
-                    compare => compare.Excluding(x => x.Apprentice));
+            _context.DbContext.CommitmentStatements
+                .Should().ContainEquivalentOf(_commitmentStatement);
         }
     }
 }
