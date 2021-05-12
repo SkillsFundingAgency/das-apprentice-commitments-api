@@ -54,6 +54,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             r4.EnsureSuccessStatusCode();
 
             var change = fixture.Build<ChangeApprenticeshipCommand>()
+                .Without(x => x.ContinuationOfApprenticeshipId)
                 .With(x => x.ApprenticeshipId, create.ApprenticeshipId)
                 .With(p => p.Email, (MailAddress adr) => adr.ToString())
                 .With(p => p.ApprovedOn, (int days) => create.ApprovedOn.AddDays(days))

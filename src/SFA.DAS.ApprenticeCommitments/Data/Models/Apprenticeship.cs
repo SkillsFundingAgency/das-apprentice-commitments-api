@@ -45,9 +45,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         internal void ConfirmHowApprenticeshipWillBeDelivered(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(apprenticeshipCorrect);
 
-        internal void RenewCommitment(ApprenticeshipDetails details, DateTime approvedOn)
+        internal void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var ns = CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First().RenewCommitment(details, approvedOn);
+            var ns = CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First().RenewCommitment(commitmentsApprenticeshipId, details, approvedOn);
             CommitmentStatements.Add(ns);
         }
     }

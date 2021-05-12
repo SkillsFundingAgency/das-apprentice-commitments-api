@@ -36,14 +36,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 
         public async Task<Unit> Handle(ChangeApprenticeshipCommand command, CancellationToken cancellationToken)
         {
-            var existingStatement =
-                await _statements.FindByCommitmentsApprenticeshipId(
-                    command.ApprenticeshipId);
+            var apprenticeshipId = command.ContinuationOfApprenticeshipId ?? command.ApprenticeshipId;
+
+            var existingStatement = await _statements.FindByCommitmentsApprenticeshipId(apprenticeshipId);
 
             if (existingStatement == null)
             {
                 _logger.LogWarning("Ignoring update for missing apprenticeship {commitmentsApprenticeshipId}", command.ApprenticeshipId);
-                return Unit.Value;
             }
             else
             {
@@ -61,10 +60,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
                         command.PlannedStartDate,
                         command.PlannedEndDate));
 
-                existingStatement.RenewCommitment(details, command.ApprovedOn);
-
-                return Unit.Value;
+                existingStatement.RenewCommitment(command.ApprenticeshipId, details, command.ApprovedOn);
             }
+
+            return Unit.Value;
         }
     }
 }

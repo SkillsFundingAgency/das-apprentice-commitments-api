@@ -3,6 +3,7 @@ using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -13,17 +14,21 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 {
     [Binding]
+    [Scope(Feature = "ChangeApprenticeship")]
+
     public class ChangeApprenticeshipSteps
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private ChangeApprenticeshipCommand _request = null!;
         private CommitmentStatement _commitmentStatement;
+        private long _newApprenticeshipId;
 
         public ChangeApprenticeshipSteps(TestContext context)
         {
             _context = context;
             _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _newApprenticeshipId = _fixture.Create<long>();
         }
 
         [Given("we have an existing apprenticeship")]
@@ -46,7 +51,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var start = _fixture.Create<DateTime>();
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
+                .Without(x=>x.ContinuationOfApprenticeshipId)
                 .With(x => x.ApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
+                .With(x => x.Email, (MailAddress email) => email.ToString())
+                .With(x => x.PlannedStartDate, start)
+                .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
+                .Create();
+        }
+
+        [Given("we have a update apprenticeship continuation request")]
+        public void GivenWeHaveANewApprenticeshipRequest()
+        {
+            var start = _fixture.Create<DateTime>();
+            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+                .With(x => x.ContinuationOfApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
+                .With(x => x.ApprenticeshipId, _newApprenticeshipId)
                 .With(x => x.Email, (MailAddress email) => email.ToString())
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
@@ -72,11 +91,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Then("the new commitment statement exists in database")]
-        public void ThenTheRegistrationExistsInDatabase()
+        public void ThenTheCommitmentStatementExistsInDatabase()
         {
+            var cs = _context.DbContext.CommitmentStatements.ToList();
+
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
-                _commitmentStatement.CommitmentsApprenticeshipId,
                 CommitmentsApprovedOn = _request.ApprovedOn,
                 Details = new
                 {
@@ -99,6 +119,30 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 ApprenticeshipDetailsCorrect = (bool?)null,
                 HowApprenticeshipDeliveredCorrect = (bool?)null,
                 ApprenticeshipConfirmed = (bool?)null,
+            });
+        }
+
+        [Then("the new commitment statement has same commitments apprenticeship Id")]
+        public void ThenTheCommitmentStatementHasSameCommitmentsApprenticeshipId()
+        {
+            var cs = _context.DbContext.CommitmentStatements.ToList();
+
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            {
+                CommitmentsApprovedOn = _request.ApprovedOn,
+                CommitmentsApprenticeshipId = _commitmentStatement.CommitmentsApprenticeshipId
+            });
+        }
+
+        [Then(@"the new commitment statement has a new commitments apprenticeship Id")]
+        public void ThenTheNewCommitmentStatementHasANewCommitmentsApprenticeshipId()
+        {
+            var cs = _context.DbContext.CommitmentStatements.ToList();
+
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            {
+                CommitmentsApprovedOn = _request.ApprovedOn,
+                CommitmentsApprenticeshipId = _newApprenticeshipId
             });
         }
 
