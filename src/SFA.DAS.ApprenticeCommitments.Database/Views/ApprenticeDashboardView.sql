@@ -85,8 +85,8 @@ Begin DesignProperties =
                Bottom = 136
                Right = 208
             End
-            DisplayFlags = 344
-            TopColumn = 0
+            DisplayFlags = 280
+            TopColumn = 2
          End
       End
    End

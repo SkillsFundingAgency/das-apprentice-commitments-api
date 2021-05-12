@@ -71,6 +71,7 @@
     <Build Include="Tables\Apprenticeship.sql" />
     <Build Include="Views\ApprenticeDashboardView.sql" />
     <Build Include="Views\ApprenticeshipDashboardView.sql" />
+    <Build Include="Views\CommitmentStatementDashboardView.sql" />
     <Build Include="Views\RegistrationDashboardView.sql" />
   </ItemGroup>
   <ItemGroup>

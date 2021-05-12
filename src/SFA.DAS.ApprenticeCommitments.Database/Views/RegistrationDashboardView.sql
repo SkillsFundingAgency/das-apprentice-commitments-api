@@ -1,6 +1,7 @@
 ﻿CREATE VIEW dbo.RegistrationDashboardView
 AS
-SELECT        Id AS Expr1, ApprenticeId AS Expr2, ApprenticeshipId AS Expr3, CreatedOn AS Expr4, EmployerName AS Expr5, EmployerAccountLegalEntityId AS Expr6
+SELECT        ApprenticeId, ApprenticeshipId, ApprovedOn, Email, CreatedOn, EmployerAccountLegalEntityId, EmployerName, TrainingProviderId, TrainingProviderName, CourseName, CourseLevel, CourseOption, PlannedStartDate, 
+                         PlannedEndDate, FirstViewedOn, SignUpReminderSentOn
 FROM            dbo.Registration
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_DiagramPaneCount', @value = 1, @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'RegistrationDashboardView';
@@ -82,11 +83,11 @@ Begin DesignProperties =
             Begin Extent = 
                Top = 6
                Left = 38
-               Bottom = 136
+               Bottom = 288
                Right = 290
             End
-            DisplayFlags = 344
-            TopColumn = 4
+            DisplayFlags = 280
+            TopColumn = 0
          End
       End
    End

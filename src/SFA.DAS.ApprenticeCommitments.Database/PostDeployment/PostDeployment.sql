@@ -22,4 +22,6 @@ GRANT SELECT ON ApprenticeDashboardView TO Developer
 
 GRANT SELECT ON ApprenticeshipDashboardView TO Developer
 
+GRANT SELECT ON CommitmentstatementDashboardView TO Developer
+
 GRANT SELECT ON RegistrationDashboardView TO Developer

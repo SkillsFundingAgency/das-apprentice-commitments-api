@@ -1,9 +1,10 @@
-﻿CREATE VIEW dbo.ApprenticeshipDashboardView
+﻿CREATE VIEW dbo.CommitmentStatementDashboardView
 AS
-SELECT        Id, ApprenticeId, CreatedOn
-FROM            dbo.Apprenticeship
+SELECT        Id, ApprenticeshipId, CommitmentsApprenticeshipId, CommitmentsApprovedOn, EmployerAccountLegalEntityId, EmployerName, TrainingProviderId, TrainingProviderName, CourseName, CourseLevel, PlannedStartDate, 
+                         CourseOption, PlannedEndDate, TrainingProviderCorrect, EmployerCorrect, RolesAndResponsibilitiesCorrect, ApprenticeshipDetailsCorrect, HowApprenticeshipDeliveredCorrect, ApprenticeshipConfirmed
+FROM            dbo.CommitmentStatement
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_DiagramPaneCount', @value = 1, @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'ApprenticeshipDashboardView';
+EXECUTE sp_addextendedproperty @name = N'MS_DiagramPaneCount', @value = 1, @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'CommitmentStatementDashboardView';
 
 
 GO
@@ -12,7 +13,7 @@ Begin DesignProperties =
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+         Configuration = "(H (1[66] 4[3] 2[12] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -78,15 +79,15 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "Apprenticeship"
+         Begin Table = "CommitmentStatement"
             Begin Extent = 
-               Top = 6
-               Left = 38
-               Bottom = 119
-               Right = 208
+               Top = 0
+               Left = 53
+               Bottom = 487
+               Right = 395
             End
-            DisplayFlags = 344
-            TopColumn = 0
+            DisplayFlags = 280
+            TopColumn = 1
          End
       End
    End
@@ -114,5 +115,5 @@ Begin DesignProperties =
       End
    End
 End
-', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'ApprenticeshipDashboardView';
+', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'VIEW', @level1name = N'CommitmentStatementDashboardView';
 
