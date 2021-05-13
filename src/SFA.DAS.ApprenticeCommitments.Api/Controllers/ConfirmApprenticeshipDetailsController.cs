@@ -19,13 +19,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public ConfirmApprenticeshipDetailsController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/apprenticeshipdetailsconfirmation")]
-        public async Task<IActionResult> ConfirmTrainingProvider(
-            Guid apprenticeId, long apprenticeshipId,
+        [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/{commitmentStatementId}/ApprenticeshipDetailsConfirmation")]
+        public async Task ConfirmTrainingProvider(
+            Guid apprenticeId, long apprenticeshipId, long commitmentStatementId,
             [FromBody] ConfirmApprenticeshipDetailsRequest request)
         {
-            var command = new ConfirmApprenticeshipDetailsCommand(apprenticeId, apprenticeshipId, request.ApprenticeshipDetailsCorrect);
-            await _mediator.Send(command);
-            return Ok();
+            await _mediator.Send(new ConfirmApprenticeshipDetailsCommand(
+                (apprenticeId, apprenticeshipId, commitmentStatementId),
+                request.ApprenticeshipDetailsCorrect));
         }
     }
 }

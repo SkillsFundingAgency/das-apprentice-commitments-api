@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
@@ -12,16 +13,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmApprenticesh
     public class ConfirmApprenticeshipDetailsCommand : IUnitOfWorkCommand
     {
         public ConfirmApprenticeshipDetailsCommand(
-            Guid apprenticeId, long apprenticeshipId,
+            (Guid apprenticeId, long apprenticeshipId, long commitmentStatementId) id,
             bool apprenticeshipDetailsCorrect)
         {
-            ApprenticeId = apprenticeId;
-            ApprenticeshipId = apprenticeshipId;
+            Id = new ApprenticeCommitmentStatementId(id);
             ApprenticeshipDetailsCorrect = apprenticeshipDetailsCorrect;
         }
 
-        public Guid ApprenticeId { get; }
-        public long ApprenticeshipId { get; }
+        public ApprenticeCommitmentStatementId Id { get; }
         public bool ApprenticeshipDetailsCorrect { get; }
     }
 
@@ -35,8 +34,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmApprenticesh
 
         public async Task<Unit> Handle(ConfirmApprenticeshipDetailsCommand request, CancellationToken cancellationToken)
         {
-            var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
-            apprenticeship.ConfirmApprenticeshipDetails(request.ApprenticeshipDetailsCorrect);
+            var apprenticeship = await _apprenticeships.GetById(request.Id.ApprenticeId, request.Id.ApprenticeshipId);
+            apprenticeship.ConfirmApprenticeshipDetails(request.Id.CommitmentStatementId, request.ApprenticeshipDetailsCorrect);
             return Unit.Value;
         }
     }

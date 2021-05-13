@@ -58,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             await _context.Api.Post(
                 $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/howapprenticeshipwillbedeliveredconfirmation",
-                new HowApprenticeshipWillBeDeliveredRequest
+                new ConfirmHowApprenticeshipWillBeDeliveredRequest
                 {
                     HowApprenticeshipDeliveredCorrect = (bool)HowApprenticeshipDeliveredCorrect,
                 });

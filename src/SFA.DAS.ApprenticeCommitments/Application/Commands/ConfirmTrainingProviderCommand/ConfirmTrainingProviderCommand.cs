@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
+﻿using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
+using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 
 #nullable enable
@@ -8,16 +9,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmTrainingProv
     public class ConfirmTrainingProviderCommand : IUnitOfWorkCommand
     {
         public ConfirmTrainingProviderCommand(
-            Guid apprenticeId, long apprenticeshipId,
+            (Guid apprenticeId, long apprenticeshipId, long commitmentStatementId) id,
             bool trainingProviderCorrect)
         {
-            ApprenticeId = apprenticeId;
-            ApprenticeshipId = apprenticeshipId;
+            Id = new ApprenticeCommitmentStatementId(id);
             TrainingProviderCorrect = trainingProviderCorrect;
         }
 
-        public Guid ApprenticeId { get; }
-        public long ApprenticeshipId { get; }
+        public ApprenticeCommitmentStatementId Id { get; }
         public bool TrainingProviderCorrect { get; }
     }
 }

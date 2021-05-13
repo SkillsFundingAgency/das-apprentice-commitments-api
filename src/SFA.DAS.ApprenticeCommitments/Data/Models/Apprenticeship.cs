@@ -27,23 +27,29 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public CommitmentStatement LatestCommitmentStatement
             => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault();
 
-        internal void ConfirmApprenticeship(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmApprenticeship(apprenticeshipCorrect);
+        private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
+            => commitmentStatementId == 0 ? LatestCommitmentStatement : CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId);
+
+        internal void ConfirmEmployer(long commitmentStatementId, bool employerCorrect)
+            => GetCommitmentStatement(commitmentStatementId).ConfirmEmployer(employerCorrect);
+
+        internal void ConfirmApprenticeship(long commitmentStatementId, bool apprenticeshipCorrect)
+            => GetCommitmentStatement(commitmentStatementId).ConfirmApprenticeship(apprenticeshipCorrect);
 
         internal void ConfirmApprenticeshipDetails(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmApprenticeshipDetails(apprenticeshipCorrect);
 
-        internal void ConfirmEmployer(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmEmployer(apprenticeshipCorrect);
+        internal void ConfirmApprenticeshipDetails(long commitmentStatementId, bool apprenticeshipCorrect)
+            => GetCommitmentStatement(commitmentStatementId).ConfirmApprenticeshipDetails(apprenticeshipCorrect);
 
-        internal void ConfirmTrainingProvider(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmTrainingProvider(apprenticeshipCorrect);
+        internal void ConfirmTrainingProvider(long commitmentStatementId, bool apprenticeshipCorrect)
+            => GetCommitmentStatement(commitmentStatementId).ConfirmTrainingProvider(apprenticeshipCorrect);
 
-        internal void ConfirmRolesAndResponsibilities(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmRolesAndResponsibilities(apprenticeshipCorrect);
+        internal void ConfirmRolesAndResponsibilities(long commitmentStatementId, bool apprenticeshipCorrect)
+            => GetCommitmentStatement(commitmentStatementId).ConfirmRolesAndResponsibilities(apprenticeshipCorrect);
 
-        internal void ConfirmHowApprenticeshipWillBeDelivered(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(apprenticeshipCorrect);
+        internal void ConfirmHowApprenticeshipWillBeDelivered(long commitmentStatementId, bool apprenticeshipCorrect)
+            => GetCommitmentStatement(commitmentStatementId).ConfirmHowApprenticeshipWillBeDelivered(apprenticeshipCorrect);
 
         internal void RenewCommitment(ApprenticeshipDetails details, DateTime approvedOn)
         {

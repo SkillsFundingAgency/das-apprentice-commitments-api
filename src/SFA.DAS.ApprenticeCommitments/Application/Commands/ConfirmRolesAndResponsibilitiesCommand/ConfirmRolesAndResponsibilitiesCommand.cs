@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
@@ -10,16 +11,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmRolesAndResp
     public class ConfirmRolesAndResponsibilitiesCommand : IUnitOfWorkCommand
     {
         public ConfirmRolesAndResponsibilitiesCommand(
-            Guid apprenticeId, long apprenticeshipId,
+            (Guid apprenticeId, long apprenticeshipId, long commitmentStatementId) id,
             bool rolesAndResponsibilitiesCorrect)
         {
-            ApprenticeId = apprenticeId;
-            ApprenticeshipId = apprenticeshipId;
+            Id = new ApprenticeCommitmentStatementId(id);
             RolesAndResponsibilitiesCorrect = rolesAndResponsibilitiesCorrect;
         }
 
-        public Guid ApprenticeId { get; }
-        public long ApprenticeshipId { get; }
+        public ApprenticeCommitmentStatementId Id { get; }
         public bool RolesAndResponsibilitiesCorrect { get; }
     }
 
@@ -33,8 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmRolesAndResp
 
         public async Task<Unit> Handle(ConfirmRolesAndResponsibilitiesCommand request, CancellationToken cancellationToken)
         {
-            var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
-            apprenticeship.ConfirmRolesAndResponsibilities(request.RolesAndResponsibilitiesCorrect);
+            var apprenticeship = await _apprenticeships.GetById(request.Id.ApprenticeId, request.Id.ApprenticeshipId);
+            apprenticeship.ConfirmRolesAndResponsibilities(request.Id.CommitmentStatementId, request.RolesAndResponsibilitiesCorrect);
             return Unit.Value;
         }
     }

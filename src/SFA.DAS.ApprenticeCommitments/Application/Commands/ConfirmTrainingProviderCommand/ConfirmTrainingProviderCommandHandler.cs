@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.ApprenticeCommitments.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmTrainingProviderCommand
 {
@@ -15,8 +15,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmTrainingProv
 
         public async Task<Unit> Handle(ConfirmTrainingProviderCommand request, CancellationToken cancellationToken)
         {
-            var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
-            apprenticeship.ConfirmTrainingProvider(request.TrainingProviderCorrect);
+            var apprenticeship = await _apprenticeships.GetById(request.Id.ApprenticeId, request.Id.ApprenticeshipId);
+            apprenticeship.ConfirmTrainingProvider(request.Id.CommitmentStatementId, request.TrainingProviderCorrect);
             return Unit.Value;
         }
     }
