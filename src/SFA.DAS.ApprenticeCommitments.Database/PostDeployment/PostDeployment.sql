@@ -15,7 +15,7 @@ Post-Deployment Script Template
 
 IF DATABASE_PRINCIPAL_ID('Reporter') IS NULL
 BEGIN
-    CREATE ROLE [Developer]
+    CREATE ROLE [Reporter]
 END
 
 GRANT SELECT ON ApprenticeDashboardView TO Reporter
