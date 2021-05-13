@@ -11,17 +11,17 @@ Post-Deployment Script Template
 */
 
 
-/* Developer Role Access */
+/* Reporter Role Access */
 
-IF DATABASE_PRINCIPAL_ID('Developer') IS NULL
+IF DATABASE_PRINCIPAL_ID('Reporter') IS NULL
 BEGIN
     CREATE ROLE [Developer]
 END
 
-GRANT SELECT ON ApprenticeDashboardView TO Developer
+GRANT SELECT ON ApprenticeDashboardView TO Reporter
 
-GRANT SELECT ON ApprenticeshipDashboardView TO Developer
+GRANT SELECT ON ApprenticeshipDashboardView TO Reporter
 
-GRANT SELECT ON CommitmentstatementDashboardView TO Developer
+GRANT SELECT ON CommitmentstatementDashboardView TO Reporter
 
-GRANT SELECT ON RegistrationDashboardView TO Developer
+GRANT SELECT ON RegistrationDashboardView TO Reporter
