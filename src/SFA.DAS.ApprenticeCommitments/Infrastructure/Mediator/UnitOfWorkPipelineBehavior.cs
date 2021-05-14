@@ -1,12 +1,12 @@
-﻿using System;
+﻿using MediatR;
+using SFA.DAS.UnitOfWork.Managers;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using SFA.DAS.UnitOfWork.Managers;
 
 namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
 {
-    public class UnitOfWorkPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class UnitOfWorkPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
     {
         private readonly IUnitOfWorkManager _unitOfWorkManager;
 

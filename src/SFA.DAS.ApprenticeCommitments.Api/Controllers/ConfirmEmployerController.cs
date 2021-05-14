@@ -1,9 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmTrainingProviderCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
 using System;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {

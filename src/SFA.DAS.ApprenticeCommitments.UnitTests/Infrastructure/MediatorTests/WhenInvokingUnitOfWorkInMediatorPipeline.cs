@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoFixture.NUnit3;
+﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using SFA.DAS.UnitOfWork.Managers;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.UnitTests.Infrastructure.MediatorTests
 {
@@ -40,14 +40,13 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.Infrastructure.MediatorTests
         }
 
         [Test, AutoData]
-        public async Task And_an_exception_occurs_in_handler_Then_we_start_unit_of_work_and_end_it_passing_exception(SimpleUnitOfWorkRequest request, SimpleResponse expectedResponse)
+        public void And_an_exception_occurs_in_handler_Then_we_start_unit_of_work_and_end_it_passing_exception(SimpleUnitOfWorkRequest request, SimpleResponse expectedResponse)
         {
-
             Func<Task> action = () => _sut.Handle(request, CancellationToken.None, () => throw new Exception("failed"));
 
             action.Should().Throw<Exception>().WithMessage("failed");
             _unitOfWorkManager.Verify(x => x.BeginAsync(), Times.Once);
-            _unitOfWorkManager.Verify(x => x.EndAsync(It.Is<Exception>(e=>e.Message == "failed")), Times.Once);
+            _unitOfWorkManager.Verify(x => x.EndAsync(It.Is<Exception>(e => e.Message == "failed")), Times.Once);
         }
 
         public class SimpleUnitOfWorkRequest : IUnitOfWorkCommand

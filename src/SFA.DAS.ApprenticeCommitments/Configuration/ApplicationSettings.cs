@@ -1,4 +1,6 @@
-﻿namespace SFA.DAS.ApprenticeCommitments.Configuration
+﻿#nullable disable
+
+namespace SFA.DAS.ApprenticeCommitments.Configuration
 {
     public class ApplicationSettings
     {

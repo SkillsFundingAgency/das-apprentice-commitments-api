@@ -16,8 +16,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
     public class GetApprenticeshipsSteps
     {
         private readonly TestContext _context;
-        private Fixture _fixture = new Fixture();
-        private Apprentice _apprentice;
+        private readonly Fixture _fixture = new Fixture();
+        private readonly Apprentice _apprentice;
 
         public GetApprenticeshipsSteps(TestContext context)
         {
@@ -36,7 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         }
 
         [Given("there are no apprenticeships")]
-        public async Task GivenThereAreNoApprenticeships()
+        public void GivenThereAreNoApprenticeships()
         {
         }
 
