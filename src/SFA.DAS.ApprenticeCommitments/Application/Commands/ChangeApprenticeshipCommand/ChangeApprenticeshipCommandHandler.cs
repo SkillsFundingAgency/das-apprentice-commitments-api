@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
     {
         public ChangeApprenticeshipCommandValidator()
         {
-            RuleFor(model => model.ApprenticeshipId).Must(id => id > 0).WithMessage("The ApprenticeshipId must be positive");
+            RuleFor(model => model.CommitmentsApprenticeshipId).Must(id => id > 0).WithMessage("The ApprenticeshipId must be positive");
             RuleFor(model => model.Email).NotNull().EmailAddress().WithMessage("Email must be a valid email address");
             RuleFor(model => model.EmployerAccountLegalEntityId).Must(id => id > 0).WithMessage("The EmployerAccountLegalEntityId must be positive");
             RuleFor(model => model.EmployerName).NotEmpty().WithMessage("The Employer Name is required");
@@ -36,17 +36,17 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 
         public async Task<Unit> Handle(ChangeApprenticeshipCommand command, CancellationToken cancellationToken)
         {
-            var apprenticeshipId = command.ContinuationOfApprenticeshipId ?? command.ApprenticeshipId;
+            var apprenticeshipId = command.ContinuationOfCommitmentsApprenticeshipId ?? command.CommitmentsApprenticeshipId;
 
             var existingStatement = await _statements.FindByCommitmentsApprenticeshipId(apprenticeshipId);
 
             if (existingStatement == null)
             {
-                _logger.LogWarning("Ignoring update for missing apprenticeship {commitmentsApprenticeshipId}", command.ApprenticeshipId);
+                _logger.LogWarning("Ignoring update for missing apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
             }
             else
             {
-                _logger.LogInformation("Updating apprenticeship {commitmentsApprenticeshipId}", command.ApprenticeshipId);
+                _logger.LogInformation("Updating apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
 
                 var details = new ApprenticeshipDetails(
                     command.EmployerAccountLegalEntityId,
@@ -60,7 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
                         command.PlannedStartDate,
                         command.PlannedEndDate));
 
-                existingStatement.RenewCommitment(command.ApprenticeshipId, details, command.ApprovedOn);
+                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, details, command.CommitmentsApprovedOn);
             }
 
             return Unit.Value;

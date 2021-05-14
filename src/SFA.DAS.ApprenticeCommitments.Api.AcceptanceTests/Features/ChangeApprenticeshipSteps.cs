@@ -51,8 +51,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var start = _fixture.Create<DateTime>();
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
-                .Without(x=>x.ContinuationOfApprenticeshipId)
-                .With(x => x.ApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
+                .Without(x=>x.ContinuationOfCommitmentsApprenticeshipId)
+                .With(x => x.CommitmentsApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
                 .With(x => x.Email, (MailAddress email) => email.ToString())
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
@@ -64,8 +64,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var start = _fixture.Create<DateTime>();
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
-                .With(x => x.ContinuationOfApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
-                .With(x => x.ApprenticeshipId, _newApprenticeshipId)
+                .With(x => x.ContinuationOfCommitmentsApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
+                .With(x => x.CommitmentsApprenticeshipId, _newApprenticeshipId)
                 .With(x => x.Email, (MailAddress email) => email.ToString())
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
@@ -97,7 +97,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.ApprovedOn,
+                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
                 Details = new
                 {
                     _request.EmployerAccountLegalEntityId,
@@ -129,7 +129,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.ApprovedOn,
+                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
                 CommitmentsApprenticeshipId = _commitmentStatement.CommitmentsApprenticeshipId
             });
         }
@@ -141,7 +141,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.ApprovedOn,
+                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
                 CommitmentsApprenticeshipId = _newApprenticeshipId
             });
         }
