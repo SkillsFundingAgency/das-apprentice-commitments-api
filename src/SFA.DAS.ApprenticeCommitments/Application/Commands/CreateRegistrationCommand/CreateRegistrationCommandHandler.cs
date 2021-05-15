@@ -14,24 +14,24 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         public CreateRegistrationCommandHandler(IRegistrationContext registrations)
             => _registrations = registrations;
 
-        public async Task<Unit> Handle(CreateRegistrationCommand command, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateRegistrationCommand request, CancellationToken cancellationToken)
         {
             await _registrations.AddAsync(new Registration(
-                command.ApprenticeId,
-                command.ApprenticeshipId,
-                command.ApprovedOn,
-                new MailAddress(command.Email),
+                request.ApprenticeId,
+                request.ApprenticeshipId,
+                request.ApprovedOn,
+                new MailAddress(request.Email),
                 new ApprenticeshipDetails(
-                    command.EmployerAccountLegalEntityId,
-                    command.EmployerName,
-                    command.TrainingProviderId,
-                    command.TrainingProviderName,
+                    request.EmployerAccountLegalEntityId,
+                    request.EmployerName,
+                    request.TrainingProviderId,
+                    request.TrainingProviderName,
                     new CourseDetails(
-                        command.CourseName,
-                        command.CourseLevel,
-                        command.CourseOption,
-                        command.PlannedStartDate,
-                        command.PlannedEndDate))));
+                        request.CourseName,
+                        request.CourseLevel,
+                        request.CourseOption,
+                        request.PlannedStartDate,
+                        request.PlannedEndDate))));
 
             return Unit.Value;
         }

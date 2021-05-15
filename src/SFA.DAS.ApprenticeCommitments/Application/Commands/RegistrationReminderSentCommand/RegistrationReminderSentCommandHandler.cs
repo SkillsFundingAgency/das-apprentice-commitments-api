@@ -14,10 +14,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminde
             _registrations = registrations;
         }
 
-        public async Task<Unit> Handle(RegistrationReminderSentCommand command, CancellationToken _)
+        public async Task<Unit> Handle(RegistrationReminderSentCommand request, CancellationToken cancellationToken)
         {
-            var registration = await _registrations.GetById(command.ApprenticeId);
-            registration.SignUpReminderSent(command.SentOn);
+            var registration = await _registrations.GetById(request.ApprenticeId);
+            registration.SignUpReminderSent(request.SentOn);
             return Unit.Value;
         }
     }

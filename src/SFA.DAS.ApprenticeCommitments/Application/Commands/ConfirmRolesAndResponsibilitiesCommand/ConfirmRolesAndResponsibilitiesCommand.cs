@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmRolesAndResp
         public ConfirmRolesAndResponsibilitiesCommandHandler(IApprenticeshipContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
-        public async Task<Unit> Handle(ConfirmRolesAndResponsibilitiesCommand request, CancellationToken _)
+        public async Task<Unit> Handle(ConfirmRolesAndResponsibilitiesCommand request, CancellationToken cancellationToken)
         {
             var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
             apprenticeship.ConfirmRolesAndResponsibilities(request.RolesAndResponsibilitiesCorrect);
