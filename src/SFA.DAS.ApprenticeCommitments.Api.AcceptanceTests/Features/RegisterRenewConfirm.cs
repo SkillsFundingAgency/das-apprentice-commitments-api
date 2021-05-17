@@ -55,9 +55,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             var change = fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x => x.ContinuationOfCommitmentsApprenticeshipId)
-                .With(x => x.CommitmentsApprenticeshipId, create.ApprenticeshipId)
+                .With(x => x.CommitmentsApprenticeshipId, create.CommitmentsApprenticeshipId)
                 .With(p => p.Email, (MailAddress adr) => adr.ToString())
-                .With(p => p.CommitmentsApprovedOn, (int days) => create.ApprovedOn.AddDays(days))
+                .With(p => p.CommitmentsApprovedOn, (int days) => create.CommitmentsApprovedOn.AddDays(days))
                 .Create();
 
             var r5 = await client.PostValueAsync("apprenticeships/change", change);
