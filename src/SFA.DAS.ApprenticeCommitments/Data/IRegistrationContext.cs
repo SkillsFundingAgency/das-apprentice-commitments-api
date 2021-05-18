@@ -20,6 +20,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data
         internal async Task<Registration?> Find(Guid apprenticeId)
             => await Entities.FirstOrDefaultAsync(x => x.ApprenticeId == apprenticeId);
 
+        internal async Task<Registration?> FindByCommitmentsApprenticeshipId(long commitmentsApprenticeshipId)
+            => await Entities.FirstOrDefaultAsync(x => x.CommitmentsApprenticeshipId == commitmentsApprenticeshipId);
+
         internal Task<List<Registration>> RegistrationsNeedingSignUpReminders(DateTime cutOffDateTime)
             => Entities.Where(r =>
                     r.FirstViewedOn == null && r.SignUpReminderSentOn == null && r.UserIdentityId == null &&

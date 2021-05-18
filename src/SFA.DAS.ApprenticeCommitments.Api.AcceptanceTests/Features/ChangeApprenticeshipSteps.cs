@@ -3,10 +3,13 @@ using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using TechTalk.SpecFlow;
 
 #nullable enable
@@ -23,11 +26,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private ChangeApprenticeshipCommand _request = null!;
         private CommitmentStatement _commitmentStatement;
         private long _newApprenticeshipId;
+        private long _commitmentsApprenticeshipId;
 
         public ChangeApprenticeshipSteps(TestContext context)
         {
             _context = context;
+            _commitmentsApprenticeshipId = _fixture.Create<long>();
             _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _commitmentStatement.SetProperty(p=>p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
             _newApprenticeshipId = _fixture.Create<long>();
         }
 
@@ -41,9 +47,35 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.DbContext.SaveChangesAsync();
         }
 
+        [Given("we do not have an existing apprenticeship, confirmed or unconfirmed")]
+        public void GivenWeDoNotHaveAnExistingApprenticeshipConfirmedOrUnconfirmed()
+        {
+        }
+
         [Given("we do not have an existing apprenticeship")]
         public void GivenWeDoNotHaveAnExistingApprenticeship()
         {
+        }
+
+        [Given(@"we do have a verified registration")]
+        public async Task GivenWeDoHaveAVerifiedRegistration()
+        {
+            var registration = _fixture.Create<Registration>();
+            registration.SetProperty(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
+            registration.SetProperty(x=>x.UserIdentityId, Guid.NewGuid());
+
+            _context.DbContext.Registrations.Add(registration);
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given(@"we do have an unconfirmed registration")]
+        public async Task GivenWeDoHaveAnUnconfirmedRegistration()
+        {
+            var registration = _fixture.Create<Registration>();
+            registration.SetProperty(x=>x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
+
+            _context.DbContext.Registrations.Add(registration);
+            await _context.DbContext.SaveChangesAsync();
         }
 
         [Given("we have an update apprenticeship request")]
@@ -52,8 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             var start = _fixture.Create<DateTime>();
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x=>x.ContinuationOfCommitmentsApprenticeshipId)
-                .With(x => x.CommitmentsApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
-                .With(x => x.Email, (MailAddress email) => email.ToString())
+                .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
                 .Create();
@@ -64,9 +95,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var start = _fixture.Create<DateTime>();
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
-                .With(x => x.ContinuationOfCommitmentsApprenticeshipId, _commitmentStatement.CommitmentsApprenticeshipId)
+                .With(x => x.ContinuationOfCommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _newApprenticeshipId)
-                .With(x => x.Email, (MailAddress email) => email.ToString())
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
                 .Create();
@@ -122,11 +152,32 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
+        [Then(@"we have updated the apprenticeship details for the unconfirmed registration")]
+        public void ThenWeHaveUpdatedTheApprenticeshipDetailsForTheUnconfirmedRegistration()
+        {
+            _context.DbContext.Registrations.Should().ContainEquivalentOf(new 
+            {
+                Apprenticeship = new
+                {
+                    _request.EmployerAccountLegalEntityId,
+                    _request.EmployerName,
+                    _request.TrainingProviderId,
+                    _request.TrainingProviderName,
+                    Course = new
+                    {
+                        Name = _request.CourseName,
+                        Level = _request.CourseLevel,
+                        Option = _request.CourseOption,
+                        _request.PlannedStartDate,
+                        _request.PlannedEndDate,
+                    },
+                }
+            });
+        }
+
         [Then("the new commitment statement has same commitments apprenticeship Id")]
         public void ThenTheCommitmentStatementHasSameCommitmentsApprenticeshipId()
         {
-            var cs = _context.DbContext.CommitmentStatements.ToList();
-
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
@@ -137,8 +188,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"the new commitment statement has a new commitments apprenticeship Id")]
         public void ThenTheNewCommitmentStatementHasANewCommitmentsApprenticeshipId()
         {
-            var cs = _context.DbContext.CommitmentStatements.ToList();
-
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
@@ -146,10 +195,36 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
+        [Then(@"registration commitments apprenticeship are updated correctly")]
+        public void ThenRegistrationCommitmentsApprenticeshipAreUpdatedCorrectly()
+        {
+            _context.DbContext.Registrations.Should().ContainEquivalentOf(new
+            {
+                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
+                CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId
+            });
+        }
+
         [Then("there should be no commitment statements in the database")]
         public void ThenThereShouldBeNoCommitmentStatementsInTheDatabase()
         {
             _context.DbContext.CommitmentStatements.Should().BeEmpty();
+        }
+
+        [Then(@"a domain exception is thrown")]
+        public async Task ThenADomainExceptionIsThrown()
+        {
+            var content = await _context.Api.Response.Content.ReadAsStringAsync();
+            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
+            errors.Count.Should().Be(1);
+            errors[0].PropertyName.Should().BeNull();
+            errors[0].ErrorMessage.Should().NotBeNull();
+        }
+
+        [Then("the response is bad request")]
+        public void ThenTheResponseIsOK()
+        {
+            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
 }

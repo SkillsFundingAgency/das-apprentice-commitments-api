@@ -85,7 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             registration.Email.Should().Be(_createApprenticeshipRequest.Email);
             registration.Apprenticeship.EmployerName.Should().Be(_createApprenticeshipRequest.EmployerName);
             registration.Apprenticeship.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);
-            registration.ApprenticeshipId.Should().Be(_createApprenticeshipRequest.CommitmentsApprenticeshipId);
+            registration.CommitmentsApprenticeshipId.Should().Be(_createApprenticeshipRequest.CommitmentsApprenticeshipId);
             registration.Apprenticeship.TrainingProviderName.Should().Be(_createApprenticeshipRequest.TrainingProviderName);
             registration.Apprenticeship.Course.Name.Should().Be(_createApprenticeshipRequest.CourseName);
             registration.Apprenticeship.Course.Level.Should().Be(_createApprenticeshipRequest.CourseLevel);

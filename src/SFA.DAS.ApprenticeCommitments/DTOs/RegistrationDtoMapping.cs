@@ -10,7 +10,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
             {
                 ApprenticeId = registration.ApprenticeId,
                 CreatedOn = registration.CreatedOn,
-                ApprenticeshipId = registration.ApprenticeshipId,
+                ApprenticeshipId = registration.CommitmentsApprenticeshipId,
                 Email = registration.Email.ToString(),
                 EmployerName = registration.Apprenticeship.EmployerName,
                 EmployerAccountLegalEntityId = registration.Apprenticeship.EmployerAccountLegalEntityId,

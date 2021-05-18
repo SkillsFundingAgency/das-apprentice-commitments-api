@@ -1,8 +1,8 @@
 CREATE TABLE [dbo].[Registration]
 (
     [ApprenticeId] UNIQUEIDENTIFIER NOT NULL,
-    [ApprenticeshipId] BIGINT NOT NULL, 
-    [ApprovedOn] DATETIME2 NOT NULL, 
+    [CommitmentsApprenticeshipId] BIGINT NOT NULL, 
+    [CommitmentsApprovedOn] DATETIME2 NOT NULL, 
     [Email] NVARCHAR(150) NOT NULL, 
     [UserIdentityId] UNIQUEIDENTIFIER NULL,
     [CreatedOn] DATETIME2 NOT NULL DEFAULT current_timestamp,
@@ -17,5 +17,11 @@ CREATE TABLE [dbo].[Registration]
     [PlannedEndDate] datetime2 NOT NULL,
     [FirstViewedOn] DATETIME2 NULL, 
     [SignUpReminderSentOn] DATETIME2 NULL, 
-    CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([ApprenticeId]),
+    CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([ApprenticeId])
 )
+GO
+
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Registration_CommitmentsApprenticeshipId]
+    ON [dbo].[Registration]([CommitmentsApprenticeshipId]);
+
+GO

@@ -19,24 +19,24 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Registration(
             Guid apprenticeId,
-            long apprenticeshipId,
-            DateTime approvedOn,
+            long commitmentsApprenticeshipId,
+            DateTime commitmentsApprovedOn,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
             ApprenticeId = apprenticeId;
-            ApprenticeshipId = apprenticeshipId;
-            ApprovedOn = approvedOn;
+            CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
+            CommitmentsApprovedOn = commitmentsApprovedOn;
             Email = email;
             Apprenticeship = apprenticeship;
         }
 
         public Guid ApprenticeId { get; private set; }
-        public long ApprenticeshipId { get; private set; }
+        public long CommitmentsApprenticeshipId { get; private set; }
         public MailAddress Email { get; private set; }
         public Guid? UserIdentityId { get; private set; }
         public ApprenticeshipDetails Apprenticeship { get; private set; }
-        public DateTime ApprovedOn { get; private set; }
+        public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
@@ -72,6 +72,17 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             SignUpReminderSentOn = sentOn;
         }
 
+        public void RenewApprenticeship(long commitmentsApprenticeshipId, DateTime commitmentsApprovedOn, ApprenticeshipDetails apprenticeshipDetails)
+        {
+            if (HasBeenCompleted)
+            {
+                throw new DomainException("Cannot update registration as user has confirmed their identity");
+            }
+
+            CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
+            CommitmentsApprovedOn = commitmentsApprovedOn;
+            Apprenticeship = apprenticeshipDetails;
+        }
 
         private void EnsureNotAlreadyCompleted()
         {
@@ -90,7 +101,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             var apprentice = new Apprentice(
                 ApprenticeId, firstName, lastName, emailAddress, dateOfBirth);
 
-            apprentice.AddApprenticeship(new CommitmentStatement(ApprenticeshipId, ApprovedOn, Apprenticeship));
+            apprentice.AddApprenticeship(new CommitmentStatement(CommitmentsApprenticeshipId, CommitmentsApprovedOn, Apprenticeship));
 
             return apprentice;
         }

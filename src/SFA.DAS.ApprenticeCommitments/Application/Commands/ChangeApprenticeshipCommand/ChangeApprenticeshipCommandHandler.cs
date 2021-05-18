@@ -1,36 +1,25 @@
-﻿using FluentValidation;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 
 #nullable enable
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand
 {
-    public class ChangeApprenticeshipCommandValidator : AbstractValidator<ChangeApprenticeshipCommand>
-    {
-        public ChangeApprenticeshipCommandValidator()
-        {
-            RuleFor(model => model.CommitmentsApprenticeshipId).Must(id => id > 0).WithMessage("The ApprenticeshipId must be positive");
-            RuleFor(model => model.Email).NotNull().EmailAddress().WithMessage("Email must be a valid email address");
-            RuleFor(model => model.EmployerAccountLegalEntityId).Must(id => id > 0).WithMessage("The EmployerAccountLegalEntityId must be positive");
-            RuleFor(model => model.EmployerName).NotEmpty().WithMessage("The Employer Name is required");
-            RuleFor(model => model.TrainingProviderId).Must(id => id > 0).WithMessage("The TrainingProviderId must be positive");
-            RuleFor(model => model.TrainingProviderName).NotEmpty().WithMessage("The Training Provider Name is required");
-        }
-    }
-
     public class ChangeApprenticeshipCommandHandler : IRequestHandler<ChangeApprenticeshipCommand>
     {
         private readonly IApprenticeshipContext _statements;
+        private readonly IRegistrationContext _registrations;
         private readonly ILogger<ChangeApprenticeshipCommandHandler> _logger;
 
-        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext statements, ILogger<ChangeApprenticeshipCommandHandler> logger)
+        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext statements, IRegistrationContext registrations, ILogger<ChangeApprenticeshipCommandHandler> logger)
         {
             _statements = statements;
+            _registrations = registrations;
             _logger = logger;
         }
 
@@ -42,28 +31,47 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 
             if (existingStatement == null)
             {
-                _logger.LogWarning("Ignoring update for missing apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
+                _logger.LogWarning("No confirmed apprenticeship {commitmentsApprenticeshipId} found", command.CommitmentsApprenticeshipId);
+                await UpdateRegistration(command, apprenticeshipId);
             }
             else
             {
                 _logger.LogInformation("Updating apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
-
-                var details = new ApprenticeshipDetails(
-                    command.EmployerAccountLegalEntityId,
-                    command.EmployerName,
-                    command.TrainingProviderId,
-                    command.TrainingProviderName,
-                    new CourseDetails(
-                        command.CourseName,
-                        command.CourseLevel,
-                        command.CourseOption,
-                        command.PlannedStartDate,
-                        command.PlannedEndDate));
-
-                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, details, command.CommitmentsApprovedOn);
+                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
             }
 
             return Unit.Value;
         }
+
+        private async Task UpdateRegistration(ChangeApprenticeshipCommand command, long apprenticeshipId)
+        {
+            var registration = await _registrations.FindByCommitmentsApprenticeshipId(apprenticeshipId);
+
+            if (registration == null)
+            {
+                _logger.LogError("A matching Registration record is expected but not found for commitments apprenticeship {CommitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
+                throw new DomainException($"No registration record found for commitments apprenticeship id {command.CommitmentsApprenticeshipId}");
+            }
+
+            _logger.LogInformation("Updating registration for apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
+            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command));
+        }
+
+        private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeApprenticeshipCommand command)
+        {
+            var details = new ApprenticeshipDetails(
+                command.EmployerAccountLegalEntityId,
+                command.EmployerName,
+                command.TrainingProviderId,
+                command.TrainingProviderName,
+                new CourseDetails(
+                    command.CourseName,
+                    command.CourseLevel,
+                    command.CourseOption,
+                    command.PlannedStartDate,
+                    command.PlannedEndDate));
+            return details;
+        }
+
     }
 }
