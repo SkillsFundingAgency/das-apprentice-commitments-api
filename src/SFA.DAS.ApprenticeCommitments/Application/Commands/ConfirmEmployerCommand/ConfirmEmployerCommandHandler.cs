@@ -13,10 +13,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerComm
         public ConfirmEmployerCommandHandler(IApprenticeshipContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
-        public async Task<Unit> Handle(ConfirmEmployerCommand request, CancellationToken _)
+        public async Task<Unit> Handle(ConfirmEmployerCommand command, CancellationToken _)
         {
-            var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
-            apprenticeship.ConfirmEmployer(request.EmployerCorrect);
+            var apprenticeship = await _apprenticeships.GetById(command.ApprenticeId, command.ApprenticeshipId);
+            apprenticeship.ConfirmEmployer(command.ConfirmEmployerData);
             return Unit.Value;
         }
     }

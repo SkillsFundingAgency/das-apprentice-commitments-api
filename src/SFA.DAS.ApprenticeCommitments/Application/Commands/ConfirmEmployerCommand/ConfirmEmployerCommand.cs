@@ -5,19 +5,27 @@ using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand
 {
+
+    public class ConfirmEmployerData
+    {
+        public bool EmployerCorrect { get; set; }
+        public long ComitmentStatementId { get; set; }
+    }
+
+
     public class ConfirmEmployerCommand : IUnitOfWorkCommand
     {
         public ConfirmEmployerCommand(
             Guid apprenticeId, long apprenticeshipId,
-            bool trainingProviderCorrect)
+            ConfirmEmployerData confirmEmployerData)
         {
             ApprenticeId = apprenticeId;
             ApprenticeshipId = apprenticeshipId;
-            EmployerCorrect = trainingProviderCorrect;
+            confirmEmployerData = confirmEmployerData;
         }
 
         public Guid ApprenticeId { get; }
         public long ApprenticeshipId { get; }
-        public bool EmployerCorrect { get; }
+        public ConfirmEmployerData ConfirmEmployerData { get; }
     }
 }

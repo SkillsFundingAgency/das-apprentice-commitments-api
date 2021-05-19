@@ -1,6 +1,8 @@
-﻿using System;
+﻿using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 
 #nullable enable
 
@@ -33,8 +35,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         internal void ConfirmApprenticeshipDetails(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmApprenticeshipDetails(apprenticeshipCorrect);
 
-        internal void ConfirmEmployer(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmEmployer(apprenticeshipCorrect);
+        internal void ConfirmEmployer(ConfirmEmployerData confirmEmployerCorrect)
+        {
+            var cs = LatestCommitmentStatement;
+                
+            if(cs.Id != confirmEmployerCorrect.ComitmentStatementId)
+                throw new DomainException("Commitment Statement has been updated");
+
+            cs.ConfirmEmployer(confirmEmployerCorrect.EmployerCorrect);
+        }
 
         internal void ConfirmTrainingProvider(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmTrainingProvider(apprenticeshipCorrect);

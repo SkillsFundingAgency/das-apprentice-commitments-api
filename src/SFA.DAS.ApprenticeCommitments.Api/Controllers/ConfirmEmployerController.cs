@@ -7,10 +7,6 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerCommand;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
-    public class ConfirmEmployerRequest
-    {
-        public bool EmployerCorrect { get; set; }
-    }
 
     [ApiController]
     public class ConfirmEmployerController : ControllerBase
@@ -22,9 +18,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/EmployerConfirmation")]
         public async Task<IActionResult> ConfirmTrainingProvider(
             Guid apprenticeId, long apprenticeshipId,
-            [FromBody] ConfirmEmployerRequest request)
+            [FromBody] ConfirmEmployerData data)
         {
-            var command = new ConfirmEmployerCommand(apprenticeId, apprenticeshipId, request.EmployerCorrect);
+            var command = new ConfirmEmployerCommand(apprenticeId, apprenticeshipId, data);
             await _mediator.Send(command);
             return Ok();
         }
