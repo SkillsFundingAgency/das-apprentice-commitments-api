@@ -8,6 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
     {
         public HttpClient Client { get; private set; }
         public HttpResponseMessage Response { get; set; }
+        public string ResponseContent => Response?.Content?.ReadAsStringAsync().Result;
         public Uri BaseAddress { get; private set; }
         private bool isDisposed;
 

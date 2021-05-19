@@ -22,17 +22,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
         {
             if (Client == null)
             {
-                var config = new Dictionary<string, string>
+                Factory = CreateApiFactory();
+                Client = new ApprenticeCommitmentsApi(Factory.CreateClient());
+            }
+            _context.Api = Client;
+        }
+
+        public static LocalWebApplicationFactory<Startup> CreateApiFactory()
+        {
+            var config = new Dictionary<string, string>
                 {
                     { "EnvironmentName", "ACCEPTANCE_TESTS" },
                     { "ApplicationSettings:DbConnectionString", TestsDbConnectionFactory.ConnectionString }
                 };
 
-                Factory = new LocalWebApplicationFactory<Startup>(config);
-                Client = new ApprenticeCommitmentsApi(Factory.CreateClient());
-            }
-
-            _context.Api = Client;
+            return new LocalWebApplicationFactory<Startup>(config);
         }
 
         [AfterFeature()]
