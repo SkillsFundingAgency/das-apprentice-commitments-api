@@ -21,8 +21,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Details = details;
         }
 
+        public CommitmentStatement(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
+        {
+            CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
+            Details = details;
+            CommitmentsApprovedOn = approvedOn;
+        }
+
         public long Id { get; private set; }
-        public long ApprenticeshipId { get; private set; } = 0;
+        public long ApprenticeshipId { get; private set; }
         public ApprenticeshipDetails Details { get; private set; } = null!;
         public long CommitmentsApprenticeshipId { get; private set; }
         public DateTime CommitmentsApprovedOn { get; private set; }
@@ -65,15 +72,54 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             ApprenticeshipConfirmed = apprenticeshipCorrect;
         }
 
-        public CommitmentStatement RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails updatedDetails, DateTime approvedOn)
+        public void RenewedFromCommitment(CommitmentStatement lastStatement)
         {
-            return new CommitmentStatement
+
+            bool EmployerIsEquivalent()
             {
-                ApprenticeshipId = ApprenticeshipId,
-                CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
-                CommitmentsApprovedOn = approvedOn,
-                Details = updatedDetails,
-            };
+                return lastStatement.Details.EmployerAccountLegalEntityId ==
+                       Details.EmployerAccountLegalEntityId
+                       && lastStatement.Details.EmployerName == Details.EmployerName;
+            }
+
+            bool ProviderIsEquivalent()
+            {
+                return lastStatement.Details.TrainingProviderId == Details.TrainingProviderId &&
+                        lastStatement.Details.TrainingProviderName == Details.TrainingProviderName;
+            }
+
+            bool ApprenticeshipIsEquivalent()
+            {
+                return lastStatement.CommitmentsApprenticeshipId == CommitmentsApprenticeshipId 
+                       && Details.Course.IsEquivalent(lastStatement.Details.Course);
+            }
+
+            if (lastStatement == null) throw new ArgumentNullException(nameof(lastStatement));
+
+            if (lastStatement.EmployerCorrect.HasValue && EmployerIsEquivalent())
+            {
+                EmployerCorrect = lastStatement.EmployerCorrect;
+            }
+
+            if (lastStatement.TrainingProviderCorrect.HasValue && ProviderIsEquivalent())
+            {
+                TrainingProviderCorrect = lastStatement.TrainingProviderCorrect;
+            }
+
+            if (lastStatement.ApprenticeshipDetailsCorrect.HasValue && ApprenticeshipIsEquivalent())
+            {
+                ApprenticeshipDetailsCorrect = lastStatement.ApprenticeshipDetailsCorrect;
+            }
+
+            if (lastStatement.HowApprenticeshipDeliveredCorrect.HasValue)
+            {
+                HowApprenticeshipDeliveredCorrect = lastStatement.HowApprenticeshipDeliveredCorrect;
+            }
+
+            if (lastStatement.RolesAndResponsibilitiesCorrect.HasValue)
+            {
+                RolesAndResponsibilitiesCorrect = lastStatement.RolesAndResponsibilitiesCorrect;
+            }
         }
     }
 }

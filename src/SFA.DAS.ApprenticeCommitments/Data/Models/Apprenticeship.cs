@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 #nullable enable
+[assembly: InternalsVisibleTo("SFA.DAS.ApprenticeCommitments.UnitTests")]
+[assembly: InternalsVisibleTo("SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests")]
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
@@ -25,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             = new List<CommitmentStatement>();
 
         public CommitmentStatement LatestCommitmentStatement
-            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault();
+            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First();
 
         internal void ConfirmApprenticeship(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmApprenticeship(apprenticeshipCorrect);
@@ -47,8 +50,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         internal void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var ns = CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First().RenewCommitment(commitmentsApprenticeshipId, details, approvedOn);
-            CommitmentStatements.Add(ns);
+            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, details, approvedOn); 
+            newStatement.RenewedFromCommitment(LatestCommitmentStatement);
+            CommitmentStatements.Add(newStatement);
         }
     }
 }
