@@ -40,29 +40,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             TrainingProviderCorrect = trainingProviderCorrect;
         }
 
-        public void ConfirmEmployer(bool employerCorrect)
+        public void Confirm(Confirmations confirmations)
         {
-            EmployerCorrect = employerCorrect;
-        }
-
-        public void ConfirmRolesAndResponsibilities(bool rolesAndResponsibilitiesCorrect)
-        {
-            RolesAndResponsibilitiesCorrect = rolesAndResponsibilitiesCorrect;
-        }
-
-        public void ConfirmApprenticeshipDetails(bool apprenticeshipDetailsCorrect)
-        {
-            ApprenticeshipDetailsCorrect = apprenticeshipDetailsCorrect;
-        }
-
-        public void ConfirmHowApprenticeshipWillBeDelivered(bool howApprenticeshipDeliveredCorrect)
-        {
-            HowApprenticeshipDeliveredCorrect = howApprenticeshipDeliveredCorrect;
-        }
-
-        public void ConfirmApprenticeship(bool apprenticeshipCorrect)
-        {
-            ApprenticeshipConfirmed = apprenticeshipCorrect;
+            EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
+            TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
+            ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
+            RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
+            HowApprenticeshipDeliveredCorrect = confirmations.HowApprenticeshipDeliveredCorrect ?? HowApprenticeshipDeliveredCorrect;
+            ApprenticeshipConfirmed = confirmations.ApprenticeshipCorrect ?? ApprenticeshipConfirmed;
         }
 
         public CommitmentStatement RenewCommitment(ApprenticeshipDetails updatedDetails, DateTime approvedOn)

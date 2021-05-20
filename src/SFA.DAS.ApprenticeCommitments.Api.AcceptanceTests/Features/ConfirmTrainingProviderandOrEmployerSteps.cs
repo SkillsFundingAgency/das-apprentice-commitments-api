@@ -43,21 +43,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had its training provider positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsTrainingProviderConfirmed()
         {
-            _commitmentStatement.ConfirmTrainingProvider(true);
+            _commitmentStatement.Confirm(new Confirmations { TrainingProviderCorrect = true });
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
         [Given("we have an apprenticeship that has previously had its employer positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsEmployerPositivelyConfirmed()
         {
-            _commitmentStatement.ConfirmEmployer(true);
+            _commitmentStatement.Confirm(new Confirmations { EmployerCorrect = true });
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
         [Given("we have an apprenticeship that has previously had its apprenticeship details positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsApprenticeshipDetailsPositivelyConfirmed()
         {
-            _commitmentStatement.ConfirmApprenticeshipDetails(true);
+            _commitmentStatement.Confirm(new Confirmations { ApprenticeshipDetailsCorrect = true });
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 

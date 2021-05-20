@@ -48,7 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had HowMyApprenticeshipWillBeDelivered positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadHowMyApprenticeshipWillBeDeliveredPositivelyConfirmed()
         {
-            _commitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(true);
+            _commitmentStatement.Confirm(new Confirmations { HowApprenticeshipDeliveredCorrect = true });
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 

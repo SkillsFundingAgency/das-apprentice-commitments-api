@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmTrainingProviderCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmCommand;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -24,9 +25,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             Guid apprenticeId, long apprenticeshipId, long commitmentStatementId,
             [FromBody] ConfirmTrainingProviderRequest request)
         {
-            await _mediator.Send(new ConfirmTrainingProviderCommand(
-                (apprenticeId, apprenticeshipId, commitmentStatementId),
-                request.TrainingProviderCorrect));
+            await _mediator.Send(new ConfirmCommand(
+                apprenticeId, apprenticeshipId, commitmentStatementId,
+                new Confirmations { TrainingProviderCorrect = request.TrainingProviderCorrect }));
         }
     }
 }

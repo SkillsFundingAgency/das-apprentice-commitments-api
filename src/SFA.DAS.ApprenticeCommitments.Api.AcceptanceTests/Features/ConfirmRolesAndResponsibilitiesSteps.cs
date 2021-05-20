@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had its roles and responsibilities confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsRolesAndResponsibilitiesConfirmed()
         {
-            _commitmentStatement.ConfirmRolesAndResponsibilities(true);
+            _commitmentStatement.Confirm(new Confirmations { RolesAndResponsibilitiesCorrect = true });
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
