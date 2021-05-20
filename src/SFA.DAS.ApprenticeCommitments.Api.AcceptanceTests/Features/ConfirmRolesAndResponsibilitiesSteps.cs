@@ -62,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/RolesAndResponsibilitiesConfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/statements/{_commitmentStatement.Id}/RolesAndResponsibilitiesConfirmation",
                 command);
         }
 

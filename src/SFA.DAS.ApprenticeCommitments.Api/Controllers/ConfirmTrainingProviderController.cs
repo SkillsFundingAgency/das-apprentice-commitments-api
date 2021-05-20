@@ -20,7 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public ConfirmTrainingProviderController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/TrainingProviderConfirmation")]
-        [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/{commitmentStatementId}/TrainingProviderConfirmation")]
+        [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/statements/{commitmentStatementId}/TrainingProviderConfirmation")]
         public async Task ConfirmTrainingProvider(
             Guid apprenticeId, long apprenticeshipId, long commitmentStatementId,
             [FromBody] ConfirmTrainingProviderRequest request)

@@ -110,7 +110,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             r5.EnsureSuccessStatusCode();
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/{csId}/EmployerConfirmation",
+                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/statements/{csId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.StatusCode.Should().Be(HttpStatusCode.OK);
 

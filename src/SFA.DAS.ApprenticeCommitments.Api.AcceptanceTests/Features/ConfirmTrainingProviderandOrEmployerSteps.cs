@@ -131,7 +131,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task WhenWeSendTheConfirmation()
         {
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/{endpoint}",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/statements/{_commitmentStatement.Id}/{endpoint}",
                 command);
         }
 
