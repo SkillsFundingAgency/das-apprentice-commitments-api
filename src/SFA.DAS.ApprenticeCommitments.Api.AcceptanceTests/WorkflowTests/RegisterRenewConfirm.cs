@@ -11,7 +11,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
+namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class RegisterRenewConfirm
     {
@@ -74,7 +74,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 });
         }
 
-
         [Test]
         public async Task ConfirmingCommitmentStatementConcurrentToApprovedChangeConfirmsCorrectStatement()
         {
@@ -128,7 +127,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .And.ContainEquivalentOf(new
                 {
                     Id = apprenticeshipId,
-                    CommitmentStatementId = csId+1,
+                    CommitmentStatementId = csId + 1,
                     EmployerCorrect = (bool?)null,
                 });
         }
