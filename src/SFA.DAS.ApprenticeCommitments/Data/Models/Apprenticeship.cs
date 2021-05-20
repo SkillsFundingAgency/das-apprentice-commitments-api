@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,17 +26,31 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             = new List<CommitmentStatement>();
 
         public CommitmentStatement LatestCommitmentStatement
-            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault();
+            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
+                ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
 
         private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
-            => commitmentStatementId == 0 ? LatestCommitmentStatement : CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId);
+        {
+            // Remove around the end of May 2021
+            // https://skillsfundingagency.atlassian.net/browse/CS-655
+            if (commitmentStatementId == 0)
+            {
+                return LatestCommitmentStatement;
+            }
+            else
+            {
+                return CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId)
+                    ?? throw new DomainException(
+                        $"Commitment Statement {commitmentStatementId} not found in apprenticeship {Id}");
+            }
+        }
 
         internal void Confirm(long commitmentStatementId, Confirmations confirmations)
             => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations);
 
         internal void RenewCommitment(ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var ns = CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First().RenewCommitment(details, approvedOn);
+            var ns = LatestCommitmentStatement.RenewCommitment(details, approvedOn);
             CommitmentStatements.Add(ns);
         }
     }
