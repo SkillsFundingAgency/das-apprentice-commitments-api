@@ -1,5 +1,7 @@
-﻿using System;
-using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
+﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
+using System;
+
+#nullable disable
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand
 {

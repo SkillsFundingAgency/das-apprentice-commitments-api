@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmApprenticesh
         public ConfirmApprenticeshipDetailsCommandHandler(IApprenticeshipContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
-        public async Task<Unit> Handle(ConfirmApprenticeshipDetailsCommand request, CancellationToken _)
+        public async Task<Unit> Handle(ConfirmApprenticeshipDetailsCommand request, CancellationToken cancellationToken)
         {
             var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
             apprenticeship.ConfirmApprenticeshipDetails(request.ApprenticeshipDetailsCorrect);

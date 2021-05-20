@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using MediatR;
+using SFA.DAS.ApprenticeCommitments.Data;
+using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using SFA.DAS.ApprenticeCommitments.Data;
-using SFA.DAS.ApprenticeCommitments.DTOs;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery
 {
@@ -15,10 +14,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationReminder
         public RegistrationRemindersQueryHandler(IRegistrationContext registrations)
             => _registrations = registrations;
 
-        public async Task<RegistrationRemindersResponse> Handle(RegistrationRemindersQuery query, CancellationToken _)
+        public async Task<RegistrationRemindersResponse> Handle(RegistrationRemindersQuery request, CancellationToken cancellationToken)
         {
-            var reminders = await _registrations.RegistrationsNeedingSignUpReminders(query.CutOffDateTime);
-            return new RegistrationRemindersResponse(reminders.Select(x=>x.MapToRegistrationDto()));
+            var reminders = await _registrations.RegistrationsNeedingSignUpReminders(request.CutOffDateTime);
+            return new RegistrationRemindersResponse(reminders.Select(x => x.MapToRegistrationDto()));
         }
     }
 }

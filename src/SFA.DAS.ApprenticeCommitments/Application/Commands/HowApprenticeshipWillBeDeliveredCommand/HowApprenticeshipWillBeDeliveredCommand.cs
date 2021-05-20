@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.HowApprenticeshipWi
         public HowApprenticeshipWillBeDeliveredCommandHandler(IApprenticeshipContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
-        public async Task<Unit> Handle(HowApprenticeshipWillBeDeliveredCommand request, CancellationToken _)
+        public async Task<Unit> Handle(HowApprenticeshipWillBeDeliveredCommand request, CancellationToken cancellationToken)
         {
             var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
             apprenticeship.ConfirmHowApprenticeshipWillBeDelivered(request.HowApprenticeshipDeliveredCorrect);
