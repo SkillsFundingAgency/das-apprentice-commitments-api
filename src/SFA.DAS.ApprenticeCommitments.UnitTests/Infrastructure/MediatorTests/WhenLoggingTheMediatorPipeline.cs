@@ -47,7 +47,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.Infrastructure.MediatorTests
         }
 
         [Test, AutoData]
-        public async Task Then_we_log_the_handler_has_errored(SimpleRequest request, SimpleResponse expectedResponse)
+        public void Then_we_log_the_handler_has_errored(SimpleRequest request, SimpleResponse expectedResponse)
         {
             Func<Task> action = () => _sut.Handle(request, CancellationToken.None, () => throw new Exception("failed"));
 

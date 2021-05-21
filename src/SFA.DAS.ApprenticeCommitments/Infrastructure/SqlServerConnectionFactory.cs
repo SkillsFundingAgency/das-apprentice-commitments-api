@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             return sqlConnection;
         }
 
-        private string GetAccessToken()
+        private string? GetAccessToken()
         {
             if (_configuration.IsLocalAcceptanceOrDev())
             {

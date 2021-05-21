@@ -1,7 +1,7 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using SFA.DAS.ApprenticeCommitments.Data;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand
 {
@@ -14,10 +14,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSe
             _registrations = registrations;
         }
 
-        public async Task<Unit> Handle(Commands.RegistrationFirstSeenCommand.RegistrationFirstSeenCommand command, CancellationToken _)
+        public async Task<Unit> Handle(RegistrationFirstSeenCommand request, CancellationToken cancellationToken)
         {
-            var registration = await _registrations.GetById(command.ApprenticeId);
-            registration.ViewedByUser(command.SeenOn);
+            var registration = await _registrations.GetById(request.ApprenticeId);
+            registration.ViewedByUser(request.SeenOn);
             return Unit.Value;
         }
     }
