@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         {
             _existingCommitmentStatement.SetProperty(p => p.HowApprenticeshipDeliveredCorrect, null);
 
-            var details = withSameData ? _existingCommitmentStatement.Details : _f.Create<ApprenticeshipDetails>();
+            var details = withSameData ? _existingCommitmentStatement.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
 
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         public void When_delivery_section_confirmation_status_is_set_Then_delivery_section_does_not_change_status_regardless_of_data_changes(bool confirmationStatus, bool withSameData)
         {
             _existingCommitmentStatement.SetProperty(p => p.HowApprenticeshipDeliveredCorrect, confirmationStatus);
-            var details = withSameData ? _existingCommitmentStatement.Details : _f.Create<ApprenticeshipDetails>();
+            var details = withSameData ? _existingCommitmentStatement.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
             

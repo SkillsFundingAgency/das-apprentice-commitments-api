@@ -21,13 +21,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Details = details;
         }
 
-        public CommitmentStatement(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
-        {
-            CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
-            Details = details;
-            CommitmentsApprovedOn = approvedOn;
-        }
-
         public long Id { get; private set; }
         public long ApprenticeshipId { get; private set; }
         public ApprenticeshipDetails Details { get; private set; } = null!;

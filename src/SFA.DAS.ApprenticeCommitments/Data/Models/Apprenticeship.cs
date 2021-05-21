@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 #nullable enable
-[assembly: InternalsVisibleTo("SFA.DAS.ApprenticeCommitments.UnitTests")]
-[assembly: InternalsVisibleTo("SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests")]
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
@@ -48,9 +45,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         internal void ConfirmHowApprenticeshipWillBeDelivered(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(apprenticeshipCorrect);
 
-        internal void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
+        public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, details, approvedOn); 
+            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details); 
             newStatement.RenewedFromCommitment(LatestCommitmentStatement);
             CommitmentStatements.Add(newStatement);
         }

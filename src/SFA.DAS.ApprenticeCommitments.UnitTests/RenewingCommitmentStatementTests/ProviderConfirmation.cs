@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         {
             _existingCommitmentStatement.SetProperty(p => p.TrainingProviderCorrect, null);
 
-            var details = withSameData ? _existingCommitmentStatement.Details : _f.Create<ApprenticeshipDetails>();
+            var details = withSameData ? _existingCommitmentStatement.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
 
@@ -42,7 +42,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         {
             _existingCommitmentStatement.SetProperty(p => p.TrainingProviderCorrect, confirmationStatus);
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details, DateTime.Now);
+            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details.Clone(), DateTime.Now);
             
             _apprenticeship.CommitmentStatements.Last().TrainingProviderCorrect.Should().Be(confirmationStatus);
         }

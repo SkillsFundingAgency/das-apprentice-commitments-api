@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         {
             _existingCommitmentStatement.SetProperty(p => p.ApprenticeshipDetailsCorrect, null);
 
-            var details = withSameData ? _existingCommitmentStatement.Details : _f.Create<ApprenticeshipDetails>();
+            var details = withSameData ? _existingCommitmentStatement.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
 
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         {
             _existingCommitmentStatement.SetProperty(p => p.ApprenticeshipDetailsCorrect, confirmationStatus);
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details, DateTime.Now);
+            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details.Clone(), DateTime.Now);
             
             _apprenticeship.CommitmentStatements.Last().ApprenticeshipDetailsCorrect.Should().Be(confirmationStatus);
         }
@@ -55,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         {
             _existingCommitmentStatement.SetProperty(p => p.ApprenticeshipDetailsCorrect, confirmationStatus);
             var newDetails = _f.Create<ApprenticeshipDetails>();
-            newDetails.SetProperty(p=>p.Course, _existingCommitmentStatement.Details.Course);
+            newDetails.SetProperty(p=>p.Course, _existingCommitmentStatement.Details.Course.Clone());
 
             _apprenticeship.RenewCommitment(_f.Create<long>(), newDetails, DateTime.Now);
 
