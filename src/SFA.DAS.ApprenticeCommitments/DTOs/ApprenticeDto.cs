@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Mail;
 
+#nullable disable
+
 namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
     public class ApprenticeDto
