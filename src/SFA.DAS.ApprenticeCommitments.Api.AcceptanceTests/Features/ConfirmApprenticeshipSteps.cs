@@ -3,6 +3,7 @@ using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -29,6 +30,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
         [Given("we have an apprenticeship waiting to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipWaitingToBeConfirmed()
+        {
+            _commitmentStatement.ConfirmEmployer(true);
+            _commitmentStatement.ConfirmTrainingProvider(true);
+            _commitmentStatement.ConfirmApprenticeshipDetails(true);
+            _commitmentStatement.ConfirmRolesAndResponsibilities(true);
+            _commitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(true);
+            _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given("we have an apprenticeship not ready to be confirmed")]
+        public async Task GivenWeHaveAnApprenticeshipNotReadyToBeConfirmed()
         {
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
@@ -59,24 +72,29 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.Api.Response.EnsureSuccessStatusCode();
         }
 
+        [Then("the response is BadRequest")]
+        public void ThenTheResponseIsBadRequest()
+        {
+            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
         [Then("the apprenticeship record is updated to show confirmed")]
         public void ThenTheApprenticeshipRecordIsUpdatedToShoConfirmed()
         {
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
-                ApprenticeshipConfirmed,
+                ConfirmedOn = DateTime.Now.Date,
             });
         }
 
-        [Then("the date the confirmation is made is recorded")]
-        public void ThenTheDateTheConfirmationIsMadeIsRecorded()
+        [Then("the apprenticeship record is untouched")]
+        public void ThenTheApprenticeshipRecordIsUntouched()
         {
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
-                ApprenticeshipConfirmed,
-                ConfirmedOn = DateTime.Now.Date,
+                ConfirmedOn = (DateTime?)null,
             });
         }
     }
