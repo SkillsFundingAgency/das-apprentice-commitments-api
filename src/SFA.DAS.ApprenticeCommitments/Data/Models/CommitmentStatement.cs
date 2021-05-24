@@ -69,7 +69,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 && EmployerCorrect == true
                 && RolesAndResponsibilitiesCorrect == true
                 && ApprenticeshipDetailsCorrect == true
-                && HowApprenticeshipDeliveredCorrect == true
                 && HowApprenticeshipDeliveredCorrect == true)
             {
                 ConfirmedOn = DateTime.Now.Date;
@@ -77,7 +76,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             else
             {
                 throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
-            }    
+            }
         }
 
         public CommitmentStatement RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails updatedDetails, DateTime approvedOn)
