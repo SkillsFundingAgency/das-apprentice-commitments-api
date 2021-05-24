@@ -1,5 +1,7 @@
 ﻿using System;
 
+#nullable disable
+
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery
 {
     public class RegistrationResponse

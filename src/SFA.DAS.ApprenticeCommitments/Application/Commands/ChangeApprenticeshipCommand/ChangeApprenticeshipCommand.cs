@@ -1,13 +1,10 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 
-#nullable disable
-
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand
 {
-    public class CreateRegistrationCommand : IUnitOfWorkCommand
+    public class ChangeApprenticeshipCommand : IUnitOfWorkCommand
     {
-        public Guid ApprenticeId { get; set; }
         public long ApprenticeshipId { get; set; }
         public DateTime ApprovedOn { get; set; }
         public string Email { get; set; }

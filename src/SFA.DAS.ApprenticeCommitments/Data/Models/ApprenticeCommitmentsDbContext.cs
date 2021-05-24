@@ -4,7 +4,7 @@ using System.Net.Mail;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class ApprenticeCommitmentsDbContext : DbContext, IRegistrationContext, IApprenticeContext, ICommitmentStatementContext
+    public class ApprenticeCommitmentsDbContext : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext
     {
         public ApprenticeCommitmentsDbContext()
         {
@@ -14,24 +14,26 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
         }
 
-        public virtual DbSet<Registration> Registrations { get; set; }
-        public virtual DbSet<Apprentice> Apprentices { get; set; }
-        public virtual DbSet<CommitmentStatement> CommitmentStatements { get; set; }
+        public virtual DbSet<Registration> Registrations { get; set; } = null!;
+        public virtual DbSet<Apprentice> Apprentices { get; set; } = null!;
+        public virtual DbSet<Apprenticeship> Apprenticeships { get; set; } = null!;
+        public virtual DbSet<CommitmentStatement> CommitmentStatements { get; set; } = null!;
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
-        DbSet<CommitmentStatement> IEntityContext<CommitmentStatement>.Entities => CommitmentStatements;
+        DbSet<Apprenticeship> IEntityContext<Apprenticeship>.Entities => Apprenticeships;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Apprenticeship>().ToTable("Apprenticeship");
             modelBuilder.Entity<Apprentice>(a =>
             {
                 a.ToTable("Apprentice");
                 a.HasKey(e => e.Id);
                 a.Property(e => e.Email)
                  .HasConversion(
-                    v => v.ToString(),
-                    v => new MailAddress(v));
+                     v => v.ToString(),
+                     v => new MailAddress(v));
                 a.OwnsMany(
                     e => e.PreviousEmailAddresses,
                     c =>

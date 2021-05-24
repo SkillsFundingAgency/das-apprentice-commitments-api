@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System.Diagnostics.CodeAnalysis;
 
 #nullable enable
 
@@ -6,6 +7,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
     public static class ApprenticeshipDtoMapping
     {
+        [return: NotNullIfNotNull("apprenticeship")]
         public static ApprenticeshipDto? MapToApprenticeshipDto(this CommitmentStatement? apprenticeship)
         {
             if (apprenticeship == null) return null;

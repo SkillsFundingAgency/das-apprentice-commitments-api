@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +22,9 @@ using SFA.DAS.NServiceBus.SqlServer.Configuration;
 using SFA.DAS.NServiceBus.SqlServer.Data;
 using SFA.DAS.UnitOfWork.Context;
 using SFA.DAS.UnitOfWork.NServiceBus.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Infrastructure
 {
@@ -41,19 +41,18 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             services.AddTransient<IConnectionFactory, SqlServerConnectionFactory>();
             services.AddScoped<IRegistrationContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
-            services.AddScoped<ICommitmentStatementContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
+            services.AddScoped<IApprenticeshipContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
 
             return services;
         }
 
         public static IServiceCollection AddEntityFrameworkForApprenticeCommitments(this IServiceCollection services, IConfiguration config)
         {
-
             return services.AddScoped(p =>
             {
-                var unitOfWorkContext = p.GetService<IUnitOfWorkContext>();
-                var connectionFactory = p.GetService<IConnectionFactory>();
-                var loggerFactory = p.GetService<ILoggerFactory>();
+                var unitOfWorkContext = p.GetRequiredService<IUnitOfWorkContext>();
+                var connectionFactory = p.GetRequiredService<IConnectionFactory>();
+                var loggerFactory = p.GetRequiredService<ILoggerFactory>();
 
                 ApprenticeCommitmentsDbContext dbContext;
                 try
@@ -72,7 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
                 }
                 catch (KeyNotFoundException)
                 {
-                    var settings = p.GetService<IOptions<ApplicationSettings>>().Value;
+                    var settings = p.GetRequiredService<IOptions<ApplicationSettings>>().Value;
                     var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>()
                         .UseDataStorage(connectionFactory, settings.DbConnectionString)
                         .UseLocalSqlLogger(loggerFactory, config);
@@ -85,8 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
 
         public static async Task<UpdateableServiceProvider> StartNServiceBus(this UpdateableServiceProvider serviceProvider, IConfiguration configuration)
         {
-
-            var connectionFactory = serviceProvider.GetService<IConnectionFactory>();
+            var connectionFactory = serviceProvider.GetRequiredService<IConnectionFactory>();
 
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.ApprenticeCommitments.Api")
                 .UseMessageConventions()
@@ -113,7 +111,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             var endpoint = await Endpoint.Start(endpointConfiguration);
 
             serviceProvider.AddSingleton(p => endpoint)
-                .AddSingleton<IMessageSession>(p => p.GetService<IEndpointInstance>())
+                .AddSingleton<IMessageSession>(p => p.GetRequiredService<IEndpointInstance>())
                 .AddHostedService<NServiceBusHostedService>();
 
             return serviceProvider;

@@ -4,23 +4,25 @@ using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Threading;
 using System.Threading.Tasks;
 
+#nullable enable
+
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery
 {
-    public class ApprenticeshipQueryHandler : IRequestHandler<ApprenticeshipQuery, ApprenticeshipDto>
+    public class ApprenticeshipQueryHandler : IRequestHandler<ApprenticeshipQuery, ApprenticeshipDto?>
     {
-        private readonly ICommitmentStatementContext _apprenticeshipRepository;
+        private readonly IApprenticeshipContext _apprenticeshipRepository;
 
-        public ApprenticeshipQueryHandler(ICommitmentStatementContext apprenticeshipRepository)
+        public ApprenticeshipQueryHandler(IApprenticeshipContext apprenticeshipRepository)
             => _apprenticeshipRepository = apprenticeshipRepository;
 
-        public async Task<ApprenticeshipDto> Handle(
+        public async Task<ApprenticeshipDto?> Handle(
             ApprenticeshipQuery request,
             CancellationToken cancellationToken)
         {
             var entity = await _apprenticeshipRepository
-                .Find(request.ApprenticeId, request.ApprenticeshipId);
+                .FindForApprentice(request.ApprenticeId, request.ApprenticeshipId);
 
-            return entity.MapToApprenticeshipDto();
+            return entity?.LatestCommitmentStatement.MapToApprenticeshipDto();
         }
     }
 }

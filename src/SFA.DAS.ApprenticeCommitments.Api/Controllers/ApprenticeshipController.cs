@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
 
@@ -19,6 +20,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 
         [HttpPost("apprenticeships")]
         public async Task<IActionResult> CreateRegistration([FromBody] CreateRegistrationCommand request)
+        {
+            await _mediator.Send(request);
+            return Accepted();
+        }
+
+        [HttpPost("apprenticeships/change")]
+        public async Task<IActionResult> ChangeApprenticeship([FromBody] ChangeApprenticeshipCommand request)
         {
             await _mediator.Send(request);
             return Accepted();

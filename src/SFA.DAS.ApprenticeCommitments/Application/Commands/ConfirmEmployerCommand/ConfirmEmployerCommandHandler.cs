@@ -8,12 +8,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmEmployerComm
     public class ConfirmEmployerCommandHandler
         : IRequestHandler<ConfirmEmployerCommand>
     {
-        private readonly ICommitmentStatementContext _apprenticeships;
+        private readonly IApprenticeshipContext _apprenticeships;
 
-        public ConfirmEmployerCommandHandler(ICommitmentStatementContext apprenticeships)
+        public ConfirmEmployerCommandHandler(IApprenticeshipContext apprenticeships)
             => _apprenticeships = apprenticeships;
 
-        public async Task<Unit> Handle(ConfirmEmployerCommand request, CancellationToken _)
+        public async Task<Unit> Handle(ConfirmEmployerCommand request, CancellationToken cancellationToken)
         {
             var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
             apprenticeship.ConfirmEmployer(request.EmployerCorrect);
