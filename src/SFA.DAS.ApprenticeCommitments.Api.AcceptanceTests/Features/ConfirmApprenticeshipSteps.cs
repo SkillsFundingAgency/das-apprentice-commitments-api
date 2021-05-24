@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
         private readonly CommitmentStatement _commitmentStatement;
-        private bool? ApprenticeshipConfirmed { get; set; }
+        private bool ApprenticeshipConfirmed { get; set; }
 
         public ConfirmApprenticeshipSteps(TestContext context)
         {
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var command = new ConfirmApprenticeshipRequest
             {
-                ApprenticeshipCorrect = (bool)ApprenticeshipConfirmed,
+                ApprenticeshipCorrect = ApprenticeshipConfirmed,
             };
 
             await _context.Api.Post(

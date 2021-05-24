@@ -148,7 +148,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 RolesAndResponsibilitiesCorrect = (bool?)null,
                 ApprenticeshipDetailsCorrect = (bool?)null,
                 HowApprenticeshipDeliveredCorrect = (bool?)null,
-                ApprenticeshipConfirmed = (bool?)null,
+                ApprenticeshipConfirmed = false,
             });
         }
 
