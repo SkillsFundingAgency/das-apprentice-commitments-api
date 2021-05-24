@@ -9,3 +9,4 @@ Scenario: Positively confirm apprenticeship
 	When the apprentice confirms the apprenticeship
 	Then the response is OK
 	And the apprenticeship record is updated to show confirmed
+	And the date the confirmation is made is recorded

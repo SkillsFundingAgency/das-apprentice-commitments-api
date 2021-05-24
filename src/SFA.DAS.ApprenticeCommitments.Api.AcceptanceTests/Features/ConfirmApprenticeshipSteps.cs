@@ -2,7 +2,7 @@
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using System.Net;
+using System;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -66,6 +66,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             {
                 _commitmentStatement.ApprenticeshipId,
                 ApprenticeshipConfirmed,
+            });
+        }
+
+        [Then("the date the confirmation is made is recorded")]
+        public void ThenTheDateTheConfirmationIsMadeIsRecorded()
+        {
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            {
+                _commitmentStatement.ApprenticeshipId,
+                ApprenticeshipConfirmed,
+                ConfirmedOn = DateTime.Now.Date,
             });
         }
     }
