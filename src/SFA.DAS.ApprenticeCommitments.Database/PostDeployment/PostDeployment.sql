@@ -25,3 +25,11 @@ GRANT SELECT ON [grafanaReporter].ApprenticeshipDashboardView TO Reporter
 GRANT SELECT ON [grafanaReporter].CommitmentstatementDashboardView TO Reporter
 
 GRANT SELECT ON [grafanaReporter].RegistrationDashboardView TO Reporter
+
+IF EXISTS(SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Apprentice' AND TABLE_SCHEMA = 'grafanaReporter')
+   DROP TABLE [grafanaReporter].[Apprentice];
+Go
+--DROP TABLE [grafanaReporter].[Apprentice]
+--DROP TABLE [grafanaReporter].[Apprenticeship]
+--DROP TABLE [grafanaReporter].[CommitmentStatement]
+--DROP TABLE [grafanaReporter].[Registration]
