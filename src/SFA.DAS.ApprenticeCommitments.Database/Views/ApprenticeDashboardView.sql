@@ -1,5 +1,5 @@
-﻿CREATE VIEW dbo.ApprenticeDashboardView
+﻿CREATE VIEW grafanaReporter.ApprenticeDashboardView
 AS
 SELECT        Id, CreatedOn
-FROM          dbo.Apprentice
+FROM          grafanaReporter.Apprentice
 GO
