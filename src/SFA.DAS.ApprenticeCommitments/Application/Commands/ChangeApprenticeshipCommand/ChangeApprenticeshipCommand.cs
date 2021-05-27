@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
         public string TrainingProviderName { get; set; }
         public string CourseName { get; set; }
         public int CourseLevel { get; set; }
-        public string CourseOption { get; set; }
+        public string? CourseOption { get; set; }
         public DateTime PlannedStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
     }
