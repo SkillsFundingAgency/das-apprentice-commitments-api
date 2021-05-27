@@ -5,7 +5,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 {
     public class ChangeApprenticeshipCommand : IUnitOfWorkCommand
     {
-        public long? ContinuationOfCommitmentsApprenticeshipId { get; set; }
+        public long? CommitmentsContinuedApprenticeshipId { get; set; }
         public long CommitmentsApprenticeshipId { get; set; }
         public DateTime CommitmentsApprovedOn { get; set; }
         public string EmployerName { get; set; }

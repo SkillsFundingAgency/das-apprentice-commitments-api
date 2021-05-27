@@ -25,19 +25,19 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 
         public async Task<Unit> Handle(ChangeApprenticeshipCommand command, CancellationToken cancellationToken)
         {
-            var apprenticeshipId = command.ContinuationOfCommitmentsApprenticeshipId ?? command.CommitmentsApprenticeshipId;
+            var apprenticeshipId = command.CommitmentsContinuedApprenticeshipId ?? command.CommitmentsApprenticeshipId;
 
             var existingStatement = await _statements.FindByCommitmentsApprenticeshipId(apprenticeshipId);
 
             if (existingStatement == null)
             {
-                _logger.LogWarning("No confirmed apprenticeship {commitmentsApprenticeshipId} found", command.CommitmentsApprenticeshipId);
+                _logger.LogWarning("No confirmed apprenticeship {apprenticeshipId} found", apprenticeshipId);
                 await UpdateRegistration(command, apprenticeshipId);
             }
             else
             {
-                _logger.LogInformation("Updating apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
-                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
+                _logger.LogInformation("Updating apprenticeship {apprenticeshipId}", apprenticeshipId);
+                existingStatement.RenewCommitment(apprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
             }
 
             return Unit.Value;
@@ -49,12 +49,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 
             if (registration == null)
             {
-                _logger.LogError("A matching Registration record is expected but not found for commitments apprenticeship {CommitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
-                throw new DomainException($"No registration record found for commitments apprenticeship id {command.CommitmentsApprenticeshipId}");
+                _logger.LogError("A matching Registration record is expected but not found for commitments apprenticeship {apprenticeshipId}", apprenticeshipId);
+                throw new DomainException($"No registration record found for commitments apprenticeship id {apprenticeshipId}");
             }
 
-            _logger.LogInformation("Updating registration for apprenticeship {commitmentsApprenticeshipId}", command.CommitmentsApprenticeshipId);
-            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command));
+            _logger.LogInformation("Updating registration for apprenticeship {apprenticeshipId}", apprenticeshipId);
+            registration.RenewApprenticeship(apprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command));
         }
 
         private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeApprenticeshipCommand command)
