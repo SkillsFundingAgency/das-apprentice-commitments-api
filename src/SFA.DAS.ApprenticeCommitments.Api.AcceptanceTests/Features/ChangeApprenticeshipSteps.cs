@@ -191,7 +191,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _request.CommitmentsContinuedApprenticeshipId ?? _request.CommitmentsApprenticeshipId
+                CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId
             });
         }
 
@@ -201,7 +201,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
                 CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _request.CommitmentsContinuedApprenticeshipId ?? _request.CommitmentsApprenticeshipId
+                CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId
             });
         }
 

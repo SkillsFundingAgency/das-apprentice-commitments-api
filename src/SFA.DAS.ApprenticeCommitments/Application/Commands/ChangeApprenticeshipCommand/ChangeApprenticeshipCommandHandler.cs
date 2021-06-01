@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             else
             {
                 _logger.LogInformation("Updating apprenticeship {apprenticeshipId}", apprenticeshipId);
-                existingStatement.RenewCommitment(apprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
+                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
             }
 
             return Unit.Value;
@@ -54,7 +54,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             }
 
             _logger.LogInformation("Updating registration for apprenticeship {apprenticeshipId}", apprenticeshipId);
-            registration.RenewApprenticeship(apprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command));
+            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command));
         }
 
         private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeApprenticeshipCommand command)
