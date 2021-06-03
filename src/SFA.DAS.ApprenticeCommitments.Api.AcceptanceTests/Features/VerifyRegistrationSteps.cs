@@ -127,7 +127,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             apprentice.Apprenticeships.SelectMany(a => a.CommitmentStatements)
                 .Should().ContainEquivalentOf(new
             {
-                CommitmentsApprenticeshipId = _registration.ApprenticeshipId,
+                CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
                 Details = new
                 {
                     _registration.Apprenticeship.EmployerName,

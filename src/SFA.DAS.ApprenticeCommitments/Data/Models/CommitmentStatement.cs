@@ -65,12 +65,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             ApprenticeshipConfirmed = apprenticeshipCorrect;
         }
 
-        public CommitmentStatement RenewCommitment(ApprenticeshipDetails updatedDetails, DateTime approvedOn)
+        public CommitmentStatement RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails updatedDetails, DateTime approvedOn)
         {
             return new CommitmentStatement
             {
                 ApprenticeshipId = ApprenticeshipId,
-                CommitmentsApprenticeshipId = CommitmentsApprenticeshipId,
+                CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
                 CommitmentsApprovedOn = approvedOn,
                 Details = updatedDetails,
             };

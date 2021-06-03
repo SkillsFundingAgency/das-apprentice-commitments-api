@@ -18,8 +18,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         {
             await _registrations.AddAsync(new Registration(
                 request.ApprenticeId,
-                request.ApprenticeshipId,
-                request.ApprovedOn,
+                request.CommitmentsApprenticeshipId,
+                request.CommitmentsApprovedOn,
                 new MailAddress(request.Email),
                 new ApprenticeshipDetails(
                     request.EmployerAccountLegalEntityId,
