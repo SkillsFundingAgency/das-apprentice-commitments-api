@@ -19,6 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
         private CommitmentStatement _commitmentStatement;
+        private CommitmentStatement _newerCommitmentStatement;
 
         public GetApprenticeshipSteps(TestContext context)
         {
@@ -36,6 +37,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 .Do(a => a.ConfirmApprenticeshipDetails(true))
                 .Do(a => a.ConfirmHowApprenticeshipWillBeDelivered(true))
                 .Create();
+
+            _newerCommitmentStatement = _fixture.Build<CommitmentStatement>()
+                .Do(a => a.ConfirmTrainingProvider(true))
+                .Do(a => a.ConfirmEmployer(true))
+                .Do(a => a.ConfirmApprenticeshipDetails(true))
+                .Do(a => a.ConfirmHowApprenticeshipWillBeDelivered(true))
+                .Create();
+
         }
 
         [Given(@"the apprenticeship exists and it's associated with this apprentice")]
@@ -67,12 +76,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _commitmentStatement.RenewCommitment(_commitmentStatement.CommitmentsApprenticeshipId,
-                _fixture.Create<ApprenticeshipDetails>(),
-                _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
+            _newerCommitmentStatement.SetProperty(x=>x.CommitmentsApprovedOn, _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
+            _apprentice.Apprenticeships.First().CommitmentStatements.Add(_newerCommitmentStatement);
             await _context.DbContext.SaveChangesAsync();
         }
-
 
         [Given(@"there is no apprenticeship")]
         public void GivenThereIsNoApprenticeship()
@@ -124,6 +131,31 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.PlannedEndDate.Should().Be(_commitmentStatement.Details.Course.PlannedEndDate);
             a.DurationInMonths.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
+
+        [Then(@"the response should match the newer apprenticeship values")]
+        public async Task ThenTheResponseShouldMatchTheNewerApprenticeshipValues()
+        {
+            var content = await _context.Api.Response.Content.ReadAsStringAsync();
+            var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
+            a.Should().NotBeNull();
+            a.Id.Should().Be(_newerCommitmentStatement.ApprenticeshipId);
+            a.CommitmentsApprenticeshipId.Should().Be(_newerCommitmentStatement.CommitmentsApprenticeshipId);
+            a.EmployerName.Should().Be(_newerCommitmentStatement.Details.EmployerName);
+            a.EmployerAccountLegalEntityId.Should().Be(_newerCommitmentStatement.Details.EmployerAccountLegalEntityId);
+            a.TrainingProviderName.Should().Be(_newerCommitmentStatement.Details.TrainingProviderName);
+            a.TrainingProviderCorrect.Should().Be(_newerCommitmentStatement.TrainingProviderCorrect);
+            a.EmployerCorrect.Should().Be(_newerCommitmentStatement.EmployerCorrect);
+            a.ApprenticeshipDetailsCorrect.Should().Be(_newerCommitmentStatement.ApprenticeshipDetailsCorrect);
+            a.HowApprenticeshipDeliveredCorrect.Should().Be(_newerCommitmentStatement.HowApprenticeshipDeliveredCorrect);
+            a.CourseName.Should().Be(_newerCommitmentStatement.Details.Course.Name);
+            a.CourseLevel.Should().Be(_newerCommitmentStatement.Details.Course.Level);
+            a.CourseOption.Should().Be(_commitmentStatement.Details.Course.Option);
+            a.PlannedStartDate.Should().Be(_newerCommitmentStatement.Details.Course.PlannedStartDate);
+            a.PlannedEndDate.Should().Be(_newerCommitmentStatement.Details.Course.PlannedEndDate);
+            a.DurationInMonths.Should().Be(32 + 1); // Duration is inclusive of start and end months
+        }
+
+
 
         [Then("all commitment statements should have the same apprenticeship ID")]
         public async Task ThenAllCommitmentStatementsShouldHaveTheSameApprenticeshipID()

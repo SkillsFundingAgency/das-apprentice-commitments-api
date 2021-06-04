@@ -72,6 +72,5 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
                     command.PlannedEndDate));
             return details;
         }
-
     }
 }

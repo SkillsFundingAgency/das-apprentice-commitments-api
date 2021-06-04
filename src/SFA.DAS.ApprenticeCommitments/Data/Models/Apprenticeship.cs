@@ -25,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             = new List<CommitmentStatement>();
 
         public CommitmentStatement LatestCommitmentStatement
-            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault();
+            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First();
 
         internal void ConfirmApprenticeship(bool apprenticeshipCorrect, DateTimeOffset time)
             => LatestCommitmentStatement.ConfirmApprenticeship(apprenticeshipCorrect, time);
@@ -45,10 +45,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         internal void ConfirmHowApprenticeshipWillBeDelivered(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(apprenticeshipCorrect);
 
-        internal void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
+        public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var ns = CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First().RenewCommitment(commitmentsApprenticeshipId, details, approvedOn);
-            CommitmentStatements.Add(ns);
+            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details); 
+            newStatement.RenewedFromCommitment(LatestCommitmentStatement);
+            CommitmentStatements.Add(newStatement);
         }
     }
 }
