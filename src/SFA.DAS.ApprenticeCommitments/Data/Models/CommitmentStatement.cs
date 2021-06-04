@@ -62,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             HowApprenticeshipDeliveredCorrect = howApprenticeshipDeliveredCorrect;
         }
 
-        public void ConfirmApprenticeship(bool apprenticeshipCorrect)
+        public void ConfirmApprenticeship(bool apprenticeshipCorrect, DateTimeOffset time)
         {
             if (apprenticeshipCorrect
                 && TrainingProviderCorrect == true
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 && ApprenticeshipDetailsCorrect == true
                 && HowApprenticeshipDeliveredCorrect == true)
             {
-                ConfirmedOn = DateTime.Now.Date;
+                ConfirmedOn = time.UtcDateTime;
             }
             else
             {

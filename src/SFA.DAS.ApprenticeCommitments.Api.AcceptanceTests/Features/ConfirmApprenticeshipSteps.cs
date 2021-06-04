@@ -84,7 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
-                ConfirmedOn = DateTime.Now.Date,
+                ConfirmedOn = _context.Time.Now.DateTime,
             });
         }
 
