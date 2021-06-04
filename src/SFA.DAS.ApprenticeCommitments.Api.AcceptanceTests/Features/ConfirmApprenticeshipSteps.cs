@@ -2,6 +2,7 @@
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -16,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
         private readonly CommitmentStatement _commitmentStatement;
-        private bool? ApprenticeshipConfirmed { get; set; }
+        private bool ApprenticeshipConfirmed { get; set; }
 
         public ConfirmApprenticeshipSteps(TestContext context)
         {
@@ -29,6 +30,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
         [Given("we have an apprenticeship waiting to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipWaitingToBeConfirmed()
+        {
+            _commitmentStatement.ConfirmEmployer(true);
+            _commitmentStatement.ConfirmTrainingProvider(true);
+            _commitmentStatement.ConfirmApprenticeshipDetails(true);
+            _commitmentStatement.ConfirmRolesAndResponsibilities(true);
+            _commitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(true);
+            _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given("we have an apprenticeship not ready to be confirmed")]
+        public async Task GivenWeHaveAnApprenticeshipNotReadyToBeConfirmed()
         {
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
@@ -45,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var command = new ConfirmApprenticeshipRequest
             {
-                ApprenticeshipCorrect = (bool)ApprenticeshipConfirmed,
+                ApprenticeshipCorrect = ApprenticeshipConfirmed,
             };
 
             await _context.Api.Post(
@@ -59,13 +72,29 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.Api.Response.EnsureSuccessStatusCode();
         }
 
+        [Then("the response is BadRequest")]
+        public void ThenTheResponseIsBadRequest()
+        {
+            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
         [Then("the apprenticeship record is updated to show confirmed")]
         public void ThenTheApprenticeshipRecordIsUpdatedToShoConfirmed()
         {
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
-                ApprenticeshipConfirmed,
+                ConfirmedOn = _context.Time.Now.DateTime,
+            });
+        }
+
+        [Then("the apprenticeship record is untouched")]
+        public void ThenTheApprenticeshipRecordIsUntouched()
+        {
+            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            {
+                _commitmentStatement.ApprenticeshipId,
+                ConfirmedOn = (DateTime?)null,
             });
         }
     }

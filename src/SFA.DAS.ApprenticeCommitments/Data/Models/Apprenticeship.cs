@@ -27,8 +27,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public CommitmentStatement LatestCommitmentStatement
             => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).First();
 
-        internal void ConfirmApprenticeship(bool apprenticeshipCorrect)
-            => LatestCommitmentStatement.ConfirmApprenticeship(apprenticeshipCorrect);
+        internal void ConfirmApprenticeship(bool apprenticeshipCorrect, DateTimeOffset time)
+            => LatestCommitmentStatement.ConfirmApprenticeship(apprenticeshipCorrect, time);
 
         internal void ConfirmApprenticeshipDetails(bool apprenticeshipCorrect)
             => LatestCommitmentStatement.ConfirmApprenticeshipDetails(apprenticeshipCorrect);
