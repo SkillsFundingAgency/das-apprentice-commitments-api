@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable enable
@@ -33,7 +34,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? RolesAndResponsibilitiesCorrect { get; private set; }
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
-        public bool? ApprenticeshipConfirmed { get; private set; }
+        public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
+        public DateTime? ConfirmedOn { get; private set; }
 
         public void ConfirmTrainingProvider(bool trainingProviderCorrect)
         {
@@ -60,9 +62,21 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             HowApprenticeshipDeliveredCorrect = howApprenticeshipDeliveredCorrect;
         }
 
-        public void ConfirmApprenticeship(bool apprenticeshipCorrect)
+        public void ConfirmApprenticeship(bool apprenticeshipCorrect, DateTimeOffset time)
         {
-            ApprenticeshipConfirmed = apprenticeshipCorrect;
+            if (apprenticeshipCorrect
+                && TrainingProviderCorrect == true
+                && EmployerCorrect == true
+                && RolesAndResponsibilitiesCorrect == true
+                && ApprenticeshipDetailsCorrect == true
+                && HowApprenticeshipDeliveredCorrect == true)
+            {
+                ConfirmedOn = time.UtcDateTime;
+            }
+            else
+            {
+                throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
+            }
         }
 
         public CommitmentStatement RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails updatedDetails, DateTime approvedOn)
