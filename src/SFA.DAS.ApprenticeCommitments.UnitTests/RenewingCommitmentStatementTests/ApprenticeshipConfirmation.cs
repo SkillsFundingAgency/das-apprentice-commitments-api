@@ -51,19 +51,6 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
         [TestCase(true)]
         [TestCase(false)]
-        public void When_apprenticeship_section_confirmation_status_is_set_And_a_change_to_commitments_apprenticeshipId_has_occurred_Then_apprenticeship_section_is_not_confirmed(bool confirmationStatus)
-        {
-            _existingCommitmentStatement.SetProperty(p => p.ApprenticeshipDetailsCorrect, confirmationStatus);
-            var newDetails = _f.Create<ApprenticeshipDetails>();
-            newDetails.SetProperty(p=>p.Course, _existingCommitmentStatement.Details.Course.Clone());
-
-            _apprenticeship.RenewCommitment(_f.Create<long>(), newDetails, DateTime.Now);
-
-            _apprenticeship.CommitmentStatements.Last().ApprenticeshipDetailsCorrect.Should().BeNull();
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
         public void When_apprenticeship_section_confirmation_status_is_set_And_a_change_to_course_details_has_occurred_Then_apprenticeship_section_is_not_confirmed(bool confirmationStatus)
         {
             _existingCommitmentStatement.SetProperty(p => p.ApprenticeshipDetailsCorrect, confirmationStatus);
