@@ -1,5 +1,6 @@
 ﻿using System;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Infrastructure;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
@@ -13,6 +14,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         }
         public ApprenticeCommitmentsApi Api { get; set; }
         public ApprenticeCommitmentsDbContext DbContext { get; set; }
+        public SpecifiedTimeProvider Time { get; set; }
+            = new SpecifiedTimeProvider(DateTimeOffset.UtcNow);
 
         public void Dispose()
         {

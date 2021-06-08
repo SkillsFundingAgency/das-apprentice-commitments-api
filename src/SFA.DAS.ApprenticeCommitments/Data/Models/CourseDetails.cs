@@ -33,5 +33,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime PlannedStartDate { get; private set; }
 
         public int DurationInMonths => DifferenceInMonths(PlannedStartDate, PlannedEndDate);
+
+        public bool IsEquivalent(CourseDetails o)
+        {
+            if (o == null) throw new ArgumentNullException(nameof(o));
+            return Name == o.Name && Level == o.Level && Option == o.Option &&
+                PlannedStartDate == o.PlannedStartDate && PlannedEndDate == o.PlannedEndDate;
+        }
     }
 }

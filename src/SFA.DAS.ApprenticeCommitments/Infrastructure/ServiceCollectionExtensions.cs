@@ -37,6 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             services.AddFluentValidation(new[] { typeof(UnitOfWorkPipelineBehavior<,>).Assembly });
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkPipelineBehavior<,>));
 
+            services.AddTransient<ITimeProvider, UtcTimeProvider>();
             services.AddSingleton<IManagedIdentityTokenProvider, ManagedIdentityTokenProvider>();
             services.AddTransient<IConnectionFactory, SqlServerConnectionFactory>();
             services.AddScoped<IRegistrationContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());

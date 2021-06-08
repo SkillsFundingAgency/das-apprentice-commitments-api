@@ -168,4 +168,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[IX_CommitmentStatement_ApprenticeId]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="907a6346-87dd-45d5-9d27-2d5d417413fd" ChangeDateTime="05/18/2021 08:17:09">
+    <Property Name="ElementName" Value="[dbo].[Registration].[ApprenticeshipId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Registration]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CommitmentsApprenticeshipId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="affe80b6-b9e5-4572-85cc-48531452c86e" ChangeDateTime="05/18/2021 08:17:20">
+    <Property Name="ElementName" Value="[dbo].[Registration].[ApprovedOn]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Registration]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="CommitmentsApprovedOn" />
+  </Operation>
 </Operations>
