@@ -13,13 +13,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public ApprenticeshipDetails(
             long employerAccountLegalEntityId, string employerName,
             long trainingProviderId, string trainingProviderName,
-            CourseDetails courseDetails)
+            CourseDetails course)
         {
             EmployerAccountLegalEntityId = employerAccountLegalEntityId;
             EmployerName = employerName;
             TrainingProviderId = trainingProviderId;
             TrainingProviderName = trainingProviderName;
-            Course = courseDetails;
+            Course = course;
         }
 
         public long EmployerAccountLegalEntityId { get; private set; }

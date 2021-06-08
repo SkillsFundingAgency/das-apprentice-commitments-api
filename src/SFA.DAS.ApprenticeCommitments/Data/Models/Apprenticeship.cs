@@ -45,13 +45,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        internal void Confirm(long commitmentStatementId, Confirmations confirmations)
-            => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations);
+        internal void Confirm(long commitmentStatementId, Confirmations confirmations, DateTimeOffset now)
+            => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations, now);
 
-        internal void RenewCommitment(ApprenticeshipDetails details, DateTime approvedOn)
+        public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var ns = LatestCommitmentStatement.RenewCommitment(details, approvedOn);
-            CommitmentStatements.Add(ns);
+            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
+            newStatement.RenewedFromCommitment(LatestCommitmentStatement);
+            CommitmentStatements.Add(newStatement);
         }
     }
 }

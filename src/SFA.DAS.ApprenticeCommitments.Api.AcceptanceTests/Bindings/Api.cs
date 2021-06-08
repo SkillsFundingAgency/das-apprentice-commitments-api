@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SFA.DAS.ApprenticeCommitments.Infrastructure;
+using System;
+using System.Collections.Generic;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
@@ -9,12 +11,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
     {
         public static ApprenticeCommitmentsApi Client { get; set; }
         public static LocalWebApplicationFactory<Startup> Factory { get; set; }
+        private static readonly Func<SpecifiedTimeProvider> _time = () => _timeProvider;
+        private static SpecifiedTimeProvider _timeProvider;
 
         private readonly TestContext _context;
 
         public Api(TestContext context)
         {
             _context = context;
+            _timeProvider = context.Time;
         }
 
         [BeforeScenario()]
@@ -36,7 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
                     { "ApplicationSettings:DbConnectionString", TestsDbConnectionFactory.ConnectionString }
                 };
 
-            return new LocalWebApplicationFactory<Startup>(config);
+            return new LocalWebApplicationFactory<Startup>(config, _time);
         }
 
         [AfterFeature()]

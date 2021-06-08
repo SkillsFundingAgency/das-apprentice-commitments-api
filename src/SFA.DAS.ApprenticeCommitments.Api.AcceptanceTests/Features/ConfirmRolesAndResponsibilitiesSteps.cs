@@ -2,6 +2,7 @@
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -37,7 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had its roles and responsibilities confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsRolesAndResponsibilitiesConfirmed()
         {
-            _commitmentStatement.Confirm(new Confirmations { RolesAndResponsibilitiesCorrect = true });
+            _commitmentStatement.Confirm(new Confirmations { RolesAndResponsibilitiesCorrect = true }, _fixture.Create<DateTimeOffset>());
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
