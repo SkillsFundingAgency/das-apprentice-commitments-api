@@ -37,11 +37,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
         public DateTime? ConfirmedOn { get; private set; }
 
-        //public void ConfirmTrainingProvider(bool trainingProviderCorrect)
-        //{
-        //    TrainingProviderCorrect = trainingProviderCorrect;
-        //}
-
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
