@@ -1,12 +1,17 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using System;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
+    public class ChangeEmailAddressRequest
+    {
+        public string Email { get; set; }
+    }
+
     [ApiController]
     public class ApprenticesController : ControllerBase
     {
@@ -25,10 +30,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPost("apprentices/{id}/email")]
-        public async Task<IActionResult> CreateRegistration(Guid id, ChangeEmailAddressCommand request)
+        public async Task<IActionResult> CreateRegistration(Guid id, ChangeEmailAddressRequest request)
         {
-            request.ApprenticeId = id;
-            await _mediator.Send(request);
+            await _mediator.Send(new ChangeEmailAddressCommand(id, request.Email));
             return Accepted();
         }
     }

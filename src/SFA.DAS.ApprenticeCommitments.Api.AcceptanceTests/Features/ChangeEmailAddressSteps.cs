@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System.Linq;
 using System.Net.Mail;
@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
-        private ChangeEmailAddressCommand _command;
+        private ChangeEmailAddressRequest _command;
 
         public ChangeEmailAddressSteps(TestContext context)
         {
@@ -37,8 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void GivenAChangeEmailCommandWithAValidEmailAddress()
         {
             _command = _fixture
-                .Build<ChangeEmailAddressCommand>()
-                .Without(p => p.ApprenticeId)
+                .Build<ChangeEmailAddressRequest>()
                 .With(p => p.Email, (MailAddress adr) => adr.ToString())
                 .Create();
         }
