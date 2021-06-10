@@ -7,7 +7,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
 {
     public class ChangeEmailAddressCommand : IUnitOfWorkCommand
     {
-        public Guid ApprenticeId { get; set; }
-        public string Email { get; set; }
+        public ChangeEmailAddressCommand(Guid apprenticeId, string email)
+        {
+            ApprenticeId = apprenticeId;
+            Email = email;
+        }
+
+        public Guid ApprenticeId { get; }
+        public string Email { get; }
     }
 }
