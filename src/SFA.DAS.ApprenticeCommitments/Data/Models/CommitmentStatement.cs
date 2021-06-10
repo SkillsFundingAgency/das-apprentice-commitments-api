@@ -97,8 +97,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             bool ApprenticeshipIsEquivalent()
             {
-                return lastStatement.CommitmentsApprenticeshipId == CommitmentsApprenticeshipId 
-                       && Details.Course.IsEquivalent(lastStatement.Details.Course);
+                return Details.Course.IsEquivalent(lastStatement.Details.Course);
             }
 
             if (lastStatement == null) throw new ArgumentNullException(nameof(lastStatement));
