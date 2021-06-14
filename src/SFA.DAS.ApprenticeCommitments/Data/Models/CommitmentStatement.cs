@@ -37,51 +37,33 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
         public DateTime? ConfirmedOn { get; private set; }
 
-        public void ConfirmTrainingProvider(bool trainingProviderCorrect)
+        public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
-            TrainingProviderCorrect = trainingProviderCorrect;
-        }
+            EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
+            TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
+            ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
+            RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
+            HowApprenticeshipDeliveredCorrect = confirmations.HowApprenticeshipDeliveredCorrect ?? HowApprenticeshipDeliveredCorrect;
 
-        public void ConfirmEmployer(bool employerCorrect)
-        {
-            EmployerCorrect = employerCorrect;
-        }
-
-        public void ConfirmRolesAndResponsibilities(bool rolesAndResponsibilitiesCorrect)
-        {
-            RolesAndResponsibilitiesCorrect = rolesAndResponsibilitiesCorrect;
-        }
-
-        public void ConfirmApprenticeshipDetails(bool apprenticeshipDetailsCorrect)
-        {
-            ApprenticeshipDetailsCorrect = apprenticeshipDetailsCorrect;
-        }
-
-        public void ConfirmHowApprenticeshipWillBeDelivered(bool howApprenticeshipDeliveredCorrect)
-        {
-            HowApprenticeshipDeliveredCorrect = howApprenticeshipDeliveredCorrect;
-        }
-
-        public void ConfirmApprenticeship(bool apprenticeshipCorrect, DateTimeOffset time)
-        {
-            if (apprenticeshipCorrect
-                && TrainingProviderCorrect == true
-                && EmployerCorrect == true
-                && RolesAndResponsibilitiesCorrect == true
-                && ApprenticeshipDetailsCorrect == true
-                && HowApprenticeshipDeliveredCorrect == true)
+            if (confirmations.ApprenticeshipCorrect == true)
             {
-                ConfirmedOn = time.UtcDateTime;
-            }
-            else
-            {
-                throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
+                if (TrainingProviderCorrect == true
+                    && EmployerCorrect == true
+                    && RolesAndResponsibilitiesCorrect == true
+                    && ApprenticeshipDetailsCorrect == true
+                    && HowApprenticeshipDeliveredCorrect == true)
+                {
+                    ConfirmedOn = time.UtcDateTime;
+                }
+                else
+                {
+                    throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
+                }
             }
         }
 
         public void RenewedFromCommitment(CommitmentStatement lastStatement)
         {
-
             bool EmployerIsEquivalent()
             {
                 return lastStatement.Details.EmployerAccountLegalEntityId ==
@@ -92,7 +74,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             bool ProviderIsEquivalent()
             {
                 return lastStatement.Details.TrainingProviderId == Details.TrainingProviderId &&
-                        lastStatement.Details.TrainingProviderName == Details.TrainingProviderName;
+                       lastStatement.Details.TrainingProviderName == Details.TrainingProviderName;
             }
 
             bool ApprenticeshipIsEquivalent()
