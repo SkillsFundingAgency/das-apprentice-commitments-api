@@ -32,7 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 PlannedStartDate = apprenticeship.Details.Course.PlannedStartDate,
                 PlannedEndDate = apprenticeship.Details.Course.PlannedEndDate,
                 DurationInMonths = apprenticeship.Details.Course.DurationInMonths,
-                ConfirmedOn = apprenticeship.ConfirmedOn
+                ConfirmedOn = apprenticeship.ConfirmedOn,
+                ConfirmBefore = apprenticeship.ConfirmBefore,
             };
         }
     }
