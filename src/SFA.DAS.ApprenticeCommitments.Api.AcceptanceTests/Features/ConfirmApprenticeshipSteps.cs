@@ -31,11 +31,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship waiting to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipWaitingToBeConfirmed()
         {
-            _commitmentStatement.ConfirmEmployer(true);
-            _commitmentStatement.ConfirmTrainingProvider(true);
-            _commitmentStatement.ConfirmApprenticeshipDetails(true);
-            _commitmentStatement.ConfirmRolesAndResponsibilities(true);
-            _commitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(true);
+            _commitmentStatement.Confirm(new Confirmations
+            {
+                EmployerCorrect = true,
+                TrainingProviderCorrect = true,
+                ApprenticeshipDetailsCorrect = true,
+                RolesAndResponsibilitiesCorrect = true,
+                HowApprenticeshipDeliveredCorrect = true,
+            }, _fixture.Create<DateTimeOffset>());
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
         }
@@ -62,7 +65,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/ApprenticeshipConfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/statements/{_commitmentStatement.Id}/ApprenticeshipConfirmation",
                 command);
         }
 

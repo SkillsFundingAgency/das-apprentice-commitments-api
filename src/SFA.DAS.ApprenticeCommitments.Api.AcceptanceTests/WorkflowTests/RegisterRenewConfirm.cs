@@ -11,7 +11,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
+namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class RegisterRenewConfirm
     {
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Test]
-        public async Task Test()
+        public async Task ChangingApprenticeshipCreatesNewCommitmentStatementWhichIsLatest()
         {
             var factory = Bindings.Api.CreateApiFactory();
             var client = factory.CreateClient();
@@ -71,6 +71,64 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 {
                     CommitmentsApprenticeshipId = change.CommitmentsApprenticeshipId,
                     change.CourseName,
+                });
+        }
+
+        [Test]
+        public async Task ConfirmingCommitmentStatementConcurrentToApprovedChangeConfirmsCorrectStatement()
+        {
+            var factory = Bindings.Api.CreateApiFactory();
+            var client = factory.CreateClient();
+            var db = Bindings.Database.CreateDbContext();
+
+            var create = fixture.Build<CreateRegistrationCommand>()
+                .With(p => p.Email, (MailAddress adr) => adr.ToString())
+                .Create();
+
+            var r1 = await client.PostValueAsync("apprenticeships", create);
+            r1.EnsureSuccessStatusCode();
+
+            var verify = fixture.Build<VerifyRegistrationCommand>()
+                .With(x => x.ApprenticeId, create.ApprenticeId)
+                .With(p => p.Email, create.Email)
+                .Create();
+
+            var r2 = await client.PostValueAsync("registrations", verify);
+            r2.EnsureSuccessStatusCode();
+
+            var (r3, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
+            var apprenticeshipId = apprenticeships[0].Id;
+            var csId = apprenticeships[0].CommitmentStatementId;
+
+            var change = fixture.Build<ChangeApprenticeshipCommand>()
+                .With(x => x.CommitmentsApprenticeshipId, create.CommitmentsApprenticeshipId)
+                .Without(x => x.CommitmentsContinuedApprenticeshipId)
+                .With(p => p.CommitmentsApprovedOn, (int days) => create.CommitmentsApprovedOn.AddDays(days))
+                .Create();
+
+            var r5 = await client.PostValueAsync("apprenticeships/change", change);
+            r5.EnsureSuccessStatusCode();
+
+            var r4 = await client.PostValueAsync(
+                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/statements/{csId}/EmployerConfirmation",
+                new ConfirmEmployerRequest { EmployerCorrect = true });
+            r4.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var (r6, apprenticeships2) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
+            r5.EnsureSuccessStatusCode();
+
+            apprenticeships2.Should().HaveCount(2)
+                .And.ContainEquivalentOf(new
+                {
+                    Id = apprenticeshipId,
+                    CommitmentStatementId = csId,
+                    EmployerCorrect = true,
+                })
+                .And.ContainEquivalentOf(new
+                {
+                    Id = apprenticeshipId,
+                    CommitmentStatementId = csId + 1,
+                    EmployerCorrect = (bool?)null,
                 });
         }
     }

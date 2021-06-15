@@ -32,17 +32,25 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 startDate, startDate.AddMonths(32)));
 
             _commitmentStatement = _fixture.Build<CommitmentStatement>()
-                .Do(a => a.ConfirmTrainingProvider(true))
-                .Do(a => a.ConfirmEmployer(true))
-                .Do(a => a.ConfirmApprenticeshipDetails(true))
-                .Do(a => a.ConfirmHowApprenticeshipWillBeDelivered(true))
+                .Do(a => a.Confirm(new Confirmations
+                {
+                    EmployerCorrect = true,
+                    TrainingProviderCorrect = true,
+                    ApprenticeshipDetailsCorrect = true,
+                    RolesAndResponsibilitiesCorrect = true,
+                    HowApprenticeshipDeliveredCorrect = true,
+                    ApprenticeshipCorrect = true,
+                }, DateTime.Now))
                 .Create();
 
             _newerCommitmentStatement = _fixture.Build<CommitmentStatement>()
-                .Do(a => a.ConfirmTrainingProvider(true))
-                .Do(a => a.ConfirmEmployer(true))
-                .Do(a => a.ConfirmApprenticeshipDetails(true))
-                .Do(a => a.ConfirmHowApprenticeshipWillBeDelivered(true))
+                .Do(a => a.Confirm(new Confirmations
+                {
+                    TrainingProviderCorrect = true,
+                    EmployerCorrect = true,
+                    ApprenticeshipDetailsCorrect = true,
+                    HowApprenticeshipDeliveredCorrect = true,
+                }, DateTimeOffset.UtcNow))
                 .Create();
 
         }

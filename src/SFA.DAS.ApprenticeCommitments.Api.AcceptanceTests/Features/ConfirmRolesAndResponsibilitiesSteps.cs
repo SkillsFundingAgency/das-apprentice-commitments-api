@@ -2,6 +2,7 @@
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -37,7 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had its roles and responsibilities confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsRolesAndResponsibilitiesConfirmed()
         {
-            _commitmentStatement.ConfirmRolesAndResponsibilities(true);
+            _commitmentStatement.Confirm(new Confirmations { RolesAndResponsibilitiesCorrect = true }, _fixture.Create<DateTimeOffset>());
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
@@ -62,7 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/RolesAndResponsibilitiesConfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/statements/{_commitmentStatement.Id}/RolesAndResponsibilitiesConfirmation",
                 command);
         }
 

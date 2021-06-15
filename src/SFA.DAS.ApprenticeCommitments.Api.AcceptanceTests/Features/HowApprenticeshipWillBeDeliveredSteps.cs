@@ -2,6 +2,7 @@
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -48,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship that has previously had HowMyApprenticeshipWillBeDelivered positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadHowMyApprenticeshipWillBeDeliveredPositivelyConfirmed()
         {
-            _commitmentStatement.ConfirmHowApprenticeshipWillBeDelivered(true);
+            _commitmentStatement.Confirm(new Confirmations { HowApprenticeshipDeliveredCorrect = true }, DateTimeOffset.Now);
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
@@ -57,8 +58,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/howapprenticeshipwillbedeliveredconfirmation",
-                new HowApprenticeshipWillBeDeliveredRequest
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/statements/{_commitmentStatement.Id}/howapprenticeshipwillbedeliveredconfirmation",
+                new ConfirmHowApprenticeshipWillBeDeliveredRequest
                 {
                     HowApprenticeshipDeliveredCorrect = (bool)HowApprenticeshipDeliveredCorrect,
                 });
