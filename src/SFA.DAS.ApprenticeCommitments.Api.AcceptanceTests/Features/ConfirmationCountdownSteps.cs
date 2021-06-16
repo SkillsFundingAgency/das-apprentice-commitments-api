@@ -2,9 +2,11 @@
 using AutoFixture.Kernel;
 using FluentAssertions;
 using Newtonsoft.Json;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -40,6 +42,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
+        }
+
+        [When("we have received a change of circumstances that was approved on (.*)")]
+        public async Task GivenWeHaveReceivedAChangeOfCircumstancesThatWasApprovedOn(DateTime approvedOn)
+        {
+            var change = _fixture.Build<ChangeApprenticeshipCommand>()
+                .With(x => x.CommitmentsApprovedOn, approvedOn)
+                .With(x => x.CommitmentsApprenticeshipId, _apprenticeship.CommitmentsApprenticeshipId)
+                .Without(x => x.CommitmentsContinuedApprenticeshipId)
+                .Create();
+
+            await _context.Api.Post($"apprenticeships/change", change);
         }
 
         [When("retrieving the apprenticeship")]
