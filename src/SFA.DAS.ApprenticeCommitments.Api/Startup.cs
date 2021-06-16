@@ -91,6 +91,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                         o.Filters.Add(new AuthorizeFilter(PolicyNames.Default));
                     }
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            var overdueDays = Configuration.GetValue<int?>("DaysUntilCommitmentStatementOverdue");
+            if (overdueDays > 0) CommitmentStatement.DaysBeforeOverdue = overdueDays.Value;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

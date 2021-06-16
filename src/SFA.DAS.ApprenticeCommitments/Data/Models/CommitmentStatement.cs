@@ -9,6 +9,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
     [Table("CommitmentStatement")]
     public class CommitmentStatement
     {
+        public static int DaysBeforeOverdue { get; set; } = 14;
+
         private CommitmentStatement()
         {
         }
@@ -35,8 +37,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
-        
-        public DateTime ConfirmBefore => CommitmentsApprovedOn.AddDays(14);
+
+        public DateTime ConfirmBefore => CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
         public DateTime? ConfirmedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
