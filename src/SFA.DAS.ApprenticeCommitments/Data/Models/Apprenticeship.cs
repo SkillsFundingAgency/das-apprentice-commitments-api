@@ -31,18 +31,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
         {
-            // Remove around the end of May 2021
-            // https://skillsfundingagency.atlassian.net/browse/CS-655
-            if (commitmentStatementId == 0)
-            {
-                return LatestCommitmentStatement;
-            }
-            else
-            {
-                return CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId)
-                    ?? throw new DomainException(
-                        $"Commitment Statement {commitmentStatementId} not found in apprenticeship {Id}");
-            }
+            return CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId)
+                ?? throw new DomainException(
+                    $"Commitment Statement {commitmentStatementId} not found in apprenticeship {Id}");
         }
 
         internal void Confirm(long commitmentStatementId, Confirmations confirmations, DateTimeOffset now)

@@ -19,7 +19,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 
         public ConfirmApprenticeshipDetailsController(IMediator mediator) => _mediator = mediator;
 
-        [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/apprenticeshipdetailsconfirmation")]
         [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/statements/{commitmentStatementId}/ApprenticeshipDetailsConfirmation")]
         public async Task ConfirmTrainingProvider(
             Guid apprenticeId, long apprenticeshipId, long commitmentStatementId,

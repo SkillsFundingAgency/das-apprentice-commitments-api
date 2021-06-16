@@ -49,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var apprenticeshipId = apprenticeships[0].Id;
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/EmployerConfirmation",
+                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/statements/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.EnsureSuccessStatusCode();
 
