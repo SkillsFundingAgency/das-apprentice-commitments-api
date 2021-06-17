@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -225,6 +225,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void ThenTheResponseIsOK()
         {
             _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Then("the Confirmation Commenced event is published")]
+        public void ThenTheConfirmationStartedEventIsPublished()
+        {
+            var latest = _context.DbContext.CommitmentStatements.OrderBy(x => x.Id).Last();
+
+            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipConfirmationCommencedEvent
+                {
+                    ApprenticeshipId = _commitmentStatement.ApprenticeshipId,
+                    ConfirmationOverdueOn = latest.ConfirmBefore,
+                    CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
+                    CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId,
+                }
+            });
         }
     }
 }

@@ -145,7 +145,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api
 
         public void ConfigureContainer(UpdateableServiceProvider serviceProvider)
         {
-            serviceProvider.StartNServiceBus(Configuration).GetAwaiter().GetResult();
+            if (!Configuration.IsAcceptanceTest())
+                serviceProvider.StartNServiceBus(Configuration).GetAwaiter().GetResult();
         }
     }
 }

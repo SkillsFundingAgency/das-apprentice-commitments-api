@@ -1,4 +1,4 @@
-﻿@database
+@database
 @api
 
 Feature: ChangeApprenticeship
@@ -10,6 +10,7 @@ Scenario: Update an apprenticeship with a new commitment statement
 	Then the result should return accepted
 	And the new commitment statement exists in database
 	And the new commitment statement has same commitments apprenticeship Id
+	And the Confirmation Commenced event is published
 
 Scenario: A new apprenticeship has been created as a continuation of an apprenticeship
 	Given we have an existing apprenticeship

@@ -1,6 +1,7 @@
-﻿using System;
+﻿using NServiceBus.Testing;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
+using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
@@ -12,10 +13,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         {
             isDisposed = false;
         }
+
         public ApprenticeCommitmentsApi Api { get; set; }
         public ApprenticeCommitmentsDbContext DbContext { get; set; }
+
         public SpecifiedTimeProvider Time { get; set; }
             = new SpecifiedTimeProvider(DateTimeOffset.UtcNow);
+
+        public TestableMessageSession Messages { get; set; }
+            = new TestableMessageSession();
 
         public void Dispose()
         {

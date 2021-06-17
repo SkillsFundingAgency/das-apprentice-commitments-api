@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,11 +49,19 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         internal void Confirm(long commitmentStatementId, Confirmations confirmations, DateTimeOffset now)
             => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations, now);
 
-        public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
+        public object? RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
             var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
             newStatement.RenewedFromCommitment(LatestCommitmentStatement);
             CommitmentStatements.Add(newStatement);
+
+            return new ApprenticeshipConfirmationCommencedEvent
+            {
+                ApprenticeshipId = Id,
+                ConfirmationOverdueOn = newStatement.ConfirmBefore,
+                CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
+                CommitmentsApprovedOn = approvedOn,
+            };
         }
     }
 }
