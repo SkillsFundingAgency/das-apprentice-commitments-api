@@ -2,11 +2,7 @@
 
 namespace SFA.DAS.ApprenticeCommitments.Messages.Events
 {
-    public interface IAsyncNotification
-    {
-    }
-
-    public class ApprenticeshipConfirmationCommencedEvent : IAsyncNotification
+    public class ApprenticeshipConfirmationCommencedEvent
     {
         public long ApprenticeshipId { get; set; }
         public long ConfirmationId { get; set; }

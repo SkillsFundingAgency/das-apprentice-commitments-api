@@ -1,11 +1,8 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
-using SFA.DAS.ApprenticeCommitments.Messages.Events;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,14 +15,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
         private readonly IApprenticeshipContext _statements;
         private readonly IRegistrationContext _registrations;
         private readonly ILogger<ChangeApprenticeshipCommandHandler> _logger;
-        private readonly IMessageSession _messageSession;
 
-        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext statements, IRegistrationContext registrations, IMessageSession session, ILogger<ChangeApprenticeshipCommandHandler> logger)
+        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext statements, IRegistrationContext registrations, ILogger<ChangeApprenticeshipCommandHandler> logger)
         {
             _statements = statements;
             _registrations = registrations;
             _logger = logger;
-            _messageSession = session;
         }
 
         public async Task<Unit> Handle(ChangeApprenticeshipCommand command, CancellationToken cancellationToken)
@@ -42,9 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             else
             {
                 _logger.LogInformation("Updating apprenticeship {apprenticeshipId}", apprenticeshipId);
-                var e = existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
-
-                if (e != null) await _messageSession.Publish(e);
+                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
             }
 
             return Unit.Value;

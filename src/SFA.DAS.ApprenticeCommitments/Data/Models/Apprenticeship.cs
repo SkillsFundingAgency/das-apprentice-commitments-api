@@ -1,5 +1,6 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
-using SFA.DAS.ApprenticeCommitments.Messages.Events;
+﻿using MediatR;
+using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,39 +50,38 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         internal void Confirm(long commitmentStatementId, Confirmations confirmations, DateTimeOffset now)
             => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations, now);
 
-        public object? RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
+        public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
             var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (renewed == null) return null;
-
-            CommitmentStatements.Add(renewed);
-
-            var e = new ApprenticeshipConfirmationCommencedEvent
+            if (renewed != null)
             {
-                ApprenticeshipId = Id,
-                ConfirmationOverdueOn = renewed.ConfirmBefore,
-                CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
-                CommitmentsApprovedOn = approvedOn,
-            };
+                CommitmentStatements.Add(renewed);
 
-            AddDomainEvent(e);
+                var e = new ApprenticeshipConfirmationCommenced
+                {
+                    ApprenticeshipId = Id,
+                    ConfirmationOverdueOn = renewed.ConfirmBefore,
+                    CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
+                    CommitmentsApprovedOn = approvedOn,
+                };
 
-            return null;
+                AddDomainEvent(e);
+            }
         }
     }
 
     public abstract class Entity
     {
-        public List<IAsyncNotification> DomainEvents { get; }
-            = new List<IAsyncNotification>();
+        public List<INotification> DomainEvents { get; }
+            = new List<INotification>();
 
-        public void AddDomainEvent(IAsyncNotification eventItem)
+        public void AddDomainEvent(INotification eventItem)
         {
             DomainEvents.Add(eventItem);
         }
 
-        public void RemoveDomainEvent(IAsyncNotification eventItem)
+        public void RemoveDomainEvent(INotification eventItem)
         {
             DomainEvents.Remove(eventItem);
         }
