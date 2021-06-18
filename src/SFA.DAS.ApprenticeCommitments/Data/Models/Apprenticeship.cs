@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Apprenticeship
+    public class Apprenticeship : Entity
     {
         private Apprenticeship()
         {
@@ -57,13 +57,33 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             CommitmentStatements.Add(renewed);
 
-            return new ApprenticeshipConfirmationCommencedEvent
+            var e = new ApprenticeshipConfirmationCommencedEvent
             {
                 ApprenticeshipId = Id,
                 ConfirmationOverdueOn = renewed.ConfirmBefore,
                 CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
                 CommitmentsApprovedOn = approvedOn,
             };
+
+            AddDomainEvent(e);
+
+            return null;
+        }
+    }
+
+    public abstract class Entity
+    {
+        public List<IAsyncNotification> DomainEvents { get; }
+            = new List<IAsyncNotification>();
+
+        public void AddDomainEvent(IAsyncNotification eventItem)
+        {
+            DomainEvents.Add(eventItem);
+        }
+
+        public void RemoveDomainEvent(IAsyncNotification eventItem)
+        {
+            DomainEvents.Remove(eventItem);
         }
     }
 }

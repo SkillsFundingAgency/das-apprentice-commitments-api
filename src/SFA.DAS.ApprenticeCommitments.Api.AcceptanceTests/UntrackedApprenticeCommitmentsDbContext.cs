@@ -6,7 +6,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
     public class UntrackedApprenticeCommitmentsDbContext : ApprenticeCommitmentsDbContext
     {
-        public UntrackedApprenticeCommitmentsDbContext(DbContextOptions<ApprenticeCommitmentsDbContext> options) : base(options)
+        public UntrackedApprenticeCommitmentsDbContext(DbContextOptions<ApprenticeCommitmentsDbContext> options) : base(options, new MyDispatcher())
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTrackingWithIdentityResolution;
         }

@@ -1,17 +1,35 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Linq;
 using System.Net.Mail;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
+    public interface IDispatcher
+    {
+        public void Dispatch(object message);
+    }
+
+    public class MyDispatcher : IDispatcher
+    {
+        public void Dispatch(object message)
+        {
+        }
+    }
+
     public class ApprenticeCommitmentsDbContext : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext
     {
+        private readonly IDispatcher _dispatcher;
+
         public ApprenticeCommitmentsDbContext()
         {
         }
 
-        public ApprenticeCommitmentsDbContext(DbContextOptions<ApprenticeCommitmentsDbContext> options) : base(options)
+        public ApprenticeCommitmentsDbContext(DbContextOptions<ApprenticeCommitmentsDbContext> options, IDispatcher dispatcher) : base(options)
         {
+            _dispatcher = dispatcher;
         }
 
         public virtual DbSet<Registration> Registrations { get; set; } = null!;
@@ -104,6 +122,27 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 });
             });
             base.OnModelCreating(modelBuilder);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            var domainEventEntities = ChangeTracker.Entries<Entity>()
+                .Select(po => po.Entity)
+                .Where(po => po.DomainEvents.Any())
+                .ToArray();
+
+            foreach (var entity in domainEventEntities)
+            {
+                var events = entity.DomainEvents.ToArray();
+                entity.DomainEvents.Clear();
+                
+                foreach (var domainEvent in events)
+                {
+                    _dispatcher.Dispatch(domainEvent);
+                }
+            }
+
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }
