@@ -263,6 +263,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 Message = new ApprenticeshipConfirmationCommencedEvent
                 {
                     ApprenticeshipId = _commitmentStatement.ApprenticeshipId,
+                    ConfirmationId = latest.Id,
                     ConfirmationOverdueOn = latest.ConfirmBefore,
                     CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
                     CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId,

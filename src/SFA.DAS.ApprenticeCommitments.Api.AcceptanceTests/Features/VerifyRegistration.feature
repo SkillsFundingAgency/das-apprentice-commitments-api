@@ -11,6 +11,7 @@ Scenario: A registration is successfully completed
 	When we verify that registration
 	Then the apprentice record is created
 	And an apprenticeship record is created
+	And the Confirmation Commenced event is published
 	And the registration has been marked as completed
 	And the registration CreatedOn field is unchanged
 	And a record of the apprentice email address is kept

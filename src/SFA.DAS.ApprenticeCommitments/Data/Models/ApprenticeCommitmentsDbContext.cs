@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading;
@@ -119,8 +120,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
+            var i = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
             await DispatchDomainEvents();
-            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            return i;
         }
 
         private async Task DispatchDomainEvents()
