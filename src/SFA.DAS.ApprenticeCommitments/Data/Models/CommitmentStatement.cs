@@ -1,4 +1,4 @@
-using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -79,8 +79,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             bool ApprenticeshipIsEquivalent() =>
                 Details.Course.IsEquivalent(details.Course);
 
-            if (EmployerIsEquivalent() && ProviderIsEquivalent() && ApprenticeshipIsEquivalent())
-                return null;
+            if (Details.Equals(details)) return null;
 
             var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
 
