@@ -1,4 +1,4 @@
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using TechTalk.SpecFlow;
+using NServiceBus.Testing;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 
 #nullable enable
 
@@ -33,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
             _commitmentsApprenticeshipId = _fixture.Create<long>();
             _commitmentStatement = _fixture.Create<CommitmentStatement>();
-            _commitmentStatement.SetProperty(p=>p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
+            _commitmentStatement.SetProperty(p => p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
             _newApprenticeshipId = _fixture.Create<long>();
         }
 
@@ -62,7 +64,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var registration = _fixture.Create<Registration>();
             registration.SetProperty(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
-            registration.SetProperty(x=>x.UserIdentityId, Guid.NewGuid());
+            registration.SetProperty(x => x.UserIdentityId, Guid.NewGuid());
 
             _context.DbContext.Registrations.Add(registration);
             await _context.DbContext.SaveChangesAsync();
@@ -72,7 +74,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task GivenWeDoHaveAnUnconfirmedRegistration()
         {
             var registration = _fixture.Create<Registration>();
-            registration.SetProperty(x=>x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
+            registration.SetProperty(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
 
             _context.DbContext.Registrations.Add(registration);
             await _context.DbContext.SaveChangesAsync();
@@ -83,10 +85,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var start = _fixture.Create<DateTime>();
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
-                .Without(x=>x.CommitmentsContinuedApprenticeshipId)
+                .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
+                .Create();
+        }
+
+        [Given("we have an update apprenticeship request with no material change")]
+        public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest()
+        {
+            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+                .Without(x => x.CommitmentsContinuedApprenticeshipId)
+                .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
+                .With(x => x.EmployerAccountLegalEntityId, _commitmentStatement.Details.EmployerAccountLegalEntityId)
+                .With(x => x.EmployerName, _commitmentStatement.Details.EmployerName)
+                .With(x => x.TrainingProviderId, _commitmentStatement.Details.TrainingProviderId)
+                .With(x => x.TrainingProviderName, _commitmentStatement.Details.TrainingProviderName)
+                .With(x => x.CourseName, _commitmentStatement.Details.Course.Name)
+                .With(x => x.CourseLevel, _commitmentStatement.Details.Course.Level)
+                .With(x => x.CourseOption, _commitmentStatement.Details.Course.Option)
+                .With(x => x.PlannedStartDate, _commitmentStatement.Details.Course.PlannedStartDate)
+                .With(x => x.PlannedEndDate, _commitmentStatement.Details.Course.PlannedEndDate)
                 .Create();
         }
 
@@ -155,7 +175,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"we have updated the apprenticeship details for the unconfirmed registration")]
         public void ThenWeHaveUpdatedTheApprenticeshipDetailsForTheUnconfirmedRegistration()
         {
-            _context.DbContext.Registrations.Should().ContainEquivalentOf(new 
+            _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
                 Apprenticeship = new
                 {
@@ -205,6 +225,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
+        [Then("there should only be the original commitment statement in the database")]
+        public void ThenThereShouldOnlyBeTheOriginalCommitmentStatementInTheDatabase()
+        {
+            _context.DbContext.CommitmentStatements.Should().HaveCount(1);
+        }
+
         [Then("there should be no commitment statements in the database")]
         public void ThenThereShouldBeNoCommitmentStatementsInTheDatabase()
         {
@@ -242,6 +268,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId,
                 }
             });
+        }
+
+        [Then("no Confirmation Commenced event is published")]
+        public void ThenNoConfirmationCommencedEventIsPublished()
+        {
+            _context.Messages.PublishedMessages
+                .Select(x => x.Message is ApprenticeshipConfirmationCommencedEvent)
+                .Should().BeEmpty();
         }
     }
 }

@@ -1,4 +1,4 @@
-@database
+﻿@database
 @api
 
 Feature: ChangeApprenticeship
@@ -50,3 +50,12 @@ Scenario: No apprenticeship exist, but registation details are marked as complet
 	When the update is posted
 	Then the response is bad request
 	And a domain exception is thrown
+
+Scenario: Do not update an apprenticeship when no consequential change is made
+	Given we have an existing apprenticeship
+	And we have an update apprenticeship request with no material change
+	When the update is posted
+	Then the result should return accepted
+	Then there should only be the original commitment statement in the database
+	And no Confirmation Commenced event is published
+

@@ -51,14 +51,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public object? RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
-            newStatement.RenewedFromCommitment(LatestCommitmentStatement);
-            CommitmentStatements.Add(newStatement);
+            var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
+
+            if (renewed == null) return null;
+
+            CommitmentStatements.Add(renewed);
 
             return new ApprenticeshipConfirmationCommencedEvent
             {
                 ApprenticeshipId = Id,
-                ConfirmationOverdueOn = newStatement.ConfirmBefore,
+                ConfirmationOverdueOn = renewed.ConfirmBefore,
                 CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
                 CommitmentsApprovedOn = approvedOn,
             };
