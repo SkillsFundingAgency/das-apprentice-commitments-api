@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading;

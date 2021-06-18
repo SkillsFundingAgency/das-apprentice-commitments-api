@@ -1,8 +1,10 @@
 ﻿#nullable enable
 
+using System;
+
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class ApprenticeshipDetails
+    public sealed class ApprenticeshipDetails : IEquatable<ApprenticeshipDetails>
     {
         private ApprenticeshipDetails()
         {
@@ -35,7 +37,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             _ => false,
         };
 
-        public bool Equals(ApprenticeshipDetails other) =>
+        public bool Equals(ApprenticeshipDetails? other) =>
+            other != null &&
             other.EmployerAccountLegalEntityId == EmployerAccountLegalEntityId &&
             other.EmployerName == EmployerName &&
             other.TrainingProviderId == TrainingProviderId &&
