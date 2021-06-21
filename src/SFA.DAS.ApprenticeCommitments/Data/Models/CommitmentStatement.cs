@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("CommitmentStatement")]
-    public class CommitmentStatement
+    public class CommitmentStatement : Entity
     {
         public static int DaysBeforeOverdue { get; set; } = 14;
 
@@ -58,13 +59,19 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     && ApprenticeshipDetailsCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
-                    ConfirmedOn = time.UtcDateTime;
+                    ConfirmCommitmentStatement(time);
                 }
                 else
                 {
                     throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
                 }
             }
+        }
+
+        private void ConfirmCommitmentStatement(DateTimeOffset time)
+        {
+            ConfirmedOn = time.UtcDateTime;
+            AddDomainEvent(new CommitmentStatementConfirmed(this));
         }
 
         internal CommitmentStatement? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)

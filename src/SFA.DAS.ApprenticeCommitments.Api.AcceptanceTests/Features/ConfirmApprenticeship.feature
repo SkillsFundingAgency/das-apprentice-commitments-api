@@ -9,6 +9,7 @@ Scenario: Positively confirm apprenticeship
 	When the apprentice confirms the apprenticeship
 	Then the response is OK
 	And the apprenticeship record is updated to show confirmed
+	And the Confirmation Confirmed event is published
 
 Scenario: Attempt to confirm apprenticeship prematurely
 	Given we have an apprenticeship not ready to be confirmed
