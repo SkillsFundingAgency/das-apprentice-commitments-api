@@ -57,6 +57,9 @@
   <ItemGroup>
     <Folder Include="Properties" />
     <Folder Include="Tables" />
+    <Folder Include="PostDeployment" />
+    <Folder Include="Views" />
+    <Folder Include="Schemas" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Registration.sql" />
@@ -67,8 +70,16 @@
     <Build Include="Tables\ApprenticeEmailAddressHistory.sql" />
     <Build Include="Tables\ApprenticeshipIdNumbers.sql" />
     <Build Include="Tables\Apprenticeship.sql" />
+    <Build Include="Views\ApprenticeDashboardView.sql" />
+    <Build Include="Views\ApprenticeshipDashboardView.sql" />
+    <Build Include="Views\CommitmentStatementDashboardView.sql" />
+    <Build Include="Views\RegistrationDashboardView.sql" />
+    <Build Include="Schemas\grafanaReporter.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.ApprenticeCommitments.Database.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="PostDeployment\PostDeployment.sql" />
   </ItemGroup>
 </Project>
