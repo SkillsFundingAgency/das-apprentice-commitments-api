@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.Mail;
@@ -8,7 +9,7 @@ using System.Net.Mail;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("Registration")]
-    public class Registration
+    public class Registration : Entity
     {
 #pragma warning disable CS8618 // Private constructor for entity framework
 
@@ -29,6 +30,17 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentsApprovedOn = commitmentsApprovedOn;
             Email = email;
             Apprenticeship = apprenticeship;
+
+            // The commitment statement isn't technically added until the apprentice
+            // confirms their identity, however it's possible that the apprentice
+            // never does.  This pretence will trigger events that Approvals can use
+            // to prompt the apprentice when the confirmation is overdue.
+            AddDomainEvent(
+                new CommitmentStatementAdded(
+                    new CommitmentStatement(
+                        commitmentsApprenticeshipId,
+                        commitmentsApprovedOn,
+                        Apprenticeship)));
         }
 
         public Guid ApprenticeId { get; private set; }

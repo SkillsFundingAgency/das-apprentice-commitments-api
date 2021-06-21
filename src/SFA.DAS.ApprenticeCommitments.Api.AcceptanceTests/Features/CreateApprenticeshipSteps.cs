@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,6 +94,22 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             registration.Apprenticeship.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
             registration.Apprenticeship.Course.PlannedStartDate.Should().Be(_createApprenticeshipRequest.PlannedStartDate);
             registration.Apprenticeship.Course.PlannedEndDate.Should().Be(_createApprenticeshipRequest.PlannedEndDate);
+        }
+
+        [Then("the Confirmation Commenced event is published")]
+        public void ThenTheConfirmationStartedEventIsPublished()
+        {
+            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipConfirmationCommencedEvent
+                {
+                    ApprenticeshipId = 0,
+                    ConfirmationId = 0,
+                    ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(CommitmentStatement.DaysBeforeOverdue),
+                    CommitmentsApprovedOn = _createApprenticeshipRequest.CommitmentsApprovedOn,
+                    CommitmentsApprenticeshipId = _createApprenticeshipRequest.CommitmentsApprenticeshipId,
+                }
+            });
         }
     }
 }

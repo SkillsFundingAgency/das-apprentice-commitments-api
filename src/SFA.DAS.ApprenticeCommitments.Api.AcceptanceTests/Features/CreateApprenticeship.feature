@@ -16,3 +16,4 @@ Scenario: Trying to create an apprenticeship with valid values
 	When the apprenticeship is posted
 	Then the result should return accepted
 	And the registration exists in database
+	And the Confirmation Commenced event is published
