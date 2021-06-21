@@ -24,6 +24,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentsApprovedOn = approvedOn;
             ConfirmBefore = CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
             Details = details;
+
+            AddDomainEvent(new CommitmentStatementAdded(this));
         }
 
         public long Id { get; private set; }

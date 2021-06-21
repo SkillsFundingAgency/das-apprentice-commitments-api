@@ -1,5 +1,4 @@
-﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
-using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +7,7 @@ using System.Linq;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Apprenticeship : Entity
+    public class Apprenticeship
     {
         private Apprenticeship()
         {
@@ -32,10 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
 
         private void AddCommitmentStatement(CommitmentStatement apprenticeship)
-        {
-            _commitmentStatements.Add(apprenticeship);
-            AddDomainEvent(new CommitmentStatementAdded(apprenticeship));
-        }
+            => _commitmentStatements.Add(apprenticeship);
 
         private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
         {
