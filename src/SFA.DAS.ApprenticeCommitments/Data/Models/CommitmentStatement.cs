@@ -21,6 +21,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = approvedOn;
+            ConfirmBefore = CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
             Details = details;
         }
 
@@ -38,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
-        public DateTime ConfirmBefore => CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
+        public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
