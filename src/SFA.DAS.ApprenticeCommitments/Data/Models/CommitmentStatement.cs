@@ -37,9 +37,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Confirmation? EmployerCorrect { get; private set; }
         public Confirmation? TrainingProviderCorrect { get; private set; }
+        public Confirmation? ApprenticeshipDetailsCorrect { get; private set; }
 
         public bool? RolesAndResponsibilitiesCorrect { get; private set; }
-        public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
             EmployerCorrect = (Confirmation?)confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = (Confirmation?)confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
-            ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
+            ApprenticeshipDetailsCorrect = (Confirmation?)confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
             RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
             HowApprenticeshipDeliveredCorrect = confirmations.HowApprenticeshipDeliveredCorrect ?? HowApprenticeshipDeliveredCorrect;
 

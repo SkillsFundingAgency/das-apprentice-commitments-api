@@ -84,6 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 })
                 .OwnsOne(e => e.EmployerCorrect, _ => { })
                 .OwnsOne(e => e.TrainingProviderCorrect, _ => { })
+                .OwnsOne(e => e.ApprenticeshipDetailsCorrect, _ => { })
                 ;
 
             modelBuilder.Entity<Registration>(entity =>
