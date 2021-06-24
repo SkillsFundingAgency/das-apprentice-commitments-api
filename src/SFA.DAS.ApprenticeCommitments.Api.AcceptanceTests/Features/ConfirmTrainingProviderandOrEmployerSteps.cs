@@ -19,7 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
         private readonly CommitmentStatement _commitmentStatement;
-        private bool? TrainingProviderCorrect { get; set; }
+        private Confirmation? TrainingProviderCorrect { get; set; }
         private Confirmation? EmployerCorrect { get; set; }
         private bool? ApprenticeshipDetailsCorrect { get; set; }
         private string endpoint;

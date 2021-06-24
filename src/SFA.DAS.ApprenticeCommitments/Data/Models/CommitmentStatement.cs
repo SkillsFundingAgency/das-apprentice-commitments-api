@@ -36,8 +36,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
         public Confirmation? EmployerCorrect { get; private set; }
+        public Confirmation? TrainingProviderCorrect { get; private set; }
 
-        public bool? TrainingProviderCorrect { get; private set; }
         public bool? RolesAndResponsibilitiesCorrect { get; private set; }
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
@@ -51,14 +51,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
             EmployerCorrect = (Confirmation?)confirmations.EmployerCorrect ?? EmployerCorrect;
-            TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
+            TrainingProviderCorrect = (Confirmation?)confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
             RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
             HowApprenticeshipDeliveredCorrect = confirmations.HowApprenticeshipDeliveredCorrect ?? HowApprenticeshipDeliveredCorrect;
 
             if (confirmations.ApprenticeshipCorrect == true)
             {
-                if (TrainingProviderCorrect == true
+                if (TrainingProviderCorrect
                     && EmployerCorrect
                     && RolesAndResponsibilitiesCorrect == true
                     && ApprenticeshipDetailsCorrect == true

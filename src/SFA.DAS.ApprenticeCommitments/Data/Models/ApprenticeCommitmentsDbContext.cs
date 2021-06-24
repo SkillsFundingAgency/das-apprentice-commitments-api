@@ -82,9 +82,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                         course.Property(p => p.PlannedEndDate).HasColumnName("PlannedEndDate");
                     });
                 })
-                .OwnsOne(e => e.EmployerCorrect, confirmation =>
-                {
-                });
+                .OwnsOne(e => e.EmployerCorrect, _ => { })
+                .OwnsOne(e => e.TrainingProviderCorrect, _ => { })
+                ;
 
             modelBuilder.Entity<Registration>(entity =>
             {
