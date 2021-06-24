@@ -31,16 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Email = email;
             Apprenticeship = apprenticeship;
 
-            // The commitment statement isn't technically added until the apprentice
-            // confirms their identity, however it's possible that the apprentice
-            // never does.  This pretence will trigger events that Approvals can use
-            // to prompt the apprentice when the confirmation is overdue.
-            AddDomainEvent(
-                new CommitmentStatementAdded(
-                    new CommitmentStatement(
-                        commitmentsApprenticeshipId,
-                        commitmentsApprovedOn,
-                        Apprenticeship)));
+            AddDomainEvent(new RegistrationAdded(this));
         }
 
         public Guid ApprenticeId { get; private set; }
