@@ -119,9 +119,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            var i = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            var numEntriesWritten = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
             await DispatchDomainEvents();
-            return i;
+            return numEntriesWritten;
         }
 
         private async Task DispatchDomainEvents()

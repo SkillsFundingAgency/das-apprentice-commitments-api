@@ -54,6 +54,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
             Client?.Dispose();
             Client = null;
             Factory?.Dispose();
+            _timeProvider = null;
+            _messageProvider = null;
         }
     }
 }

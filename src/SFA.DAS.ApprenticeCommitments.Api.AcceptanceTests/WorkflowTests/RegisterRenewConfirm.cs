@@ -28,6 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var factory = Bindings.Api.CreateApiFactory();
             var client = factory.CreateClient();
+            _ = new Bindings.Api(new TestContext());
             var db = Bindings.Database.CreateDbContext();
 
             var create = fixture.Build<CreateRegistrationCommand>()
