@@ -19,9 +19,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
         private readonly CommitmentStatement _commitmentStatement;
-        private Confirmation? TrainingProviderCorrect { get; set; }
+        private bool? TrainingProviderCorrect { get; set; }
         private bool? EmployerCorrect { get; set; }
-        private Confirmation? ApprenticeshipDetailsCorrect { get; set; }
+        private bool? ApprenticeshipDetailsCorrect { get; set; }
         private string endpoint;
         private object command;
         private DateTimeOffset _anytime;
@@ -159,7 +159,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 TrainingProviderCorrect,
                 EmployerCorrect,
                 ApprenticeshipDetailsCorrect,
-            }, c => c.Excluding(s => s.SelectedMemberPath.Contains("ConfirmedOn")));
+            });
         }
 
         [Then("the apprenticeship record remains unchanged")]

@@ -36,8 +36,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
         public bool? EmployerCorrect { get; private set; }
-        public Confirmation? TrainingProviderCorrect { get; private set; }
-        public Confirmation? ApprenticeshipDetailsCorrect { get; private set; }
+        public bool? TrainingProviderCorrect { get; private set; }
+        public bool? ApprenticeshipDetailsCorrect { get; private set; }
 
         public bool? RolesAndResponsibilitiesCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
@@ -51,14 +51,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
-            TrainingProviderCorrect = (Confirmation?)confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
-            ApprenticeshipDetailsCorrect = (Confirmation?)confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
+            TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
+            ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
             RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
             HowApprenticeshipDeliveredCorrect = confirmations.HowApprenticeshipDeliveredCorrect ?? HowApprenticeshipDeliveredCorrect;
 
             if (confirmations.ApprenticeshipCorrect == true)
             {
-                if (EmployerCorrect == true && TrainingProviderCorrect && ApprenticeshipDetailsCorrect
+                if (EmployerCorrect == true
+                    && TrainingProviderCorrect == true
+                    && ApprenticeshipDetailsCorrect == true
                     && RolesAndResponsibilitiesCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {

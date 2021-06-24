@@ -42,8 +42,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details.Clone(), DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().TrainingProviderCorrect.Should().NotBeNull();
-            _apprenticeship.CommitmentStatements.Last().TrainingProviderCorrect.Correct.Should().Be(confirmationStatus);
+            _apprenticeship.CommitmentStatements.Last().TrainingProviderCorrect.Should().Be(confirmationStatus);
         }
 
         [TestCase(true)]
