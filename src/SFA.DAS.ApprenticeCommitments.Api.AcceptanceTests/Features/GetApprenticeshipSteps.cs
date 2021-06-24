@@ -141,7 +141,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.EmployerAccountLegalEntityId.Should().Be(_commitmentStatement.Details.EmployerAccountLegalEntityId);
             a.TrainingProviderName.Should().Be(_commitmentStatement.Details.TrainingProviderName);
             a.TrainingProviderCorrect.Should().Be(_commitmentStatement.TrainingProviderCorrect);
-            a.EmployerCorrect.Should().Be(_commitmentStatement.EmployerConfirmation?.Correct);
+            a.EmployerCorrect.Should().Be(_commitmentStatement.EmployerCorrect?.Correct);
             a.ApprenticeshipDetailsCorrect.Should().Be(_commitmentStatement.ApprenticeshipDetailsCorrect);
             a.HowApprenticeshipDeliveredCorrect.Should().Be(_commitmentStatement.HowApprenticeshipDeliveredCorrect);
             a.CourseName.Should().Be(_commitmentStatement.Details.Course.Name);
@@ -164,7 +164,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.EmployerAccountLegalEntityId.Should().Be(_newerCommitmentStatement.Details.EmployerAccountLegalEntityId);
             a.TrainingProviderName.Should().Be(_newerCommitmentStatement.Details.TrainingProviderName);
             a.TrainingProviderCorrect.Should().Be(_newerCommitmentStatement.TrainingProviderCorrect);
-            a.EmployerCorrect.Should().Be(_newerCommitmentStatement.EmployerConfirmation?.Correct);
+            a.EmployerCorrect.Should().Be(_newerCommitmentStatement.EmployerCorrect?.Correct);
             a.ApprenticeshipDetailsCorrect.Should().Be(_newerCommitmentStatement.ApprenticeshipDetailsCorrect);
             a.HowApprenticeshipDeliveredCorrect.Should().Be(_newerCommitmentStatement.HowApprenticeshipDeliveredCorrect);
             a.CourseName.Should().Be(_newerCommitmentStatement.Details.Course.Name);

@@ -165,7 +165,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     },
                 },
                 TrainingProviderCorrect = (bool?)null,
-                EmployerConfirmation = (Confirmation?)null,
+                EmployerCorrect = (Confirmation?)null,
                 RolesAndResponsibilitiesCorrect = (bool?)null,
                 ApprenticeshipDetailsCorrect = (bool?)null,
                 HowApprenticeshipDeliveredCorrect = (bool?)null,

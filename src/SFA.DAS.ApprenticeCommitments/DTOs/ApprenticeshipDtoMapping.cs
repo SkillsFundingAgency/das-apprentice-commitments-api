@@ -27,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 TrainingProviderCorrect = latest.TrainingProviderCorrect,
                 ApprenticeshipDetailsCorrect = latest.ApprenticeshipDetailsCorrect,
                 HowApprenticeshipDeliveredCorrect = latest.HowApprenticeshipDeliveredCorrect,
-                EmployerCorrect = latest.EmployerConfirmation?.Correct,
+                EmployerCorrect = latest.EmployerCorrect?.Correct,
                 RolesAndResponsibilitiesCorrect = latest.RolesAndResponsibilitiesCorrect,
                 CourseName = latest.Details.Course.Name,
                 CourseLevel = latest.Details.Course.Level,

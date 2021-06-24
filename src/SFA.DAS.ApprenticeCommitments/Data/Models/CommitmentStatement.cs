@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime CommitmentsApprovedOn { get; private set; }
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
-        public Confirmation? EmployerConfirmation { get; private set; }
+        public Confirmation? EmployerCorrect { get; private set; }
 
         public bool? TrainingProviderCorrect { get; private set; }
         public bool? RolesAndResponsibilitiesCorrect { get; private set; }
@@ -43,14 +43,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
-        public bool DisplayChangeNotification => !(EmployerConfirmation?.ConfirmedOn < CommitmentsApprovedOn);
+        public bool DisplayChangeNotification => !(EmployerCorrect?.ConfirmedOn < CommitmentsApprovedOn);
 
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
-            EmployerConfirmation = (Confirmation?)confirmations.EmployerCorrect ?? EmployerConfirmation;
+            EmployerCorrect = (Confirmation?)confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
             RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
@@ -59,7 +59,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (confirmations.ApprenticeshipCorrect == true)
             {
                 if (TrainingProviderCorrect == true
-                    && EmployerConfirmation
+                    && EmployerCorrect
                     && RolesAndResponsibilitiesCorrect == true
                     && ApprenticeshipDetailsCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (EmployerIsEquivalent()) newStatement.EmployerConfirmation = EmployerConfirmation?.Clone();
+            if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect?.Clone();
             if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;
             if (ApprenticeshipIsEquivalent()) newStatement.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             newStatement.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;

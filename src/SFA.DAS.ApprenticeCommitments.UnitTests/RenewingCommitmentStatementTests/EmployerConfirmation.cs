@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().EmployerConfirmation.Should().BeNull();
+            _apprenticeship.CommitmentStatements.Last().EmployerCorrect.Should().BeNull();
         }
 
         [TestCase(true)]
@@ -42,8 +42,8 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details.Clone(), DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().EmployerConfirmation.Should().NotBeNull();
-            _apprenticeship.CommitmentStatements.Last().EmployerConfirmation.Correct.Should().Be(confirmationStatus);
+            _apprenticeship.CommitmentStatements.Last().EmployerCorrect.Should().NotBeNull();
+            _apprenticeship.CommitmentStatements.Last().EmployerCorrect.Correct.Should().Be(confirmationStatus);
         }
 
         [TestCase(true)]
@@ -56,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().EmployerConfirmation.Should().BeNull();
+            _apprenticeship.CommitmentStatements.Last().EmployerCorrect.Should().BeNull();
         }
 
         [TestCase(true)]
@@ -68,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
             newDetails.SetProperty(p => p.EmployerName, _existingCommitmentStatement.Details.EmployerName);
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
-            _apprenticeship.CommitmentStatements.Last().EmployerConfirmation.Should().BeNull();
+            _apprenticeship.CommitmentStatements.Last().EmployerCorrect.Should().BeNull();
         }
     }
 }
