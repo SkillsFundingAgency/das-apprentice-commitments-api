@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime CommitmentsApprovedOn { get; private set; }
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
-        public Confirmation? EmployerCorrect { get; private set; }
+        public bool? EmployerCorrect { get; private set; }
         public Confirmation? TrainingProviderCorrect { get; private set; }
         public Confirmation? ApprenticeshipDetailsCorrect { get; private set; }
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
-            EmployerCorrect = (Confirmation?)confirmations.EmployerCorrect ?? EmployerCorrect;
+            EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = (Confirmation?)confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = (Confirmation?)confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
             RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             if (confirmations.ApprenticeshipCorrect == true)
             {
-                if (TrainingProviderCorrect && EmployerCorrect && ApprenticeshipDetailsCorrect
+                if (EmployerCorrect == true && TrainingProviderCorrect && ApprenticeshipDetailsCorrect
                     && RolesAndResponsibilitiesCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
@@ -94,7 +94,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect?.Clone();
+            if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect;
             if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;
             if (ApprenticeshipIsEquivalent()) newStatement.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             newStatement.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
