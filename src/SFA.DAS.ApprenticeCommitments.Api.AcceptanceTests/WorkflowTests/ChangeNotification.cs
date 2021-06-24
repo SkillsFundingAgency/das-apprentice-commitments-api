@@ -29,13 +29,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             var factory = Bindings.Api.CreateApiFactory();
             context = new TestContext();
-            var apibinding = new Bindings.Api(context);
+            _ = new Bindings.Api(context);
             client = factory.CreateClient();
-            var db = Bindings.Database.CreateDbContext();
+            _ = Bindings.Database.CreateDbContext();
         }
 
         [Test]
-        public async Task No_changes_and_not_confirmed_has_no_notification()
+        public async Task Incomplete_and_not_changed_does_not_show_notification()
         {
             var (apprenticeship, _) = await CreateApprenticeship(client);
 
@@ -47,11 +47,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task Changes_after_not_confirmed_has_notification()
+        public async Task Incomplete_and_then_changed_shows_notification()
         {
             var (apprenticeship, _) = await CreateApprenticeship(client);
 
-            await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
+            await ChangeApprenticeship(new ChangeEverythingBuilder(apprenticeship));
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
@@ -61,12 +61,26 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task Changes_after_section_confirmed_has_notification()
+        public async Task Confirmed_and_not_changed_does_not_show_notification()
         {
             var (apprenticeship, _) = await CreateApprenticeship(client);
 
-            await ConfirmApprenticeship(new ConfirmEmployerBuilder(apprenticeship));
-            await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder());
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.Should().BeEquivalentTo(new
+            {
+                DisplayChangeNotification = false,
+            });
+        }
+
+        [Test]
+        public async Task Confirmed_and_then_changed_shows_notification()
+        {
+            var (apprenticeship, _) = await CreateApprenticeship(client);
+
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder());
+            await ChangeApprenticeship(new ChangeEverythingBuilder(apprenticeship));
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
@@ -76,12 +90,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task Irrelevant_changes_after_section_confirmed_has_no_notification()
+        public async Task Negatively_confirmed_and_not_changed_does_not_show_notification()
         {
             var (apprenticeship, _) = await CreateApprenticeship(client);
 
-            await ConfirmApprenticeship(new ConfirmEmployerBuilder(apprenticeship));
-            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).WithUnchangedEmployer());
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder().AsIncorrect());
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
@@ -91,11 +104,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task No_changes_after_section_confirmed_are_has_no_notification()
+        public async Task Negatively_confirmed_and_then_changed_shows_notification()
         {
             var (apprenticeship, _) = await CreateApprenticeship(client);
 
-            await ConfirmApprenticeship(new ConfirmEmployerBuilder(apprenticeship));
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder().AsIncorrect());
+            await ChangeApprenticeship(new ChangeEverythingBuilder(apprenticeship));
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.Should().BeEquivalentTo(new
+            {
+                DisplayChangeNotification = true,
+            });
+        }
+
+        [Test]
+        public async Task Confirmed_and_then_changed_and_also_reconfirmed_does_not_show_notification()
+        {
+            var (apprenticeship, _) = await CreateApprenticeship(client);
+
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder());
+            await ChangeApprenticeship(new ChangeEverythingBuilder(apprenticeship));
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder());
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
@@ -104,16 +134,35 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             });
         }
 
-        private async Task ConfirmApprenticeship(ConfirmEmployerBuilder confirm)
+        [Test]
+        public async Task Negatively_confirmed_and_then_changed_and_also_negatively_reconfirmed_does_not_show_notification()
+        {
+            var (apprenticeship, _) = await CreateApprenticeship(client);
+
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder());
+            await ChangeApprenticeship(new ChangeEverythingBuilder(apprenticeship));
+            await ConfirmApprenticeship(apprenticeship, new ConfirmEmployerBuilder());
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.Should().BeEquivalentTo(new
+            {
+                DisplayChangeNotification = false,
+            });
+        }
+
+        private async Task ConfirmApprenticeship(ApprenticeshipDto apprenticeship, ConfirmEmployerBuilder confirm)
         {
             context.Time.Now = context.Time.Now.AddDays(1);
+
+            apprenticeship = await GetApprenticeship(apprenticeship);
+
             var r4 = await client.PostValueAsync(
-                $"apprentices/{confirm.ApprenticeId}/apprenticeships/{confirm.ApprenticeshipId}/statements/{confirm.CommitmentStatementId}/EmployerConfirmation",
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/statements/{apprenticeship.CommitmentStatementId}/EmployerConfirmation",
                 confirm.Build());
             r4.EnsureSuccessStatusCode();
         }
 
-        private async Task ChangeApprenticeship(ChangeBuilder change)
+        private async Task ChangeApprenticeship(ChangeEverythingBuilder change)
         {
             context.Time.Now = context.Time.Now.AddDays(1);
             var data = change.ChangedOn(context.Time.Now).Build();
@@ -159,52 +208,54 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
     internal class ConfirmEmployerBuilder
     {
-        private readonly ApprenticeshipDto apprenticeship;
-        private readonly ConfirmEmployerRequest confirmation;
+        private bool correctness;
 
-        public ConfirmEmployerBuilder(ApprenticeshipDto apprenticeship)
+        public ConfirmEmployerBuilder()
         {
-            this.apprenticeship = apprenticeship;
-            confirmation = new ConfirmEmployerRequest { EmployerCorrect = true };
+            correctness = true;
         }
 
-        public Guid ApprenticeId => apprenticeship.ApprenticeId;
-        public long ApprenticeshipId => apprenticeship.Id;
-        public long CommitmentStatementId => apprenticeship.CommitmentStatementId;
+        internal ConfirmEmployerBuilder AsIncorrect()
+        {
+            correctness = false;
+            return this;
+        }
 
-        internal ConfirmEmployerRequest Build() => confirmation;
+        internal ConfirmEmployerRequest Build() =>
+            new ConfirmEmployerRequest { EmployerCorrect = correctness };
     }
 
-    public class ChangeBuilder
+    internal class ChangeEverythingBuilder
     {
         private readonly Fixture fixture = new Fixture();
-        private readonly ApprenticeshipDto apprenticeship;
         private IPostprocessComposer<ChangeApprenticeshipCommand> change;
 
-        public ChangeBuilder(ApprenticeshipDto apprenticeship)
+        internal ApprenticeshipDto Apprenticeship { get; }
+
+        internal ChangeEverythingBuilder(ApprenticeshipDto apprenticeship)
         {
-            this.apprenticeship = apprenticeship;
+            this.Apprenticeship = apprenticeship;
             change = fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, apprenticeship.CommitmentsApprenticeshipId);
         }
 
-        internal ChangeBuilder ChangedOn(DateTimeOffset now)
+        internal ChangeEverythingBuilder ChangedOn(DateTimeOffset now)
         {
             change = change.With(p => p.CommitmentsApprovedOn, now.DateTime);
             return this;
         }
 
-        public ChangeApprenticeshipCommand Build()
+        internal ChangeApprenticeshipCommand Build()
         {
             return change.Create();
         }
 
-        internal ChangeBuilder WithUnchangedEmployer()
+        internal ChangeEverythingBuilder WithUnchangedEmployer()
         {
             change = change
-                .With(x => x.EmployerAccountLegalEntityId, apprenticeship.EmployerAccountLegalEntityId)
-                .With(x => x.EmployerName, apprenticeship.EmployerName);
+                .With(x => x.EmployerAccountLegalEntityId, Apprenticeship.EmployerAccountLegalEntityId)
+                .With(x => x.EmployerName, Apprenticeship.EmployerName);
             return this;
         }
     }
