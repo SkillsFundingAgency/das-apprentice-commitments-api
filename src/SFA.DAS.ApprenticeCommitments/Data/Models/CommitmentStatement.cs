@@ -35,24 +35,22 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime CommitmentsApprovedOn { get; private set; }
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
+        public Confirmation? EmployerConfirmation { get; private set; }
+
         public bool? TrainingProviderCorrect { get; private set; }
-        public bool? EmployerCorrect { get; private set; }
         public bool? RolesAndResponsibilitiesCorrect { get; private set; }
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
-        public DateTime? EmployerConfirmedOn { get; private set; }
-
-        public bool DisplayChangeNotification => !(EmployerConfirmedOn < CommitmentsApprovedOn);
+        public bool DisplayChangeNotification => !(EmployerConfirmation?.ConfirmedOn < CommitmentsApprovedOn);
 
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
-            EmployerConfirmedOn = (confirmations.EmployerCorrect ?? false) ? time.UtcDateTime : EmployerConfirmedOn;
-            EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
+            EmployerConfirmation = (Confirmation?)confirmations.EmployerCorrect ?? EmployerConfirmation;
             TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
             RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
@@ -61,7 +59,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (confirmations.ApprenticeshipCorrect == true)
             {
                 if (TrainingProviderCorrect == true
-                    && EmployerCorrect == true
+                    && EmployerConfirmation
                     && RolesAndResponsibilitiesCorrect == true
                     && ApprenticeshipDetailsCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
@@ -98,11 +96,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (EmployerIsEquivalent())
-            {
-                newStatement.EmployerCorrect = EmployerCorrect;
-                newStatement.EmployerConfirmedOn = EmployerConfirmedOn;
-            }
+            if (EmployerIsEquivalent()) newStatement.EmployerConfirmation = EmployerConfirmation?.Clone();
             if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;
             if (ApprenticeshipIsEquivalent()) newStatement.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             newStatement.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
@@ -110,5 +104,28 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             return newStatement;
         }
+    }
+
+    public sealed class Confirmation
+    {
+        private Confirmation()
+        {
+        }
+
+        private Confirmation(bool correct) =>
+            (Correct, ConfirmedOn) = (correct, correct ? default : DateTime.UtcNow);
+
+        public Confirmation Clone() =>
+            new Confirmation { Correct = Correct, ConfirmedOn = ConfirmedOn };
+
+        public bool? Correct { get; private set; }
+
+        public DateTime? ConfirmedOn { get; private set; }
+
+        public static implicit operator Confirmation?(bool? correct) =>
+            correct == null ? default : new Confirmation(correct.Value);
+
+        public static implicit operator bool(Confirmation? confirmation) =>
+            confirmation?.Correct ?? false;
     }
 }

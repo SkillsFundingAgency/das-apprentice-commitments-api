@@ -20,7 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Apprentice _apprentice;
         private readonly CommitmentStatement _commitmentStatement;
         private bool? TrainingProviderCorrect { get; set; }
-        private bool? EmployerCorrect { get; set; }
+        private Confirmation? EmployerConfirmation { get; set; }
         private bool? ApprenticeshipDetailsCorrect { get; set; }
         private string endpoint;
         private object command;
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void GivenAConfirmEmployerRequestStatingTheEmployerIsCorrect()
         {
             endpoint = "EmployerConfirmation";
-            EmployerCorrect = true;
+            EmployerConfirmation = true;
             command = new ConfirmEmployerRequest
             {
                 EmployerCorrect = true,
@@ -101,7 +101,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void GivenAConfirmEmployerRequestStatingTheEmployerIsIncorrect()
         {
             endpoint = "EmployerConfirmation";
-            EmployerCorrect = false;
+            EmployerConfirmation = false;
             command = new ConfirmEmployerRequest
             {
                 EmployerCorrect = false,
@@ -157,9 +157,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             {
                 _commitmentStatement.ApprenticeshipId,
                 TrainingProviderCorrect,
-                EmployerCorrect,
+                EmployerConfirmation,
                 ApprenticeshipDetailsCorrect,
-            });
+            }, c => c.Excluding(s => s.SelectedMemberPath.Contains("ConfirmedOn")));
         }
 
         [Then("the apprenticeship record remains unchanged")]
