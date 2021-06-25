@@ -64,11 +64,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             r5.EnsureSuccessStatusCode();
 
             (r3, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
-            r3.Should().Be(HttpStatusCode.OK);
+            r3.EnsureSuccessStatusCode();
 
             apprenticeships
-                .Should().HaveCount(2)
-                .And.ContainEquivalentOf(new
+                .Should().ContainEquivalentOf(new
                 {
                     CommitmentsApprenticeshipId = change.CommitmentsApprenticeshipId,
                     change.CourseName,
@@ -118,14 +117,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var (r6, apprenticeships2) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
             r5.EnsureSuccessStatusCode();
 
-            apprenticeships2.Should().HaveCount(2)
-                .And.ContainEquivalentOf(new
-                {
-                    Id = apprenticeshipId,
-                    CommitmentStatementId = csId,
-                    EmployerCorrect = true,
-                })
-                .And.ContainEquivalentOf(new
+            apprenticeships2.Should()
+                .ContainEquivalentOf(new
                 {
                     Id = apprenticeshipId,
                     CommitmentStatementId = csId + 1,

@@ -30,6 +30,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
 
+        public bool DisplayChangeNotification =>
+            CommitmentStatements.Count > 1
+            && LatestCommitmentStatement.DisplayChangeNotification;
+
         private void AddCommitmentStatement(CommitmentStatement apprenticeship)
             => _commitmentStatements.Add(apprenticeship);
 

@@ -6,7 +6,8 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
     public class ApprenticeshipDto
     {
-        public long? Id { get; set; }
+        public long Id { get; set; }
+        public Guid ApprenticeId { get; set; }
         public long CommitmentsApprenticeshipId { get; set; }
         public string EmployerName { get; set; }
         public long EmployerAccountLegalEntityId { get; set; }
@@ -26,5 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime ConfirmBefore { get; set; }
         public DateTime? ConfirmedOn { get; set; }
         public long CommitmentStatementId { get; set; }
+        public bool DisplayChangeNotification { get; set; }
+        public DateTime ApprovedOn { get; set; }
     }
 }

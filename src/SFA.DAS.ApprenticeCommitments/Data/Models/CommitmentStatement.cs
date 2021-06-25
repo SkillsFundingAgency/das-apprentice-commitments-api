@@ -42,11 +42,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
+        public DateTime? EmployerConfirmedOn { get; private set; }
+
+        public bool DisplayChangeNotification => !(EmployerConfirmedOn < CommitmentsApprovedOn);
+
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
+            EmployerConfirmedOn = (confirmations.EmployerCorrect ?? false) ? time.UtcDateTime : EmployerConfirmedOn;
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
@@ -93,7 +98,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect;
+            if (EmployerIsEquivalent())
+            {
+                newStatement.EmployerCorrect = EmployerCorrect;
+                newStatement.EmployerConfirmedOn = EmployerConfirmedOn;
+            }
             if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;
             if (ApprenticeshipIsEquivalent()) newStatement.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             newStatement.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;

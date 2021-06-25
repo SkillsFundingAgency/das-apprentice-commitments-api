@@ -8,7 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
     public static class HttpClientExtensions
     {
-        public static async Task<(HttpStatusCode, T)> GetValueAsync<T>(this HttpClient client, string url)
+        public static async Task<(HttpResponseMessage, T)> GetValueAsync<T>(this HttpClient client, string url)
         {
             using var response = await client.GetAsync(url);
             return await ProcessResponse<T>(response);
@@ -29,15 +29,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
             return await client.PatchAsync(url, data.GetStringContent());
         }
 
-        private static async Task<(HttpStatusCode, T)> ProcessResponse<T>(HttpResponseMessage response)
+        private static async Task<(HttpResponseMessage, T)> ProcessResponse<T>(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NoContent)
-                return (response.StatusCode, default);
+                return (response, default);
 
             var content = await response.Content.ReadAsStringAsync();
             var responseValue = JsonConvert.DeserializeObject<T>(content);
 
-            return (response.StatusCode, responseValue);
+            return (response, responseValue);
         }
 
         public static StringContent GetStringContent(this object obj)

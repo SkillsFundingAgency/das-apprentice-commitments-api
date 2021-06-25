@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
     {
         public SpecifiedTimeProvider(DateTimeOffset time) => Now = time;
 
-        public DateTimeOffset Now { get; }
+        public DateTimeOffset Now { get; set; }
 
         public override string ToString() => Now.ToString();
     }
