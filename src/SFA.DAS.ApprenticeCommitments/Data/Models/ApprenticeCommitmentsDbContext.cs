@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                                 v => v.ToString(),
                                 v => new MailAddress(v));
                     });
-                a.HasMany(e => e.Apprenticeships).WithOne(a => a.Apprentice);
+                a.HasMany(e => e.Apprenticeships).WithOne();
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             });
 

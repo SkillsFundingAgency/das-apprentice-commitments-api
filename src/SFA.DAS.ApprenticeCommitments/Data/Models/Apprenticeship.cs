@@ -20,7 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public long Id { get; private set; }
 
-        public Apprentice Apprentice { get; private set; } = null!;
+        public Guid ApprenticeId { get; private set; }
 
         private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
 

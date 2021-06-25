@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
         {
             await messageSession.Publish(new ApprenticeshipConfirmationCommencedEvent
             {
-                ApprenticeId = notification.CommitmentStatement.Apprenticeship.Apprentice.Id,
+                ApprenticeId = notification.CommitmentStatement.Apprenticeship.ApprenticeId,
                 ApprenticeshipId = notification.CommitmentStatement.ApprenticeshipId,
                 ConfirmationId = notification.CommitmentStatement.Id,
                 ConfirmationOverdueOn = notification.CommitmentStatement.ConfirmBefore,
