@@ -30,6 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 
             await messageSession.Publish(new ApprenticeshipConfirmationConfirmedEvent
             {
+                ApprenticeId = notification.CommitmentStatement.Apprenticeship.ApprenticeId,
                 ApprenticeshipId = notification.CommitmentStatement.ApprenticeshipId,
                 ConfirmationId = notification.CommitmentStatement.Id,
                 ConfirmedOn = notification.CommitmentStatement.ConfirmedOn.Value,

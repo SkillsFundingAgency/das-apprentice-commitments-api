@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     public interface IApprenticeshipContext : IEntityContext<Apprenticeship>
     {
         internal Task<Apprenticeship> FindByCommitmentsApprenticeshipId(long apprenticeshipId)
-            => Entities.Include(x => x.CommitmentStatements)
+            => Entities.Include(x => x.CommitmentStatements).Include(x => x.Apprentice)
                 .FirstOrDefaultAsync(x => x.CommitmentStatements.Any(y =>
                     y.CommitmentsApprenticeshipId == apprenticeshipId));
 
