@@ -18,6 +18,8 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
 
         public DateTimeOffset Now { get; set; }
 
+        public void Advance(TimeSpan timeSpan) => Now = Now.Add(timeSpan);
+
         public override string ToString() => Now.ToString();
     }
 }
