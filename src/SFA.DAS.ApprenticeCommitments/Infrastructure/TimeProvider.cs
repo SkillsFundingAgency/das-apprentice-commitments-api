@@ -4,19 +4,19 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
 {
     public interface ITimeProvider
     {
-        DateTimeOffset Now { get; }
+        DateTime Now { get; }
     }
 
     public class UtcTimeProvider : ITimeProvider
     {
-        public DateTimeOffset Now => DateTimeOffset.UtcNow;
+        public DateTime Now => DateTime.UtcNow;
     }
 
     public class SpecifiedTimeProvider : ITimeProvider
     {
-        public SpecifiedTimeProvider(DateTimeOffset time) => Now = time;
+        public SpecifiedTimeProvider(DateTime time) => Now = time;
 
-        public DateTimeOffset Now { get; set; }
+        public DateTime Now { get; set; }
 
         public void Advance(TimeSpan timeSpan) => Now = Now.Add(timeSpan);
 

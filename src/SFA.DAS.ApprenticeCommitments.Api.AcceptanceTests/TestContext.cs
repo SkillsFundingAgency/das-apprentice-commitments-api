@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         public ApprenticeCommitmentsDbContext DbContext { get; set; }
 
         public SpecifiedTimeProvider Time { get; set; }
-            = new SpecifiedTimeProvider(DateTimeOffset.UtcNow);
+            = new SpecifiedTimeProvider(DateTime.UtcNow);
 
         public TestableMessageSession Messages { get; set; }
             = new TestableMessageSession();
