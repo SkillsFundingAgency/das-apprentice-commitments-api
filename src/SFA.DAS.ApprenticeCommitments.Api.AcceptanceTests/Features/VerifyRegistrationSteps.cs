@@ -256,5 +256,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 EmailAddress = new MailAddress(_command.Email),
             });
         }
+
+        [Then("do not send a Change of Circumstance email to the user")]
+        public void ThenDoNotSendAChangeOfCircumstanceEmailToTheUser()
+        {
+            _context.Messages.PublishedMessages
+                .Should().NotContain(x => x.Message is ApprenticeshipChangedEvent);
+        }
     }
 }
