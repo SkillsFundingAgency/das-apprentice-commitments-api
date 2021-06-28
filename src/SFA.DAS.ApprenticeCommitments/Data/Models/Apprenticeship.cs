@@ -23,6 +23,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid ApprenticeId { get; private set; }
 
+        public DateTime LastViewed { get; private set; }
+
         private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
 
         public IReadOnlyCollection<CommitmentStatement> CommitmentStatements => _commitmentStatements;
@@ -34,6 +36,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool DisplayChangeNotification =>
             CommitmentStatements.Count > 1
             && LatestCommitmentStatement.DisplayChangeNotification;
+
+        internal void ShownToApprentice(DateTime now) => LastViewed = now;
 
         private void AddCommitmentStatement(CommitmentStatement apprenticeship)
             => _commitmentStatements.Add(apprenticeship);
@@ -59,14 +63,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var previousApprovedOn = LatestCommitmentStatement.CommitmentsApprovedOn;
             var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
             if (renewed != null)
             {
                 AddCommitmentStatement(renewed);
-
-                if((approvedOn - previousApprovedOn) > TimeSpan.FromHours(24))
-                    AddDomainEvent(new ApprenticeshipChanged(this));
+                AddDomainEvent(new ApprenticeshipChanged(this));
             }
         }
     }

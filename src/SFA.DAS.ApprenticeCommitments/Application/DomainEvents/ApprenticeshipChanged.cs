@@ -1,7 +1,10 @@
 ﻿using MediatR;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
+using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,17 +21,33 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
     internal class ApprenticeshipChangedHandler : INotificationHandler<ApprenticeshipChanged>
     {
         private readonly IMessageSession messageSession;
+        private readonly ITimeProvider time;
 
-        public ApprenticeshipChangedHandler(IMessageSession messageSession)
-            => this.messageSession = messageSession;
+        public ApprenticeshipChangedHandler(IMessageSession messageSession, ITimeProvider time)
+        {
+            this.messageSession = messageSession;
+            this.time = time;
+        }
 
         public async Task Handle(ApprenticeshipChanged notification, CancellationToken cancellationToken)
         {
-            await messageSession.Publish(new ApprenticeshipChangedEvent
+            var ordered = notification.Apprenticeship.CommitmentStatements
+                .OrderBy(x => x.CommitmentsApprovedOn).ToArray();
+
+            var newest = ordered[^1];
+            var previous = ordered[^2];
+
+            var sinceLastApproval = newest.CommitmentsApprovedOn - previous.CommitmentsApprovedOn;
+            var seenPreviousApproval = notification.Apprenticeship.LastViewed > previous.CommitmentsApprovedOn;
+
+            if (sinceLastApproval > TimeSpan.FromHours(24) || seenPreviousApproval)
             {
-                ApprenticeId = notification.Apprenticeship.ApprenticeId,
-                ApprenticeshipId = notification.Apprenticeship.Id,
-            });
+                await messageSession.Publish(new ApprenticeshipChangedEvent
+                {
+                    ApprenticeId = notification.Apprenticeship.ApprenticeId,
+                    ApprenticeshipId = notification.Apprenticeship.Id,
+                });
+            }
         }
     }
 }

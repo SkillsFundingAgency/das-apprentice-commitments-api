@@ -63,12 +63,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
         {
-            var (r2, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
+            var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipDto>(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.CommitmentStatementId}");
             r2.EnsureSuccessStatusCode();
 
-            apprenticeships.Should().NotBeEmpty();
-            return apprenticeships.Last(); ;
+            var r3 = await client.PostAsync(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/visits", null);
+            r3.EnsureSuccessStatusCode();
+
+            apprenticeships.Should().NotBeNull();
+            return apprenticeships;
         }
 
         private protected async Task ChangeApprenticeship(ChangeBuilder change)
