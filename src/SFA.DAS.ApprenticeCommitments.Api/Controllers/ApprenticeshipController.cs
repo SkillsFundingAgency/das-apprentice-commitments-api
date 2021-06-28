@@ -1,10 +1,11 @@
-using System;
-using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShownCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
@@ -41,6 +42,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
                 return NotFound();
             }
             return Ok(result);
+        }
+
+        [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/visits")]
+        public async Task<IActionResult> PostApprenticeship(Guid apprenticeId, long apprenticeshipId)
+        {
+            await _mediator.Send(new ApprenticeshipShownCommand(apprenticeId, apprenticeshipId));
+            return Ok();
         }
     }
 }
