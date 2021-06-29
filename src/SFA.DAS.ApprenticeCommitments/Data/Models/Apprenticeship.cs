@@ -15,19 +15,23 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Apprenticeship(CommitmentStatement apprenticeship)
         {
-            CommitmentStatements.Add(apprenticeship);
+            AddCommitmentStatement(apprenticeship);
         }
 
         public long Id { get; private set; }
 
-        public Apprentice Apprentice { get; private set; } = null!;
+        public Guid ApprenticeId { get; private set; }
 
-        public ICollection<CommitmentStatement> CommitmentStatements { get; private set; }
-            = new List<CommitmentStatement>();
+        private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
+
+        public IReadOnlyCollection<CommitmentStatement> CommitmentStatements => _commitmentStatements;
 
         public CommitmentStatement LatestCommitmentStatement
             => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
+
+        private void AddCommitmentStatement(CommitmentStatement apprenticeship)
+            => _commitmentStatements.Add(apprenticeship);
 
         private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
         {
@@ -50,9 +54,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
-            newStatement.RenewedFromCommitment(LatestCommitmentStatement);
-            CommitmentStatements.Add(newStatement);
+            var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
+            if (renewed != null) AddCommitmentStatement(renewed);
         }
     }
 }

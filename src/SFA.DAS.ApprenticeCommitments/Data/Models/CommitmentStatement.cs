@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,8 +8,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("CommitmentStatement")]
-    public class CommitmentStatement
+    public class CommitmentStatement : Entity
     {
+        public static int DaysBeforeOverdue { get; set; } = 14;
+
         private CommitmentStatement()
         {
         }
@@ -19,7 +22,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = approvedOn;
+            ConfirmBefore = CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
             Details = details;
+
+            AddDomainEvent(new CommitmentStatementAdded(this));
         }
 
         public long Id { get; private set; }
@@ -35,6 +41,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
+
+        public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
@@ -53,7 +61,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     && ApprenticeshipDetailsCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
-                    ConfirmedOn = time.UtcDateTime;
+                    ConfirmCommitmentStatement(time);
                 }
                 else
                 {
@@ -62,52 +70,36 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        public void RenewedFromCommitment(CommitmentStatement lastStatement)
+        private void ConfirmCommitmentStatement(DateTimeOffset time)
         {
-            bool EmployerIsEquivalent()
-            {
-                return lastStatement.Details.EmployerAccountLegalEntityId ==
-                       Details.EmployerAccountLegalEntityId
-                       && lastStatement.Details.EmployerName == Details.EmployerName;
-            }
+            ConfirmedOn = time.UtcDateTime;
+            AddDomainEvent(new CommitmentStatementConfirmed(this));
+        }
 
-            bool ProviderIsEquivalent()
-            {
-                return lastStatement.Details.TrainingProviderId == Details.TrainingProviderId &&
-                       lastStatement.Details.TrainingProviderName == Details.TrainingProviderName;
-            }
+        internal CommitmentStatement? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
+        {
+            bool EmployerIsEquivalent() =>
+                details.EmployerAccountLegalEntityId == Details.EmployerAccountLegalEntityId &&
+                details.EmployerName == Details.EmployerName;
 
-            bool ApprenticeshipIsEquivalent()
-            {
-                return Details.Course.IsEquivalent(lastStatement.Details.Course);
-            }
+            bool ProviderIsEquivalent() =>
+                details.TrainingProviderId == Details.TrainingProviderId &&
+                details.TrainingProviderName == Details.TrainingProviderName;
 
-            if (lastStatement == null) throw new ArgumentNullException(nameof(lastStatement));
+            bool ApprenticeshipIsEquivalent() =>
+                Details.Course.IsEquivalent(details.Course);
 
-            if (lastStatement.EmployerCorrect.HasValue && EmployerIsEquivalent())
-            {
-                EmployerCorrect = lastStatement.EmployerCorrect;
-            }
+            if (Details.Equals(details)) return null;
 
-            if (lastStatement.TrainingProviderCorrect.HasValue && ProviderIsEquivalent())
-            {
-                TrainingProviderCorrect = lastStatement.TrainingProviderCorrect;
-            }
+            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (lastStatement.ApprenticeshipDetailsCorrect.HasValue && ApprenticeshipIsEquivalent())
-            {
-                ApprenticeshipDetailsCorrect = lastStatement.ApprenticeshipDetailsCorrect;
-            }
+            if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect;
+            if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;
+            if (ApprenticeshipIsEquivalent()) newStatement.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
+            newStatement.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
+            newStatement.RolesAndResponsibilitiesCorrect = RolesAndResponsibilitiesCorrect;
 
-            if (lastStatement.HowApprenticeshipDeliveredCorrect.HasValue)
-            {
-                HowApprenticeshipDeliveredCorrect = lastStatement.HowApprenticeshipDeliveredCorrect;
-            }
-
-            if (lastStatement.RolesAndResponsibilitiesCorrect.HasValue)
-            {
-                RolesAndResponsibilitiesCorrect = lastStatement.RolesAndResponsibilitiesCorrect;
-            }
+            return newStatement;
         }
     }
 }

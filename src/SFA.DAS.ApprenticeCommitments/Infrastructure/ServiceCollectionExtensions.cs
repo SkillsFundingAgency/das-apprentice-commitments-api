@@ -43,6 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             services.AddScoped<IRegistrationContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeshipContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
+            services.AddScoped<EventDispatcher>();
 
             return services;
         }
@@ -67,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
                     {
                         optionsBuilder.EnableSensitiveDataLogging().UseLoggerFactory(loggerFactory);
                     }
-                    dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options);
+                    dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options, p.GetRequiredService<EventDispatcher>());
                     dbContext.Database.UseTransaction(sqlStorageSession.Transaction);
                 }
                 catch (KeyNotFoundException)
@@ -76,7 +77,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
                     var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>()
                         .UseDataStorage(connectionFactory, settings.DbConnectionString)
                         .UseLocalSqlLogger(loggerFactory, config);
-                    dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options);
+                    dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options, p.GetRequiredService<EventDispatcher>());
                 }
 
                 return dbContext;

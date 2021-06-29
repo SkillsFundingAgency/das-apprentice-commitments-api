@@ -1,17 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using SFA.DAS.ApprenticeCommitments.Infrastructure;
+using System.Linq;
 using System.Net.Mail;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class ApprenticeCommitmentsDbContext : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext
+    public class ApprenticeCommitmentsDbContext
+        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext
     {
-        public ApprenticeCommitmentsDbContext()
+        protected IEventDispatcher _dispatcher;
+
+        public ApprenticeCommitmentsDbContext(DbContextOptions<ApprenticeCommitmentsDbContext> options)
+            : this(options, new NullEventDispatcher())
         {
         }
 
-        public ApprenticeCommitmentsDbContext(DbContextOptions<ApprenticeCommitmentsDbContext> options) : base(options)
+        public ApprenticeCommitmentsDbContext(
+            DbContextOptions<ApprenticeCommitmentsDbContext> options,
+            IEventDispatcher dispatcher) : base(options)
         {
+            _dispatcher = dispatcher;
         }
 
         public virtual DbSet<Registration> Registrations { get; set; } = null!;
@@ -46,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                                 v => v.ToString(),
                                 v => new MailAddress(v));
                     });
-                a.HasMany(e => e.Apprenticeships).WithOne(a => a.Apprentice);
+                a.HasMany(e => e.Apprenticeships).WithOne();
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             });
 
@@ -104,6 +115,23 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 });
             });
             base.OnModelCreating(modelBuilder);
+        }
+
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            var numEntriesWritten = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            await DispatchDomainEvents();
+            return numEntriesWritten;
+        }
+
+        private async Task DispatchDomainEvents()
+        {
+            var events = ChangeTracker.Entries<Entity>()
+                .SelectMany(x => x.Entity.DomainEvents)
+                .ToArray();
+
+            foreach (var domainEvent in events)
+                await _dispatcher.Dispatch(domainEvent);
         }
     }
 }

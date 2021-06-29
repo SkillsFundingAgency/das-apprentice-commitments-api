@@ -2,7 +2,9 @@
 using FluentAssertions;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
@@ -98,6 +100,25 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             {
                 _commitmentStatement.ApprenticeshipId,
                 ConfirmedOn = (DateTime?)null,
+            });
+        }
+
+        [Then("the Confirmation Confirmed event is published")]
+        public void ThenTheConfirmationStartedEventIsPublished()
+        {
+            var latest = _context.DbContext.CommitmentStatements.Single();
+
+            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new
+                {
+                    ApprenticeId = _apprentice.Id,
+                    latest.ApprenticeshipId,
+                    ConfirmationId = latest.Id,
+                    latest.ConfirmedOn,
+                    latest.CommitmentsApprovedOn,
+                    latest.CommitmentsApprenticeshipId,
+                }
             });
         }
     }

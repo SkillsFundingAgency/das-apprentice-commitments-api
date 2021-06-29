@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Infrastructure;
+﻿using NServiceBus.Testing;
+using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using System;
 using System.Collections.Generic;
 using TechTalk.SpecFlow;
@@ -12,7 +13,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
         public static ApprenticeCommitmentsApi Client { get; set; }
         public static LocalWebApplicationFactory<Startup> Factory { get; set; }
         private static readonly Func<SpecifiedTimeProvider> _time = () => _timeProvider;
+        private static readonly Func<TestableMessageSession> _messages = () => _messageProvider;
         private static SpecifiedTimeProvider _timeProvider;
+        private static TestableMessageSession _messageProvider;
 
         private readonly TestContext _context;
 
@@ -20,6 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
         {
             _context = context;
             _timeProvider = context.Time;
+            _messageProvider = context.Messages;
         }
 
         [BeforeScenario()]
@@ -41,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
                     { "ApplicationSettings:DbConnectionString", TestsDbConnectionFactory.ConnectionString }
                 };
 
-            return new LocalWebApplicationFactory<Startup>(config, _time);
+            return new LocalWebApplicationFactory<Startup>(config, _time, _messages);
         }
 
         [AfterFeature()]
@@ -50,6 +54,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
             Client?.Dispose();
             Client = null;
             Factory?.Dispose();
+            _timeProvider = null;
+            _messageProvider = null;
         }
     }
 }

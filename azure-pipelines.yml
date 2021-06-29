@@ -18,3 +18,5 @@ stages:
   jobs:
   - template: pipeline-templates/job/code-build.yml
   - template: pipeline-templates/job/dacpac-build.yml
+
+- template: azure-pipelines-templates/deploy/stage/nuget-publish.yml@das-platform-building-blocks

@@ -7,13 +7,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     public class CourseDetails
     {
-#pragma warning disable CS8618 // Private constructor for entity framework
-
         private CourseDetails()
         {
+            // Private constructor for entity framework
         }
-
-#pragma warning disable CS8618
 
         public CourseDetails(
             string name, int level, string? option,
@@ -26,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             PlannedEndDate = plannedEndDate;
         }
 
-        public string Name { get; private set; }
+        public string Name { get; private set; } = null!;
         public int Level { get; private set; }
         public string? Option { get; private set; }
         public DateTime PlannedEndDate { get; private set; }

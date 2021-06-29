@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -143,6 +144,25 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                         _registration.Apprenticeship.Course.PlannedEndDate,
                     }
                 },
+            });
+        }
+
+        [Then("the Confirmation Commenced event is published")]
+        public void ThenTheConfirmationStartedEventIsPublished()
+        {
+            var latest = _context.DbContext.CommitmentStatements.Single();
+
+            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipConfirmationCommencedEvent
+                {
+                    ApprenticeId = _registration.ApprenticeId,
+                    ApprenticeshipId = latest.ApprenticeshipId,
+                    ConfirmationId = latest.Id,
+                    ConfirmationOverdueOn = latest.ConfirmBefore,
+                    CommitmentsApprovedOn = _registration.CommitmentsApprovedOn,
+                    CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
+                }
             });
         }
 

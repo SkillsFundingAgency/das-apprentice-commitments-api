@@ -84,8 +84,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _newerCommitmentStatement.SetProperty(x=>x.CommitmentsApprovedOn, _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
-            _apprentice.Apprenticeships.First().CommitmentStatements.Add(_newerCommitmentStatement);
+            _apprentice.Apprenticeships.First().RenewCommitment(
+                _commitmentStatement.CommitmentsApprenticeshipId,
+                _fixture.Create<ApprenticeshipDetails>(),
+                _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
+
+            _newerCommitmentStatement = _apprentice.Apprenticeships.First().CommitmentStatements.Last();
+            _newerCommitmentStatement.Confirm(new Confirmations
+            {
+                TrainingProviderCorrect = true,
+                EmployerCorrect = true,
+                ApprenticeshipDetailsCorrect = true,
+                HowApprenticeshipDeliveredCorrect = true,
+            }, DateTimeOffset.UtcNow);
+
             await _context.DbContext.SaveChangesAsync();
         }
 

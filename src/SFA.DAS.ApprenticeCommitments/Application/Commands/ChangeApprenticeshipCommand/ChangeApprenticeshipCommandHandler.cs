@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Exceptions;
 
 #nullable enable
 

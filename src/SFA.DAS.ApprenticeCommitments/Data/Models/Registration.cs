@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.Mail;
@@ -8,7 +9,7 @@ using System.Net.Mail;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("Registration")]
-    public class Registration
+    public class Registration : Entity
     {
 #pragma warning disable CS8618 // Private constructor for entity framework
 
@@ -29,6 +30,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentsApprovedOn = commitmentsApprovedOn;
             Email = email;
             Apprenticeship = apprenticeship;
+
+            AddDomainEvent(new RegistrationAdded(this));
         }
 
         public Guid ApprenticeId { get; private set; }
