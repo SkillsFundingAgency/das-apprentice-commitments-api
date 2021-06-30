@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid ApprenticeId { get; private set; }
 
-        public DateTime LastViewed { get; private set; }
+        public DateTime LastViewed { get; set; }
 
         private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
 

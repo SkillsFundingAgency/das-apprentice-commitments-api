@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Linq;
@@ -21,12 +20,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
     internal class ApprenticeshipChangedHandler : INotificationHandler<ApprenticeshipChanged>
     {
         private readonly IMessageSession messageSession;
-        private readonly ITimeProvider time;
 
-        public ApprenticeshipChangedHandler(IMessageSession messageSession, ITimeProvider time)
+        public ApprenticeshipChangedHandler(IMessageSession messageSession)
         {
             this.messageSession = messageSession;
-            this.time = time;
         }
 
         public async Task Handle(ApprenticeshipChanged notification, CancellationToken cancellationToken)

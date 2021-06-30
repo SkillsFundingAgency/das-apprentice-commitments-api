@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.Dsl;
 using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
@@ -9,7 +10,6 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationComma
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -67,12 +67,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.CommitmentStatementId}");
             r2.EnsureSuccessStatusCode();
 
-            var r3 = await client.PostAsync(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/visits", null);
-            r3.EnsureSuccessStatusCode();
-
             apprenticeships.Should().NotBeNull();
             return apprenticeships;
+        }
+
+        protected async Task ViewApprenticeship(ApprenticeshipDto apprenticeship)
+        {
+            var patch = new JsonPatchDocument<ApprenticeshipDto>()
+                .Replace(a => a.LastViewed, context.Time.Now);
+
+            var r3 = await client.PatchAsync(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}",
+                patch.GetStringContent());
+
+            r3.EnsureSuccessStatusCode();
         }
 
         private protected async Task ChangeApprenticeship(ChangeBuilder change)
