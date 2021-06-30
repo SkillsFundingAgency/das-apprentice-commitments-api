@@ -1,5 +1,3 @@
-using System.IO;
-using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +17,8 @@ using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.UnitOfWork.EntityFrameworkCore.DependencyResolution.Microsoft;
 using SFA.DAS.UnitOfWork.NServiceBus.Features.ClientOutbox.DependencyResolution.Microsoft;
+using System.IO;
+using System.Linq;
 
 namespace SFA.DAS.ApprenticeCommitments.Api
 {
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddEnvironmentVariables();
 
-            if (!Configuration.IsLocalAcceptanceOrDev()) 
+            if (!Configuration.IsLocalAcceptanceOrDev())
             {
                 config.AddAzureTableStorage(options =>
                 {
@@ -92,6 +92,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                     }
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
+            services.AddControllersWithViews().AddNewtonsoftJson();
+
             var overdueDays = Configuration.GetValue<int?>("DaysUntilCommitmentStatementOverdue");
             if (overdueDays > 0) CommitmentStatement.DaysBeforeOverdue = overdueDays.Value;
         }
@@ -112,7 +114,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
             });
 
             app.UseHttpsRedirection()
-                .UseApiGlobalExceptionHandler();
+               .UseApiGlobalExceptionHandler();
 
             app.UseRouting();
 
