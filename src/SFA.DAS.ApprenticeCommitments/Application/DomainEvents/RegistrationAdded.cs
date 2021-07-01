@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -18,9 +19,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
     internal class RegistrationAddedHandler : INotificationHandler<RegistrationAdded>
     {
         private readonly IMessageSession messageSession;
+        private readonly ILogger<RegistrationAddedHandler> logger;
 
-        public RegistrationAddedHandler(IMessageSession messageSession)
-            => this.messageSession = messageSession;
+        public RegistrationAddedHandler(IMessageSession messageSession, ILogger<RegistrationAddedHandler> logger)
+        {
+            this.messageSession = messageSession;
+            this.logger = logger;
+        }
 
         public async Task Handle(RegistrationAdded notification, CancellationToken cancellationToken)
         {
@@ -32,6 +37,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
                 notification.Registration.CommitmentsApprenticeshipId,
                 notification.Registration.CommitmentsApprovedOn,
                 notification.Registration.Apprenticeship);
+
+            logger.LogInformation(
+                "RegistrationAdded - Publishing ApprenticeshipConfirmationCommencedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}",
+                notification.Registration.ApprenticeId,
+                notification.Registration.CommitmentsApprenticeshipId);
 
             await messageSession.Publish(new ApprenticeshipConfirmationCommencedEvent
             {
