@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticesQuery;
 using System;
 using System.Threading.Tasks;
 
@@ -22,8 +23,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("apprentices/{id}/apprenticeships")]
+        [HttpGet("apprentices/{id}")]
         public async Task<IActionResult> GetApprentice(Guid id)
+        {
+            var result = await _mediator.Send(new ApprenticesQuery(id));
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpGet("apprentices/{id}/apprenticeships")]
+        public async Task<IActionResult> GetApprenticeApprenticeships(Guid id)
         {
             var result = await _mediator.Send(new ApprenticeshipsQuery(id));
             return Ok(result);
