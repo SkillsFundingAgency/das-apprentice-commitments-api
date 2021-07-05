@@ -25,16 +25,16 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShown
 
     public class UpdateApprenticeshipCommandHandler : IRequestHandler<UpdateApprenticeshipCommand>
     {
-        private readonly IApprenticeshipContext statements;
+        private readonly IApprenticeshipContext _apprenticeships;
 
-        public UpdateApprenticeshipCommandHandler(IApprenticeshipContext statements)
+        public UpdateApprenticeshipCommandHandler(IApprenticeshipContext apprenticeships)
         {
-            this.statements = statements;
+            _apprenticeships = apprenticeships;
         }
 
         public async Task<Unit> Handle(UpdateApprenticeshipCommand request, CancellationToken cancellationToken)
         {
-            var app = await statements.GetById(request.ApprenticeId, request.ApprenticeshipId);
+            var app = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
             request.Updates.ApplyTo(app);
             return Unit.Value;
         }
