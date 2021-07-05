@@ -104,8 +104,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 Message = new ApprenticeshipConfirmationCommencedEvent
                 {
                     ApprenticeId = _createApprenticeshipRequest.ApprenticeId,
-                    ApprenticeshipId = 0,
-                    ConfirmationId = 0,
+                    ApprenticeshipId = (long?)null,
+                    ConfirmationId = (long?)null,
                     ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(CommitmentStatement.DaysBeforeOverdue),
                     CommitmentsApprovedOn = _createApprenticeshipRequest.CommitmentsApprovedOn,
                     CommitmentsApprenticeshipId = _createApprenticeshipRequest.CommitmentsApprenticeshipId,

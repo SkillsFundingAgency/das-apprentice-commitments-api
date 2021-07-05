@@ -87,6 +87,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
+                .With(x => x.CommitmentsApprovedOn, (long days) => _commitmentStatement.CommitmentsApprovedOn.AddDays(days))
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
                 .Create();
