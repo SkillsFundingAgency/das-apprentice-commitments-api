@@ -37,8 +37,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentStatements.Count > 1
             && LatestCommitmentStatement.DisplayChangeNotification;
 
-        internal void ShownToApprentice(DateTime now) => LastViewed = now;
-
         private void AddCommitmentStatement(CommitmentStatement apprenticeship)
             => _commitmentStatements.Add(apprenticeship);
 
