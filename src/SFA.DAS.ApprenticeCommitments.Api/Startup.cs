@@ -73,6 +73,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
 
             services.AddOptions();
             services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
+            services.AddSingleton(s => s.GetRequiredService<IOptions<ApplicationSettings>>().Value);
 
             services.AddEntityFrameworkForApprenticeCommitments(Configuration)
                 .AddEntityFrameworkUnitOfWork<ApprenticeCommitmentsDbContext>()
