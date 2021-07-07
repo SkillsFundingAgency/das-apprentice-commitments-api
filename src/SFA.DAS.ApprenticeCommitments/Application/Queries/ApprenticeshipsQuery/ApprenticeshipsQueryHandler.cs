@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
             List<Apprenticeship> apprenticeships = await _apprenticeshipRepository
                 .FindAllForApprentice(request.ApprenticeId);
 
-            return apprenticeships.SelectMany(x => x.CommitmentStatements)
+            return apprenticeships
                 .Select(x => x.MapToApprenticeshipDto()!)
                 .ToList();
         }

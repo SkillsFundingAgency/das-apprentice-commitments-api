@@ -27,8 +27,6 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         [TestCase(false)]
         public void When_employer_section_confirmation_status_is_not_set_Then_employer_section_remains_not_set_regardless_of_data_changes(bool withSameData)
         {
-            _existingCommitmentStatement.SetProperty(p => p.EmployerCorrect, null);
-
             var details = withSameData ? _existingCommitmentStatement.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
@@ -40,10 +38,10 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         [TestCase(false)]
         public void When_employer_section_confirmation_status_is_set_And_no_change_to_employer_has_occurred_Then_employer_section_does_not_change_status(bool confirmationStatus)
         {
-            _existingCommitmentStatement.SetProperty(p => p.EmployerCorrect, confirmationStatus);
+            _existingCommitmentStatement.Confirm(new Confirmations { EmployerCorrect = confirmationStatus }, DateTime.UtcNow);
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details.Clone(), DateTime.Now);
-            
+
             _apprenticeship.CommitmentStatements.Last().EmployerCorrect.Should().Be(confirmationStatus);
         }
 
@@ -51,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         [TestCase(false)]
         public void When_employer_section_confirmation_status_is_set_And_a_change_to_employer_name_has_occurred_Then_employer_section_is_not_confirmed(bool confirmationStatus)
         {
-            _existingCommitmentStatement.SetProperty(p => p.EmployerCorrect, confirmationStatus);
+            _existingCommitmentStatement.Confirm(new Confirmations { EmployerCorrect = confirmationStatus }, DateTime.UtcNow);
             var newDetails = _f.Create<ApprenticeshipDetails>();
             newDetails.SetProperty(p=>p.EmployerAccountLegalEntityId, _existingCommitmentStatement.Details.EmployerAccountLegalEntityId);
 
@@ -64,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         [TestCase(false)]
         public void When_employer_section_confirmation_is_set_And_a_change_to_employer_id_has_occurred_Then_employer_section_is_not_confirmed(bool confirmationStatus)
         {
-            _existingCommitmentStatement.SetProperty(p => p.EmployerCorrect, confirmationStatus);
+            _existingCommitmentStatement.Confirm(new Confirmations { EmployerCorrect = confirmationStatus }, DateTime.UtcNow);
             var newDetails = _f.Create<ApprenticeshipDetails>();
             newDetails.SetProperty(p => p.EmployerName, _existingCommitmentStatement.Details.EmployerName);
 

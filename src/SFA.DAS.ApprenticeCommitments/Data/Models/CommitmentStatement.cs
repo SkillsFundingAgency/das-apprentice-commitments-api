@@ -35,12 +35,18 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime CommitmentsApprovedOn { get; private set; }
         public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
-        public bool? TrainingProviderCorrect { get; private set; }
         public bool? EmployerCorrect { get; private set; }
-        public bool? RolesAndResponsibilitiesCorrect { get; private set; }
+        public bool? TrainingProviderCorrect { get; private set; }
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
+
+        public bool? RolesAndResponsibilitiesCorrect { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
+
+        public bool DisplayChangeNotification =>
+            EmployerCorrect == null
+            || TrainingProviderCorrect == null
+            || ApprenticeshipDetailsCorrect == null;
 
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
@@ -55,10 +61,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             if (confirmations.ApprenticeshipCorrect == true)
             {
-                if (TrainingProviderCorrect == true
-                    && EmployerCorrect == true
-                    && RolesAndResponsibilitiesCorrect == true
+                if (EmployerCorrect == true
+                    && TrainingProviderCorrect == true
                     && ApprenticeshipDetailsCorrect == true
+                    && RolesAndResponsibilitiesCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
                     ConfirmCommitmentStatement(time);

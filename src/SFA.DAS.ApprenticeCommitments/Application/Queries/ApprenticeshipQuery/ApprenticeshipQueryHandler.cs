@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery
             var entity = await _apprenticeshipRepository
                 .FindForApprentice(request.ApprenticeId, request.ApprenticeshipId);
 
-            return entity?.LatestCommitmentStatement.MapToApprenticeshipDto();
+            return entity?.MapToApprenticeshipDto();
         }
     }
 }
