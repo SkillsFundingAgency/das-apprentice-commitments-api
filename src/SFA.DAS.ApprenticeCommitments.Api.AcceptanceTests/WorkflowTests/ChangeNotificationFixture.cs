@@ -100,7 +100,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             foreach (var payload in confirm.BuildAll())
             {
                 var r4 = await client.PostValueAsync(
-                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/statements/{apprenticeship.CommitmentStatementId}/{payload.Item1}",
+                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.CommitmentStatementId}/{payload.Item1}",
                     payload.Item2);
                 r4.EnsureSuccessStatusCode();
             }
