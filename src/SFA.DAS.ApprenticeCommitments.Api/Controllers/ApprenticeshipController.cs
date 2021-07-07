@@ -5,6 +5,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShownComm
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Threading.Tasks;
@@ -39,6 +40,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public async Task<IActionResult> GetApprenticeship(Guid apprenticeId, long apprenticeshipId)
         {
             var result = await _mediator.Send(new ApprenticeshipQuery(apprenticeId, apprenticeshipId));
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+
+        [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions")]
+        public async Task<IActionResult> GetApprenticeshipRevisions(Guid apprenticeId, long apprenticeshipId)
+        {
+            var result = await _mediator.Send(new ApprenticeshipRevisionsQuery(apprenticeId, apprenticeshipId));
             if (result == null)
             {
                 return NotFound();
