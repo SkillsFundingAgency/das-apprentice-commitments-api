@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
-using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 using TechTalk.SpecFlow.Assist;
 
@@ -40,20 +37,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             foreach (var reg in _testData)
             {
                 var registration = _fixture.Create<Registration>();
-                
-                registration.SetProperty(x=>x.CreatedOn, reg.CreatedOn);
-                registration.SetProperty(x=>x.Email, new MailAddress(reg.Email));
-                registration.SetProperty(x=>x.FirstViewedOn, reg.FirstViewedOn);
-                registration.SetProperty(x=>x.UserIdentityId, reg.UserIdentityId);
-                registration.SetProperty(x=>x.SignUpReminderSentOn, reg.SignUpReminderSentOn);
-                
+
+                registration.SetProperty(x => x.CreatedOn, reg.CreatedOn);
+                registration.SetProperty(x => x.FirstName, reg.FirstName);
+                registration.SetProperty(x => x.LastName, reg.LastName);
+                registration.SetProperty(x => x.Email, new MailAddress(reg.Email));
+                registration.SetProperty(x => x.FirstViewedOn, reg.FirstViewedOn);
+                registration.SetProperty(x => x.UserIdentityId, reg.UserIdentityId);
+                registration.SetProperty(x => x.SignUpReminderSentOn, reg.SignUpReminderSentOn);
+
                 _registrations.Add(registration);
             }
 
             _context.DbContext.Registrations.AddRange(_registrations);
             await _context.DbContext.SaveChangesAsync();
         }
-
 
         [When(@"we want reminders before cut off date (.*)")]
         public async Task WhenWeGetRemindersBeforeCutOffDate(DateTime cutOffTime)
@@ -78,14 +76,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             content.Should().NotBeNull();
 
             var expected = _testData.FirstOrDefault(x => x.Email == email);
-            var match = response.Registrations.FirstOrDefault(x=>x.Email == email);
+            var match = response.Registrations.FirstOrDefault(x => x.Email == email);
             match.Should().NotBeNull();
             match.CreatedOn.Should().Be(expected.CreatedOn);
             match.UserIdentityId.Should().Be(expected.UserIdentityId);
+            match.FirstName.Should().Be(expected.FirstName);
+            match.LastName.Should().Be(expected.LastName);
         }
 
         public class RegistrationTest
         {
+            public string FirstName;
+            public string LastName;
             public string Email;
             public DateTime? CreatedOn;
             public DateTime? FirstViewedOn;
