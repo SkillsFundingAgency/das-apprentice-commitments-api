@@ -43,11 +43,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
-        public bool DisplayChangeNotification =>
-            EmployerCorrect == null
-            || TrainingProviderCorrect == null
-            || ApprenticeshipDetailsCorrect == null;
-
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 

@@ -128,6 +128,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             if (detailsCorrect != null) all.Add(("ApprenticeshipDetailsConfirmation", new ConfirmApprenticeshipRequest { ApprenticeshipCorrect = detailsCorrect.Value }));
             return all;
         }
+
+        internal ConfirmationBuilder ConfirmOnlyEmployer()
+        {
+            providerCorrect = detailsCorrect = null;
+            employerCorrect = true;
+            return this;
+        }
     }
 
     internal class ChangeBuilder

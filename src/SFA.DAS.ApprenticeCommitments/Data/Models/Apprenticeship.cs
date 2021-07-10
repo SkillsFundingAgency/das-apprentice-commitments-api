@@ -33,9 +33,32 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
 
-        public bool DisplayChangeNotification =>
-            CommitmentStatements.Count > 1
-            && LatestCommitmentStatement.DisplayChangeNotification;
+        public bool DisplayChangeNotification
+        {
+            get
+            {
+                if (CommitmentStatements.Count == 1) return false;
+
+                var previous = CommitmentStatements.ElementAt(CommitmentStatements.Count - 2);
+
+                if (LatestCommitmentStatement.EmployerCorrect == null && !EmployerIsEquivalent(LatestCommitmentStatement, previous)) return true;
+                if (LatestCommitmentStatement.TrainingProviderCorrect == null && !ProviderIsEquivalent(LatestCommitmentStatement, previous)) return true;
+                if (LatestCommitmentStatement.ApprenticeshipDetailsCorrect == null && !ApprenticeshipIsEquivalent(LatestCommitmentStatement, previous)) return true;
+
+                return false;
+
+                bool EmployerIsEquivalent(CommitmentStatement l, CommitmentStatement r) =>
+                    l.Details.EmployerAccountLegalEntityId == r.Details.EmployerAccountLegalEntityId &&
+                    l.Details.EmployerName == r.Details.EmployerName;
+
+                bool ProviderIsEquivalent(CommitmentStatement l, CommitmentStatement r) =>
+                    l.Details.TrainingProviderId == r.Details.TrainingProviderId &&
+                    l.Details.TrainingProviderName == r.Details.TrainingProviderName;
+
+                bool ApprenticeshipIsEquivalent(CommitmentStatement l, CommitmentStatement r) =>
+                    l.Details.Course.IsEquivalent(r.Details.Course);
+            }
+        }
 
         private void AddCommitmentStatement(CommitmentStatement apprenticeship)
             => _commitmentStatements.Add(apprenticeship);
