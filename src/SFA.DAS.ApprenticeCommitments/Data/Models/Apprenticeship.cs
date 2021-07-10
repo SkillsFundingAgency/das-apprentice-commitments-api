@@ -39,24 +39,29 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 if (CommitmentStatements.Count == 1) return false;
 
-                var previous = CommitmentStatements.ElementAt(CommitmentStatements.Count - 2);
+                var statements = CommitmentStatements.OrderBy(x => x.CommitmentsApprovedOn).ToList();
+                var latest = statements[CommitmentStatements.Count - 1];
+                var previous = statements[CommitmentStatements.Count - 2];
 
-                if (LatestCommitmentStatement.EmployerCorrect == null && !EmployerIsEquivalent(LatestCommitmentStatement, previous)) return true;
-                if (LatestCommitmentStatement.TrainingProviderCorrect == null && !ProviderIsEquivalent(LatestCommitmentStatement, previous)) return true;
-                if (LatestCommitmentStatement.ApprenticeshipDetailsCorrect == null && !ApprenticeshipIsEquivalent(LatestCommitmentStatement, previous)) return true;
+                if (latest.EmployerCorrect == null &&
+                    !latest.Details.EmployerIsEquivalent(previous.Details))
+                {
+                    return true;
+                }
+
+                if (latest.TrainingProviderCorrect == null &&
+                    !latest.Details.ProviderIsEquivalent(previous.Details))
+                {
+                    return true;
+                }
+
+                if (latest.ApprenticeshipDetailsCorrect == null &&
+                    !latest.Details.ApprenticeshipIsEquivalent(previous.Details))
+                {
+                    return true;
+                }
 
                 return false;
-
-                bool EmployerIsEquivalent(CommitmentStatement l, CommitmentStatement r) =>
-                    l.Details.EmployerAccountLegalEntityId == r.Details.EmployerAccountLegalEntityId &&
-                    l.Details.EmployerName == r.Details.EmployerName;
-
-                bool ProviderIsEquivalent(CommitmentStatement l, CommitmentStatement r) =>
-                    l.Details.TrainingProviderId == r.Details.TrainingProviderId &&
-                    l.Details.TrainingProviderName == r.Details.TrainingProviderName;
-
-                bool ApprenticeshipIsEquivalent(CommitmentStatement l, CommitmentStatement r) =>
-                    l.Details.Course.IsEquivalent(r.Details.Course);
             }
         }
 

@@ -79,16 +79,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         internal CommitmentStatement? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
         {
-            bool EmployerIsEquivalent() =>
-                details.EmployerAccountLegalEntityId == Details.EmployerAccountLegalEntityId &&
-                details.EmployerName == Details.EmployerName;
-
-            bool ProviderIsEquivalent() =>
-                details.TrainingProviderId == Details.TrainingProviderId &&
-                details.TrainingProviderName == Details.TrainingProviderName;
-
-            bool ApprenticeshipIsEquivalent() =>
-                Details.Course.IsEquivalent(details.Course);
+            bool EmployerIsEquivalent() => details.EmployerIsEquivalent(Details);
+            bool ProviderIsEquivalent() => details.ProviderIsEquivalent(Details);
+            bool ApprenticeshipIsEquivalent() => details.ApprenticeshipIsEquivalent(Details);
 
             if (Details.Equals(details)) return null;
 
