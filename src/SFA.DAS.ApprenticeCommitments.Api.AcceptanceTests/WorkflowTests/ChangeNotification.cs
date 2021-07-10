@@ -134,13 +134,44 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task One_section_changed_and_then_confirmed_hides_notification()
+        public async Task Employer_section_changed_and_then_confirmed_hides_notification()
         {
             var (apprenticeship, _) = await CreateApprenticeship(client);
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyEmployer());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer());
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyEmployer());
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.Should().BeEquivalentTo(new
+            {
+                DisplayChangeNotification = false,
+            });
+        }
+
+        [Test]
+        public async Task Provider_section_changed_and_then_confirmed_hides_notification()
+        {
+            var (apprenticeship, _) = await CreateApprenticeship(client);
+
+            await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyProvider());
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider());
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.Should().BeEquivalentTo(new
+            {
+                DisplayChangeNotification = true,
+            });
+        }
+
+        [Test]
+        public async Task Provider_section_confirmed_and_then_changed_shows_notification()
+        {
+            var (apprenticeship, _) = await CreateApprenticeship(client);
+
+            await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyProvider());
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider());
+            await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyProvider());
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
