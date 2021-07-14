@@ -3,6 +3,7 @@ using SFA.DAS.ApprenticeCommitments.Data;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand
 {
@@ -20,6 +21,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
         public async Task<Unit> Handle(VerifyRegistrationCommand command, CancellationToken cancellationToken)
         {
             var registration = await _registrations.GetById(command.ApprenticeId);
+
+            if (registration.DateOfBirth != command.DateOfBirth)
+            {
+                throw new DomainException("Sorry, your identity has not been verified, please check your details");
+            }
 
             var apprentice = registration.ConvertToApprentice(
                 command.FirstName, command.LastName,
