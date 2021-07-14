@@ -40,6 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 CommitmentsApprenticeshipId = 1233,
                 FirstName = "Bob",
                 LastName = "Bobbertson",
+                DateOfBirth = new DateTime(2000, 1,2),
                 Email = "paul@fff.com",
                 EmployerName = "My Company",
                 EmployerAccountLegalEntityId = 61234,

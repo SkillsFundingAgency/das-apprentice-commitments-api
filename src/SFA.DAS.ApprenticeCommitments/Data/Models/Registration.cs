@@ -24,6 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             DateTime commitmentsApprovedOn,
             string firstName,
             string lastName,
+            DateTime dateOfBirth,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
@@ -32,6 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentsApprovedOn = commitmentsApprovedOn;
             FirstName = firstName;
             LastName = lastName;
+            DateOfBirth = dateOfBirth;
             Email = email;
             Apprenticeship = apprenticeship;
 
@@ -42,6 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public long CommitmentsApprenticeshipId { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
+        public DateTime DateOfBirth { get; private set; }
         public MailAddress Email { get; private set; }
         public Guid? UserIdentityId { get; private set; }
         public ApprenticeshipDetails Apprenticeship { get; private set; }

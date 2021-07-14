@@ -29,6 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery
             return new RegistrationResponse
             {
                 ApprenticeId = model.ApprenticeId,
+                DateOfBirth = model.DateOfBirth,
                 Email = model.Email.ToString(),
                 HasViewedVerification = model.FirstViewedOn.HasValue,
                 HasCompletedVerification = model.HasBeenCompleted
