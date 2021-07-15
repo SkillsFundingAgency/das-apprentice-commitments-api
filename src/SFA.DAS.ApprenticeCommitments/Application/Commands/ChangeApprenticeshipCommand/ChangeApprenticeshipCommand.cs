@@ -1,6 +1,8 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 
+#nullable enable
+
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand
 {
     public class ChangeApprenticeshipCommand : IUnitOfWorkCommand
