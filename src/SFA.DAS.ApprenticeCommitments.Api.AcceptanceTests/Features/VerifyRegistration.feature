@@ -15,6 +15,7 @@ Scenario: A registration is successfully completed
 	And the registration has been marked as completed
 	And the registration CreatedOn field is unchanged
 	And a record of the apprentice email address is kept
+	And do not send a Change of Circumstance email to the user
 
 Scenario: A registration is submitted with a different email
 	Given we have an existing registration

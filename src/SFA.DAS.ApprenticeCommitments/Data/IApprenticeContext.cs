@@ -12,10 +12,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     {
         internal async Task<Apprentice> GetById(Guid apprenticeId)
             => await Find(apprenticeId)
-                    ?? throw new DomainException(
+                     ?? throw new DomainException(
                         $"Apprentice {apprenticeId} not found");
 
-        private async Task<Apprentice?> Find(Guid apprenticeId)
+        internal async Task<Apprentice?> Find(Guid apprenticeId)
             => await Entities.SingleOrDefaultAsync(a => a.Id == apprenticeId);
     }
 }

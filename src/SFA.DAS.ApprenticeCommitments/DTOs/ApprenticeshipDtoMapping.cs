@@ -19,6 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 Id = apprenticeship.Id,
                 ApprenticeId = apprenticeship.ApprenticeId,
                 CommitmentStatementId = latest.Id,
+                LastViewed = apprenticeship.LastViewed,
                 CommitmentsApprenticeshipId = latest.CommitmentsApprenticeshipId,
                 EmployerName = latest.Details.EmployerName,
                 EmployerAccountLegalEntityId = latest.Details.EmployerAccountLegalEntityId,

@@ -59,3 +59,8 @@ Scenario: Do not update an apprenticeship when no consequential change is made
 	Then there should only be the original commitment statement in the database
 	And no Confirmation Commenced event is published
 
+Scenario: Notify user of change
+	Given we have an existing apprenticeship
+	And we have an update apprenticeship request
+	When the update is posted
+	Then send a Change of Circumstance email to the user
