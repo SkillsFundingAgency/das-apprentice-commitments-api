@@ -22,18 +22,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Guid apprenticeId,
             long commitmentsApprenticeshipId,
             DateTime commitmentsApprovedOn,
-            string firstName,
-            string lastName,
-            DateTime dateOfBirth,
+            PersonalInformation pii,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
             ApprenticeId = apprenticeId;
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
-            FirstName = firstName;
-            LastName = lastName;
-            DateOfBirth = dateOfBirth;
+            FirstName = pii.FirstName;
+            LastName = pii.LastName;
+            DateOfBirth = pii.DateOfBirth;
             Email = email;
             Apprenticeship = apprenticeship;
 
