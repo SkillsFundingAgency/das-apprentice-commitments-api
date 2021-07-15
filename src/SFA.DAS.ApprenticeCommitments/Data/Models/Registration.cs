@@ -84,7 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             SignUpReminderSentOn = sentOn;
         }
 
-        public void RenewApprenticeship(long commitmentsApprenticeshipId, DateTime commitmentsApprovedOn, ApprenticeshipDetails apprenticeshipDetails)
+        public void RenewApprenticeship(long commitmentsApprenticeshipId, DateTime commitmentsApprovedOn, ApprenticeshipDetails apprenticeshipDetails, string firstName, string lastName, DateTime dateOfBirth)
         {
             if (HasBeenCompleted)
             {
@@ -94,6 +94,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
             Apprenticeship = apprenticeshipDetails;
+            FirstName = firstName;
+            LastName = lastName;
+            DateOfBirth = dateOfBirth;
         }
 
         private void EnsureNotAlreadyCompleted()
