@@ -38,6 +38,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             {
                 ApprenticeId = Guid.NewGuid(),
                 CommitmentsApprenticeshipId = 1233,
+                FirstName = "Bob",
+                LastName = "Bobbertson",
                 Email = "paul@fff.com",
                 EmployerName = "My Company",
                 EmployerAccountLegalEntityId = 61234,
@@ -84,6 +86,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var registration = _context.DbContext.Registrations
                 .FirstOrDefault(x => x.ApprenticeId == _createApprenticeshipRequest.ApprenticeId);
             registration.Should().NotBeNull();
+            registration.FirstName.Should().Be(_createApprenticeshipRequest.FirstName);
+            registration.LastName.Should().Be(_createApprenticeshipRequest.LastName);
             registration.Email.Should().Be(_createApprenticeshipRequest.Email);
             registration.Apprenticeship.EmployerName.Should().Be(_createApprenticeshipRequest.EmployerName);
             registration.Apprenticeship.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);

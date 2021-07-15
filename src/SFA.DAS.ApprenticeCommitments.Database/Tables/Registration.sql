@@ -3,6 +3,8 @@ CREATE TABLE [dbo].[Registration]
     [ApprenticeId] UNIQUEIDENTIFIER NOT NULL,
     [CommitmentsApprenticeshipId] BIGINT NOT NULL, 
     [CommitmentsApprovedOn] DATETIME2 NOT NULL, 
+    [FirstName] NVARCHAR(150) NOT NULL, 
+    [LastName] NVARCHAR(150) NOT NULL, 
     [Email] NVARCHAR(150) NOT NULL, 
     [UserIdentityId] UNIQUEIDENTIFIER NULL,
     [CreatedOn] DATETIME2 NOT NULL DEFAULT current_timestamp,
