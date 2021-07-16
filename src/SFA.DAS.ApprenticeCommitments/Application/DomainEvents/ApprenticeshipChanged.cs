@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -18,14 +19,19 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
     internal class ApprenticeshipChangedHandler : INotificationHandler<ApprenticeshipChanged>
     {
         private readonly IMessageSession _messageSession;
+        private readonly ILogger<ApprenticeshipChangedHandler> _logger;
 
-        public ApprenticeshipChangedHandler(IMessageSession messageSession)
+        public ApprenticeshipChangedHandler(IMessageSession messageSession, ILogger<ApprenticeshipChangedHandler> logger)
         {
             _messageSession = messageSession;
+            _logger = logger;
         }
 
         public async Task Handle(ApprenticeshipChanged notification, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Publishing ApprenticeshipChangedEvent for {apprentice} -- {apprenticeship}",
+                notification.Apprenticeship.ApprenticeId, notification.Apprenticeship.Id);
+
             await _messageSession.Publish(new ApprenticeshipChangedEvent
             {
                 ApprenticeId = notification.Apprenticeship.ApprenticeId,
