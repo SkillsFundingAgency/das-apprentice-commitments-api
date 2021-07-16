@@ -24,6 +24,13 @@ Scenario: A registration is submitted with a different email
 	Then a bad request is returned
 	And a email domain error is returned
 
+Scenario: A registration is submitted with the wrong Date of birth
+	Given we have an existing registration
+	And the request date of birth does not match
+	When we verify that registration
+	Then a bad request is returned
+	And an identity mismatch domain error is returned
+
 Scenario: A registration is re-submitted
 	Given we have an existing already verified registration
 	And the request matches registration details

@@ -41,6 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var verify = fixture.Build<VerifyRegistrationCommand>()
                 .With(x => x.ApprenticeId, create.ApprenticeId)
                 .With(p => p.Email, create.Email)
+                .With(p => p.DateOfBirth, create.DateOfBirth)
                 .Create();
 
             var r2 = await client.PostValueAsync("registrations", verify);
@@ -91,6 +92,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var verify = fixture.Build<VerifyRegistrationCommand>()
                 .With(x => x.ApprenticeId, create.ApprenticeId)
                 .With(p => p.Email, create.Email)
+                .With(p=>p.DateOfBirth, create.DateOfBirth)
                 .Create();
 
             var r2 = await client.PostValueAsync("registrations", verify);

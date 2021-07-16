@@ -22,12 +22,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Guid apprenticeId,
             long commitmentsApprenticeshipId,
             DateTime commitmentsApprovedOn,
+            PersonalInformation pii,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
             ApprenticeId = apprenticeId;
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
+            FirstName = pii.FirstName;
+            LastName = pii.LastName;
+            DateOfBirth = pii.DateOfBirth;
             Email = email;
             Apprenticeship = apprenticeship;
 
@@ -36,6 +40,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid ApprenticeId { get; private set; }
         public long CommitmentsApprenticeshipId { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public DateTime DateOfBirth { get; private set; }
         public MailAddress Email { get; private set; }
         public Guid? UserIdentityId { get; private set; }
         public ApprenticeshipDetails Apprenticeship { get; private set; }
@@ -75,7 +82,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             SignUpReminderSentOn = sentOn;
         }
 
-        public void RenewApprenticeship(long commitmentsApprenticeshipId, DateTime commitmentsApprovedOn, ApprenticeshipDetails apprenticeshipDetails)
+        public void RenewApprenticeship(long commitmentsApprenticeshipId, DateTime commitmentsApprovedOn, ApprenticeshipDetails apprenticeshipDetails, PersonalInformation pii)
         {
             if (HasBeenCompleted)
             {
@@ -85,6 +92,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
             Apprenticeship = apprenticeshipDetails;
+            FirstName = pii.FirstName;
+            LastName = pii.LastName;
+            DateOfBirth = pii.DateOfBirth;
         }
 
         private void EnsureNotAlreadyCompleted()

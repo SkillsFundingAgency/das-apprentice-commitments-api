@@ -218,8 +218,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId
+                _request.CommitmentsApprovedOn,
+                _request.CommitmentsApprenticeshipId,
+                _request.FirstName,
+                _request.LastName,
+                _request.DateOfBirth
             });
         }
 

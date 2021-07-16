@@ -48,6 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _command = _f.Build<VerifyRegistrationCommand>()
                 .With(p => p.Email, _registration.Email.ToString)
                 .With(p => p.ApprenticeId, _registration.ApprenticeId)
+                .With(p=>p.DateOfBirth, _registration.DateOfBirth)
                 .Create();
         }
 
@@ -57,6 +58,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _command = _f.Build<VerifyRegistrationCommand>()
                 .With(p => p.Email, "another@email.com")
                 .With(p => p.ApprenticeId, _registration.ApprenticeId)
+                .With(p => p.DateOfBirth, _registration.DateOfBirth)
+                .Create();
+        }
+
+        [Given(@"the request date of birth does not match")]
+        public void GivenTheRequestDateOfBirthDoesNotMatch()
+        {
+            _command = _f.Build<VerifyRegistrationCommand>()
+                .With(p => p.Email, _registration.Email.ToString)
+                .With(p => p.ApprenticeId, _registration.ApprenticeId)
+                .With(p => p.DateOfBirth, _registration.DateOfBirth.AddDays(90))
                 .Create();
         }
 
@@ -197,6 +209,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             errors.Count.Should().Be(1);
             errors[0].PropertyName.Should().BeNull();
             errors[0].ErrorMessage.Should().Be($"Email from verifying user doesn't match registered user {_registration.ApprenticeId}");
+        }
+
+        [Then(@"an identity mismatch domain error is returned")]
+        public async Task ThenAnIdentityMismatchDomainErrorIsReturned()
+        {
+            var content = await _context.Api.Response.Content.ReadAsStringAsync();
+            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
+            errors.Count.Should().Be(1);
+            errors[0].PropertyName.Should().BeNull();
+            errors[0].ErrorMessage.Should().Be("Sorry, your identity has not been verified, please check your details");
         }
 
         [Then(@"an 'already verified' domain error is returned")]
