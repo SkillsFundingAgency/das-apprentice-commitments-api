@@ -36,13 +36,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var verify = fixture.Build<VerifyRegistrationCommand>()
                 .With(x => x.ApprenticeId, create.ApprenticeId)
                 .With(p => p.Email, create.Email)
+                .With(p => p.DateOfBirth, create.DateOfBirth)
                 .Create();
 
             var verifyResponse = await client.PostValueAsync("registrations", verify);
-            verifyResponse.EnsureSuccessStatusCode();
+            verifyResponse.Should().Be200Ok();
 
             var (getResponse, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
-            getResponse.EnsureSuccessStatusCode();
+            getResponse.Should().Be200Ok();
 
             context.Time.Now = create.CommitmentsApprovedOn;
 
