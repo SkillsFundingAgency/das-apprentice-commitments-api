@@ -4,6 +4,7 @@ using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand
 {
@@ -11,19 +12,22 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
     {
         private readonly IRegistrationContext _registrations;
         private readonly IApprenticeContext _apprentices;
+        private readonly ILogger<VerifyRegistrationCommandHandler> _logger;
 
-        public VerifyRegistrationCommandHandler(IRegistrationContext registrations, IApprenticeContext apprenticeRepository)
+        public VerifyRegistrationCommandHandler(IRegistrationContext registrations, IApprenticeContext apprenticeRepository, ILogger<VerifyRegistrationCommandHandler> logger)
         {
             _registrations = registrations;
             _apprentices = apprenticeRepository;
+            _logger = logger;
         }
 
         public async Task<Unit> Handle(VerifyRegistrationCommand command, CancellationToken cancellationToken)
         {
             var registration = await _registrations.GetById(command.ApprenticeId);
 
-            if (registration.DateOfBirth != command.DateOfBirth)
+            if (registration.DateOfBirth.Date != command.DateOfBirth.Date)
             {
+                _logger.LogInformation($"Verified DOB ({command.DateOfBirth}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth})");
                 throw new DomainException("Sorry, your identity has not been verified, please check your details");
             }
 
