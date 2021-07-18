@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using Microsoft.Extensions.Logging;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand
 {
@@ -28,7 +30,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
             if (registration.DateOfBirth.Date != command.DateOfBirth.Date)
             {
                 _logger.LogInformation($"Verified DOB ({command.DateOfBirth}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth})");
-                throw new DomainException("Sorry, your identity has not been verified, please check your details");
+                throw new ValidationException(new []
+                {
+                    new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
+                });
             }
 
             var apprentice = registration.ConvertToApprentice(

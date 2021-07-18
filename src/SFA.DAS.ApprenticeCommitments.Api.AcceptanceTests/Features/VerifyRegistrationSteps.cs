@@ -217,8 +217,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
             errors.Count.Should().Be(1);
-            errors[0].PropertyName.Should().BeNull();
-            errors[0].ErrorMessage.Should().Be("Sorry, your identity has not been verified, please check your details");
+            errors[0].PropertyName.Should().Be("PersonalDetails");
         }
 
         [Then(@"an 'already verified' domain error is returned")]
