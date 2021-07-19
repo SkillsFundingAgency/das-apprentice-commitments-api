@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Linq;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Apprenticeship
+    public class Apprenticeship : Entity
     {
         private Apprenticeship()
         {
@@ -21,6 +22,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public long Id { get; private set; }
 
         public Guid ApprenticeId { get; private set; }
+
+        public DateTime LastViewed { get; set; }
 
         private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
 
@@ -59,7 +62,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
             var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
-            if (renewed != null) AddCommitmentStatement(renewed);
+            if (renewed != null)
+            {
+                AddCommitmentStatement(renewed);
+                AddDomainEvent(new ApprenticeshipChanged(this));
+            }
         }
     }
 }

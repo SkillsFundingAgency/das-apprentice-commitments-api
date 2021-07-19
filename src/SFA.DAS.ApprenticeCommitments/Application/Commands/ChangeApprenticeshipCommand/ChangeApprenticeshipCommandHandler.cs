@@ -54,7 +54,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             }
 
             _logger.LogInformation("Updating registration for apprenticeship {apprenticeshipId}", apprenticeshipId);
-            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command));
+            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command), new PersonalInformation(command.FirstName, command.LastName, command.DateOfBirth));
         }
 
         private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeApprenticeshipCommand command)

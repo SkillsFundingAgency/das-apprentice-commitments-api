@@ -1,18 +1,16 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Newtonsoft.Json;
+using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using TechTalk.SpecFlow;
-using NServiceBus.Testing;
-using SFA.DAS.ApprenticeCommitments.Messages.Events;
 
 #nullable enable
 
@@ -20,7 +18,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 {
     [Binding]
     [Scope(Feature = "ChangeApprenticeship")]
-
     public class ChangeApprenticeshipSteps
     {
         private readonly Fixture _fixture = new Fixture();
@@ -89,7 +86,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.CommitmentsApprovedOn, (long days) => _commitmentStatement.CommitmentsApprovedOn.AddDays(days))
                 .With(x => x.PlannedStartDate, start)
-                .With(x => x.PlannedEndDate, (long days) => start.AddDays(days))
+                .With(x => x.PlannedEndDate, (long days) => start.AddDays(days + 1))
                 .Create();
         }
 
@@ -221,8 +218,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId
+                _request.CommitmentsApprovedOn,
+                _request.CommitmentsApprenticeshipId,
+                _request.FirstName,
+                _request.LastName,
+                _request.DateOfBirth
             });
         }
 
@@ -279,6 +279,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.Messages.PublishedMessages
                 .Select(x => x.Message is ApprenticeshipConfirmationCommencedEvent)
                 .Should().BeEmpty();
+        }
+
+        [Then("send a Change of Circumstance email to the user")]
+        public void ThenSendAChangeOfCircumstanceEmailToTheUser()
+        {
+            var latest = _context.DbContext.CommitmentStatements.OrderBy(x => x.Id).Last();
+
+            _context.Messages.PublishedMessages
+                .Where(x => x.Message is ApprenticeshipChangedEvent)
+                .Should().ContainEquivalentOf(new
+                {
+                    Message = new
+                    {
+                        ApprenticeId = _context.DbContext.Apprentices.Single().Id,
+                        _commitmentStatement.ApprenticeshipId,
+                    }
+                });
         }
     }
 }

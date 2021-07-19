@@ -41,6 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var verify = fixture.Build<VerifyRegistrationCommand>()
                 .With(x => x.ApprenticeId, create.ApprenticeId)
                 .With(p => p.Email, create.Email)
+                .With(p => p.DateOfBirth, create.DateOfBirth)
                 .Create();
 
             var r2 = await client.PostValueAsync("registrations", verify);
@@ -50,7 +51,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var apprenticeshipId = apprenticeships[0].Id;
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/EmployerConfirmation",
+                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.EnsureSuccessStatusCode();
 
@@ -91,6 +92,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var verify = fixture.Build<VerifyRegistrationCommand>()
                 .With(x => x.ApprenticeId, create.ApprenticeId)
                 .With(p => p.Email, create.Email)
+                .With(p=>p.DateOfBirth, create.DateOfBirth)
                 .Create();
 
             var r2 = await client.PostValueAsync("registrations", verify);
@@ -110,7 +112,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             r5.EnsureSuccessStatusCode();
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/statements/{csId}/EmployerConfirmation",
+                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{csId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.StatusCode.Should().Be(HttpStatusCode.OK);
 
