@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var startDate = new System.DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
                 _fixture.Create("CourseName"), 1, null,
-                startDate, startDate.AddMonths(32)));
+                startDate, startDate.AddMonths(32), 33));
         }
 
         [Given("there is one apprentice")]

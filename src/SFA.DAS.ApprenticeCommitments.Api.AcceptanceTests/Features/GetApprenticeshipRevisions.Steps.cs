@@ -30,7 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             var startDate = new DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
                 _fixture.Create("CourseName"), 1, null,
-                startDate, startDate.AddMonths(32)));
+                startDate, startDate.AddMonths(32), 33));
 
             _commitmentStatement = _fixture.Build<CommitmentStatement>()
                 .Do(a => a.Confirm(new Confirmations
@@ -158,7 +158,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                         x.ApprenticeshipDetailsCorrect,
                         x.HowApprenticeshipDeliveredCorrect,
                         x.RolesAndResponsibilitiesCorrect,
-                        DurationInMonths = 32 + 1, // Duration is inclusive of start and end months
+                        CourseDuration = 32 + 1, // Duration is inclusive of start and end months
                     }
                     ),
                 });
