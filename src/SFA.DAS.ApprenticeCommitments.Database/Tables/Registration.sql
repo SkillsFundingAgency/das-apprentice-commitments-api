@@ -20,6 +20,7 @@ CREATE TABLE [dbo].[Registration]
     [PlannedEndDate] datetime2 NOT NULL,
     [FirstViewedOn] DATETIME2 NULL, 
     [SignUpReminderSentOn] DATETIME2 NULL, 
+    [CourseDuration] INT NULL,
     CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([ApprenticeId])
 )
 GO

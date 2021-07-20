@@ -32,7 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
                         request.CourseLevel,
                         request.CourseOption,
                         request.PlannedStartDate,
-                        request.PlannedEndDate))));
+                        request.PlannedEndDate,
+                        request.CourseDuration))));
 
             return Unit.Value;
         }

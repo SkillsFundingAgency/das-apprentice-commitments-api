@@ -69,7 +69,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
                     command.CourseLevel,
                     command.CourseOption,
                     command.PlannedStartDate,
-                    command.PlannedEndDate));
+                    command.PlannedEndDate,
+                    command.CourseDuration));
             return details;
         }
     }
