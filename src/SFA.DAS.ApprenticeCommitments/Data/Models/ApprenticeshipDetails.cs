@@ -31,6 +31,20 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public CourseDetails Course { get; private set; } = null!;
 
+        public bool EmployerIsEquivalent(ApprenticeshipDetails? other)
+            => other != null &&
+            EmployerAccountLegalEntityId == other.EmployerAccountLegalEntityId &&
+            EmployerName == other.EmployerName;
+
+        internal bool ProviderIsEquivalent(ApprenticeshipDetails other)
+            => other != null &&
+            TrainingProviderId == other.TrainingProviderId &&
+            TrainingProviderName == other.TrainingProviderName;
+
+        internal bool ApprenticeshipIsEquivalent(ApprenticeshipDetails other)
+            => other != null &&
+            Course.IsEquivalent(other.Course);
+
         public override bool Equals(object? obj) => obj switch
         {
             ApprenticeshipDetails other => Equals(other),
