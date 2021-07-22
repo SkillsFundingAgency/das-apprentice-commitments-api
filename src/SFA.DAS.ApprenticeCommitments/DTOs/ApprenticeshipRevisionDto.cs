@@ -15,9 +15,9 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public string CourseName { get; set; } = null!;
         public int CourseLevel { get; set; }
         public string? CourseOption { get; set; } = null!;
+        public int CourseDuration { get; set; }
         public DateTime PlannedStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
-        public int DurationInMonths { get; set; }
 
         public bool? TrainingProviderCorrect { get; set; }
         public bool? EmployerCorrect { get; set; }
