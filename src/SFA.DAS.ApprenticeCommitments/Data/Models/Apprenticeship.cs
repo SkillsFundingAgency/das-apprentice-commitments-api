@@ -33,9 +33,37 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
 
-        public bool DisplayChangeNotification =>
-            CommitmentStatements.Count > 1
-            && LatestCommitmentStatement.DisplayChangeNotification;
+        public bool DisplayChangeNotification
+        {
+            get
+            {
+                if (CommitmentStatements.Count == 1) return false;
+
+                var statements = CommitmentStatements.OrderBy(x => x.CommitmentsApprovedOn).ToList();
+                var latest = statements[CommitmentStatements.Count - 1];
+                var previous = statements[CommitmentStatements.Count - 2];
+
+                if (latest.EmployerCorrect == null &&
+                    !latest.Details.EmployerIsEquivalent(previous.Details))
+                {
+                    return true;
+                }
+
+                if (latest.TrainingProviderCorrect == null &&
+                    !latest.Details.ProviderIsEquivalent(previous.Details))
+                {
+                    return true;
+                }
+
+                if (latest.ApprenticeshipDetailsCorrect == null &&
+                    !latest.Details.ApprenticeshipIsEquivalent(previous.Details))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
 
         private void AddCommitmentStatement(CommitmentStatement apprenticeship)
             => _commitmentStatements.Add(apprenticeship);

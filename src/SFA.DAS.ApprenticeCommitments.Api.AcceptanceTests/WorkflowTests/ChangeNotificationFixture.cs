@@ -128,6 +128,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             if (detailsCorrect != null) all.Add(("ApprenticeshipDetailsConfirmation", new ConfirmApprenticeshipRequest { ApprenticeshipCorrect = detailsCorrect.Value }));
             return all;
         }
+
+        internal ConfirmationBuilder ConfirmOnlyEmployer()
+        {
+            providerCorrect = detailsCorrect = null;
+            employerCorrect = true;
+            return this;
+        }
+
+        internal ConfirmationBuilder ConfirmOnlyProvider()
+        {
+            employerCorrect = detailsCorrect = null;
+            providerCorrect = true;
+            return this;
+        }
     }
 
     internal class ChangeBuilder
@@ -158,7 +172,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         internal ChangeBuilder OnlyChangeEmployer()
         {
-            return this.WithUnchangedProvider().WithUnchangedCourse();
+            return WithUnchangedProvider().WithUnchangedCourse();
+        }
+
+        internal ChangeBuilder OnlyChangeProvider()
+        {
+            return WithUnchangedEmployer().WithUnchangedCourse();
         }
 
         internal ChangeBuilder WithUnchangedProvider()
