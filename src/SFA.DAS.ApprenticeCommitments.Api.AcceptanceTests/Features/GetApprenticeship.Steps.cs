@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var startDate = new System.DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
                 _fixture.Create("CourseName"), 1, null,
-                startDate, startDate.AddMonths(32)));
+                startDate, startDate.AddMonths(32), 33));
 
             _commitmentStatement = _fixture.Build<CommitmentStatement>()
                 .Do(a => a.Confirm(new Confirmations
@@ -149,7 +149,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.CourseOption.Should().Be(_commitmentStatement.Details.Course.Option);
             a.PlannedStartDate.Should().Be(_commitmentStatement.Details.Course.PlannedStartDate);
             a.PlannedEndDate.Should().Be(_commitmentStatement.Details.Course.PlannedEndDate);
-            a.DurationInMonths.Should().Be(32 + 1); // Duration is inclusive of start and end months
+            a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
 
         [Then(@"the response should match the newer apprenticeship values")]
@@ -172,7 +172,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.CourseOption.Should().Be(_commitmentStatement.Details.Course.Option);
             a.PlannedStartDate.Should().Be(_newerCommitmentStatement.Details.Course.PlannedStartDate);
             a.PlannedEndDate.Should().Be(_newerCommitmentStatement.Details.Course.PlannedEndDate);
-            a.DurationInMonths.Should().Be(32 + 1); // Duration is inclusive of start and end months
+            a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
 
 

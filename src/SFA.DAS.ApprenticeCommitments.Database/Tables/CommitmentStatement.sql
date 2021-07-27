@@ -19,7 +19,8 @@ CREATE TABLE [dbo].[CommitmentStatement]
     [ApprenticeshipDetailsCorrect] bit NULL,
     [HowApprenticeshipDeliveredCorrect] BIT NULL, 
     [ConfirmBefore] DATETIME2 NOT NULL, 
-    [ConfirmedOn] DATETIME2 NULL, 
+    [ConfirmedOn] DATETIME2 NULL,
+    [CourseDuration] INT NULL,
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
     CONSTRAINT FK_CommitmentStatement_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )
