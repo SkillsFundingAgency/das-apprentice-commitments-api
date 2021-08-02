@@ -25,5 +25,3 @@ GRANT SELECT ON [grafanaReporter].ApprenticeshipDashboardView TO Reporter
 GRANT SELECT ON [grafanaReporter].CommitmentstatementDashboardView TO Reporter
 
 GRANT SELECT ON [grafanaReporter].RegistrationDashboardView TO Reporter
-
-alter table apprentice drop column lastviewed
