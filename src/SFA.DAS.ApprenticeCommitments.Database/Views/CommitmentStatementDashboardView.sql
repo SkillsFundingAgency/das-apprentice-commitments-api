@@ -1,6 +1,27 @@
 ﻿CREATE VIEW grafanaReporter.CommitmentStatementDashboardView
 AS
-SELECT        Id, ApprenticeshipId, CommitmentsApprenticeshipId, CommitmentsApprovedOn, EmployerAccountLegalEntityId, EmployerName, TrainingProviderId, TrainingProviderName, CourseName, CourseLevel, PlannedStartDate, 
-                         CourseOption, PlannedEndDate, TrainingProviderCorrect, EmployerCorrect, RolesAndResponsibilitiesCorrect, ApprenticeshipDetailsCorrect, HowApprenticeshipDeliveredCorrect, ConfirmedOn
-FROM          dbo.CommitmentStatement
+SELECT
+    Id,
+    ApprenticeshipId,
+    CommitmentsApprenticeshipId,
+    CommitmentsApprovedOn,
+    EmployerAccountLegalEntityId,
+    EmployerName,
+    TrainingProviderId,
+    TrainingProviderName,
+    CourseName,
+    CourseLevel,
+    CourseOption,
+    PlannedStartDate,
+    PlannedEndDate,
+    TrainingProviderCorrect,
+    EmployerCorrect,
+    RolesAndResponsibilitiesCorrect,
+    ApprenticeshipDetailsCorrect,
+    HowApprenticeshipDeliveredCorrect,
+    ConfirmBefore,
+    ConfirmedOn,
+    CourseDuration
+FROM
+    dbo.CommitmentStatement
 GO
