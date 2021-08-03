@@ -1,4 +1,4 @@
-﻿CREATE VIEW grafanaReporter.ApprenticeshipDashboardView
+﻿CREATE VIEW DashboardReporting.ApprenticeshipDashboardView
 AS
 SELECT
 	Id,

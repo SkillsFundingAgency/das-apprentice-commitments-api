@@ -1,4 +1,4 @@
-﻿CREATE VIEW grafanaReporter.RegistrationDashboardView
+﻿CREATE VIEW DashboardReporting.RegistrationDashboardView
 AS
 SELECT        ApprenticeId, CommitmentsApprenticeshipId, CommitmentsApprovedOn, CreatedOn, EmployerAccountLegalEntityId, EmployerName, TrainingProviderId, TrainingProviderName, CourseName, CourseLevel, CourseOption, PlannedStartDate, 
                          PlannedEndDate, FirstViewedOn, SignUpReminderSentOn
