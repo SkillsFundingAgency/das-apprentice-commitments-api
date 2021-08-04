@@ -18,10 +18,10 @@ BEGIN
     CREATE ROLE [Reporter]
 END
 
-GRANT SELECT ON [grafanaReporter].ApprenticeDashboardView TO Reporter
+GRANT SELECT ON [DashboardReporting].ApprenticeDashboardView TO Reporter
 
-GRANT SELECT ON [grafanaReporter].ApprenticeshipDashboardView TO Reporter
+GRANT SELECT ON [DashboardReporting].ApprenticeshipDashboardView TO Reporter
 
-GRANT SELECT ON [grafanaReporter].CommitmentstatementDashboardView TO Reporter
+GRANT SELECT ON [DashboardReporting].CommitmentstatementDashboardView TO Reporter
 
-GRANT SELECT ON [grafanaReporter].RegistrationDashboardView TO Reporter
+GRANT SELECT ON [DashboardReporting].RegistrationDashboardView TO Reporter
