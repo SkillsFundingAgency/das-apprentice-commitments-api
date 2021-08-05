@@ -3,11 +3,14 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -92,7 +95,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var verify = fixture.Build<VerifyRegistrationCommand>()
                 .With(x => x.ApprenticeId, create.ApprenticeId)
                 .With(p => p.Email, create.Email)
-                .With(p=>p.DateOfBirth, create.DateOfBirth)
+                .With(p => p.DateOfBirth, create.DateOfBirth)
                 .Create();
 
             var r2 = await client.PostValueAsync("registrations", verify);

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShownCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -21,6 +22,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         {
             _mediator = mediator;
         }
+
+        [HttpPost("apprenticeships2")]
+        public async Task CreateApprenticeship([FromBody] VerifyRegistrationCommand2 request)
+            => await _mediator.Send(request);
 
         [HttpPost("apprenticeships")]
         public async Task<IActionResult> CreateRegistration([FromBody] CreateRegistrationCommand request)

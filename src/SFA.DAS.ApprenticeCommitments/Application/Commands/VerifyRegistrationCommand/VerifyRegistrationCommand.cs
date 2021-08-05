@@ -14,4 +14,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
         public string Email { get; set; }
         public DateTime DateOfBirth { get; set; }
     }
+
+    public class VerifyRegistrationCommand2 : IUnitOfWorkCommand
+    {
+        public Guid RegistrationId { get; set; }
+        public Guid ApprenticeId { get; set; }
+    }
 }

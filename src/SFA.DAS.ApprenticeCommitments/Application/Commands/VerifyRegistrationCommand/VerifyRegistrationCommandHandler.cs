@@ -1,17 +1,17 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Configuration;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using FluentValidation;
-using FluentValidation.Results;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand
 {
-    public class VerifyRegistrationCommandHandler : IRequestHandler<VerifyRegistrationCommand>
+    public class VerifyRegistrationCommandHandler : IRequestHandler<VerifyRegistrationCommand>, IRequestHandler<VerifyRegistrationCommand2>
     {
         private readonly IRegistrationContext _registrations;
         private readonly IApprenticeContext _apprentices;
@@ -19,8 +19,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
         private readonly ApplicationSettings _applicationSettings;
 
         public VerifyRegistrationCommandHandler(
-            IRegistrationContext registrations, 
-            IApprenticeContext apprenticeRepository, 
+            IRegistrationContext registrations,
+            IApprenticeContext apprenticeRepository,
             ILogger<VerifyRegistrationCommandHandler> logger,
             ApplicationSettings applicationSettings)
         {
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
         public async Task<Unit> Handle(VerifyRegistrationCommand command, CancellationToken cancellationToken)
         {
             var registration = await _registrations.GetById(command.ApprenticeId);
-                        
+
             var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold);
 
             if (!matcher.IsSimilar(registration.LastName, command.LastName))
@@ -48,7 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
             if (registration.DateOfBirth.Date != command.DateOfBirth.Date)
             {
                 _logger.LogInformation($"Verified DOB ({command.DateOfBirth}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth})");
-                throw new ValidationException(new []
+                throw new ValidationException(new[]
                 {
                     new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
                 });
@@ -62,6 +62,31 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
             await _apprentices.AddAsync(apprentice);
 
             return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(VerifyRegistrationCommand2 request, CancellationToken cancellationToken)
+        {
+            var registration = await _registrations.GetById(request.RegistrationId);
+            var apprentice = await _apprentices.GetById(request.ApprenticeId);
+
+            if (registration.DateOfBirth.Date != apprentice.DateOfBirth.Date)
+            {
+                _logger.LogInformation($"Verified DOB ({apprentice.DateOfBirth.Date}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth.Date})");
+                throw new IdentityNotVerifiedException();
+            }
+
+            return Unit.Value;
+        }
+    }
+
+    public class IdentityNotVerifiedException : ValidationException
+    {
+        public IdentityNotVerifiedException()
+            : base(new[]
+            {
+                new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
+            })
+        {
         }
     }
 }

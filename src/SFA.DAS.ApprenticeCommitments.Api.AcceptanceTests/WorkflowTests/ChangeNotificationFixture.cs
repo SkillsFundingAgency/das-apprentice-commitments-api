@@ -16,14 +16,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
-    public class ChangeNotificationFixture
+    public class ChangeNotificationFixture : ApiFixture
     {
-        private protected Fixture fixture;
-        private protected HttpClient client;
-        private protected TestContext context;
-
-        private protected TimeSpan TimeBetweenActions = TimeSpan.FromDays(2);
-
         public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateApprenticeship(HttpClient client)
         {
             var create = fixture.Build<CreateRegistrationCommand>()
@@ -48,18 +42,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             context.Time.Now = create.CommitmentsApprovedOn;
 
             return (apprenticeships[0], create.CommitmentsApprovedOn);
-        }
-
-        [SetUp]
-        public void Setup()
-        {
-            fixture = new Fixture();
-
-            var factory = Bindings.Api.CreateApiFactory();
-            context = new TestContext();
-            _ = new Bindings.Api(context);
-            client = factory.CreateClient();
-            _ = Bindings.Database.CreateDbContext();
         }
 
         protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
