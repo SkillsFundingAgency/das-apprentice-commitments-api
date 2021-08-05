@@ -62,6 +62,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [TestCase("Tayla-Smith", "Tailor")]
         [TestCase("Tayla-Smith", "Smith")]
 
+        [TestCase("Taylor", "taylor")]
+        [TestCase("Taylor", "taYlor")]
+        [TestCase("taylor", "TAYLOR")]
+        [TestCase("Taylor", "tayla")]
+
         [TestCase("Thereph", "Theirf")]
 
         public void PositiveSpellingTestCases(string string1, string string2)

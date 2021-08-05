@@ -36,15 +36,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
                         
             var matcher = new FuzzyMatcher(_applicationSettings.SimilarityThreshold);
 
-            if (!matcher.IsSimilar(registration.FirstName, command.FirstName))
-            {
-                _logger.LogInformation($"Verified FirstName ({command.FirstName}) did not match registration {registration.ApprenticeId} ({registration.FirstName})");
-                throw new ValidationException(new[]
-                {
-                    new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
-                });
-            }
-
             if (!matcher.IsSimilar(registration.LastName, command.LastName))
             {
                 _logger.LogInformation($"Verified Lastname ({command.LastName}) did not match registration {registration.ApprenticeId} ({registration.LastName})");
