@@ -22,8 +22,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching
             string1 = string1.Trim();
             string2 = string2.Trim();
 
-            var s1 = string1.Split(' ', '-');
-            var s2 = string2.Split(' ', '-');
+            var s1 = string1.Split(new char[] { ' ', '-' });
+            var s2 = string2.Split(new char[] { ' ', '-' });
 
             if (s1.Any(s => s2.Any(r => GetSimilarity(s, r) >= _similarityThreshold)))
             {
