@@ -38,6 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             AddDomainEvent(new RegistrationAdded(this));
         }
 
+        public Guid RegistrationId { get; private set; } = Guid.NewGuid();
         public Guid ApprenticeId { get; private set; }
         public long CommitmentsApprenticeshipId { get; private set; }
         public string FirstName { get; private set; }

@@ -25,3 +25,6 @@ GRANT SELECT ON [DashboardReporting].ApprenticeshipDashboardView TO Reporter
 GRANT SELECT ON [DashboardReporting].CommitmentstatementDashboardView TO Reporter
 
 GRANT SELECT ON [DashboardReporting].RegistrationDashboardView TO Reporter
+
+
+update Registration set ApprenticeId = RegistrationId where ApprenticeId is null
