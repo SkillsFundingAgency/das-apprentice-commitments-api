@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -128,6 +128,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             apprentice.DateOfBirth.Should().Be(_command.DateOfBirth);
             apprentice.Id.Should().Be(_command.ApprenticeId);
             _apprenticeId = apprentice.Id;
+        }
+
+        [Then("an apprenticeship record is not yet created")]
+        public void ThenAnApprenticeshipRecordIsNotYetCreated()
+        {
+            var apprentice = _context.DbContext
+                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.CommitmentStatements)
+                .Should().Contain(x => x.Id == _command.ApprenticeId)
+                .Which.Apprenticeships.Should().BeEmpty();
         }
 
         [Then(@"an apprenticeship record is created")]

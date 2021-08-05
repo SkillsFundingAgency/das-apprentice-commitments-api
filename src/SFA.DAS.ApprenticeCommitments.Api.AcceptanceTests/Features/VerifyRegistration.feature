@@ -1,17 +1,16 @@
-﻿@database
+@database
 @api
 
 Feature: VerifyRegistration
 	As an application user
 	I want to verify and complete an existing registration
 
-Scenario: A registration is successfully completed
+Scenario: A registration account is created
 	Given we have an existing registration
 	And the request matches registration details
 	When we verify that registration
 	Then the apprentice record is created
-	And an apprenticeship record is created
-	And the Confirmation Commenced event is published
+	And an apprenticeship record is not yet created
 	And the registration has been marked as completed
 	And the registration CreatedOn field is unchanged
 	And a record of the apprentice email address is kept
