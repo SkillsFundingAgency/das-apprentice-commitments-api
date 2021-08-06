@@ -1,10 +1,9 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Configuration;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,20 +37,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
 
             if (!matcher.IsSimilar(registration.LastName, command.LastName))
             {
-                _logger.LogInformation($"Verified Lastname ({command.LastName}) did not match registration {registration.ApprenticeId} ({registration.LastName})");
-                throw new ValidationException(new[]
-                {
-                    new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
-                });
+                throw new IdentityNotVerifiedException(
+                    $"Verified Lastname ({command.LastName}) did not match registration {registration.ApprenticeId} ({registration.LastName})");
             }
 
             if (registration.DateOfBirth.Date != command.DateOfBirth.Date)
             {
-                _logger.LogInformation($"Verified DOB ({command.DateOfBirth}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth})");
-                throw new ValidationException(new[]
-                {
-                    new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
-                });
+                throw new IdentityNotVerifiedException(
+                    $"Verified DOB ({command.DateOfBirth}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth})");
             }
 
             var apprentice = registration.ConvertToApprentice(
@@ -71,22 +64,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
 
             if (registration.DateOfBirth.Date != apprentice.DateOfBirth.Date)
             {
-                _logger.LogInformation($"Verified DOB ({apprentice.DateOfBirth.Date}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth.Date})");
-                throw new IdentityNotVerifiedException();
+                throw new IdentityNotVerifiedException(
+                    $"Verified DOB ({apprentice.DateOfBirth.Date}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth.Date})");
             }
 
-            return Unit.Value;
-        }
-    }
+            registration.AssociateWithApprentice(apprentice);
 
-    public class IdentityNotVerifiedException : ValidationException
-    {
-        public IdentityNotVerifiedException()
-            : base(new[]
-            {
-                new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
-            })
-        {
+            return Unit.Value;
         }
     }
 }

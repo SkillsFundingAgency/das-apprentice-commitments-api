@@ -4,10 +4,14 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
+
+#nullable enable
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
@@ -43,14 +47,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return create;
         }
 
-        protected async Task<CreateAccountCommand> CreateAccount(Guid apprenticeId, string? email = default, DateTime? dateOfBirth = default)
+        protected async Task<CreateAccountCommand> CreateAccount(CreateRegistrationCommand approval,
+            Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
-            email ??= fixture.Create<MailAddress>().ToString();
-            dateOfBirth ??= fixture.Create<DateTime>();
+            apprenticeId ??= approval.ApprenticeId;
+            email ??= new MailAddress(approval.Email);
+            dateOfBirth ??= approval.DateOfBirth;
 
             var create = fixture.Build<CreateAccountCommand>()
                 .With(p => p.ApprenticeId, apprenticeId)
-                .With(p => p.Email, (MailAddress adr) => adr.ToString())
+                .With(p => p.Email, email.ToString())
                 .With(p => p.DateOfBirth, dateOfBirth)
                 .Create();
 
@@ -75,6 +81,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             var response = await client.PostValueAsync("apprenticeships2", create);
             return response;
+        }
+
+        protected async Task<List<ApprenticeshipDto>> GetApprenticeships(Guid apprenticeId)
+        {
+            var (response, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{apprenticeId}/apprenticeships");
+            response.Should().Be200Ok();
+            return apprenticeships;
         }
     }
 }

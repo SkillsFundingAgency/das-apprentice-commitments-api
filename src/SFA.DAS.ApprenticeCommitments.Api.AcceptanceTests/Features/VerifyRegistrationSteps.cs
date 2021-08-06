@@ -216,8 +216,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
             errors.Count.Should().Be(1);
-            errors[0].PropertyName.Should().BeNull();
-            errors[0].ErrorMessage.Should().Be($"Email from verifying user doesn't match registered user {_registration.ApprenticeId}");
+            errors[0].PropertyName.Should().Be("PersonalDetails");
+            errors[0].ErrorMessage.Should().Be("Sorry, your identity has not been verified, please check your details");
         }
 
         [Then(@"an identity mismatch domain error is returned")]

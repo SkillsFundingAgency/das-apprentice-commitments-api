@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+﻿using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -63,6 +64,19 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             return CreateRegisteredApprentice(firstName, lastName, emailAddress, dateOfBirth);
         }
 
+        public void AssociateWithApprentice(Apprentice apprentice)
+        {
+            //EnsureNotAlreadyCompleted();
+            EnsureStatedEmailMatchesApproval(apprentice.Email);
+
+            var apprenticeship = new CommitmentStatement(
+                    CommitmentsApprenticeshipId,
+                    CommitmentsApprovedOn,
+                    Apprenticeship);
+
+            apprentice.AddApprenticeship(apprenticeship);
+        }
+
         public void ViewedByUser(DateTime viewedOn)
         {
             if (FirstViewedOn.HasValue)
@@ -107,7 +121,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private void EnsureStatedEmailMatchesApproval(MailAddress emailAddress)
         {
             if (!emailAddress.ToString().Equals(Email.ToString(), StringComparison.InvariantCultureIgnoreCase))
-                throw new DomainException($"Email from verifying user doesn't match registered user {ApprenticeId}");
+            {
+                throw new IdentityNotVerifiedException(
+                    $"Email from account {ApprenticeId} doesn't match registration {RegistrationId}");
+            }
         }
 
         private Apprentice CreateRegisteredApprentice(string firstName, string lastName, MailAddress emailAddress, DateTime dateOfBirth)

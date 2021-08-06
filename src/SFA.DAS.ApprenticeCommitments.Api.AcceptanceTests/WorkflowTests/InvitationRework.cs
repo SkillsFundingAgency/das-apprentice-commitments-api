@@ -2,6 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using System;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
@@ -33,11 +34,24 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
+        public async Task Cannot_match_incorrect_email()
+        {
+            var approval = await CreateApprenticeship();
+
+            await CreateAccount(approval, email: fixture.Create<MailAddress>());
+            var response = await PostVerifyRegistrationCommand(approval.ApprenticeId, approval.ApprenticeId);
+
+            response
+                .Should().Be400BadRequest()
+                .And.MatchInContent("*\"Sorry, your identity has not been verified, please check your details\"*");
+        }
+
+        [Test]
         public async Task Cannot_match_incorrect_date_of_birth()
         {
             var approval = await CreateApprenticeship();
 
-            await CreateAccount(approval.ApprenticeId, dateOfBirth: fixture.Create<DateTime>());
+            await CreateAccount(approval, dateOfBirth: fixture.Create<DateTime>());
             var response = await PostVerifyRegistrationCommand(approval.ApprenticeId, approval.ApprenticeId);
 
             response
@@ -49,11 +63,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Valid_match_creates_apprenticeship()
         {
             var approval = await CreateApprenticeship();
-            await CreateAccount(approval.ApprenticeId, dateOfBirth: approval.DateOfBirth);
+            await CreateAccount(approval);
 
             await VerifyRegistration(approval.ApprenticeId, approval.ApprenticeId);
 
-            var apprenticeship = GetApprenticeships(approval.ApprenticeId);
+            var apprenticeships = await GetApprenticeships(approval.ApprenticeId);
+            apprenticeships.Should().ContainEquivalentOf(new
+            {
+                approval.ApprenticeId,
+                approval.CommitmentsApprenticeshipId,
+                //approval.CommitmentsApprovedOn,
+            });
         }
     }
 }

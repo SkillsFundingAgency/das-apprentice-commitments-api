@@ -2,46 +2,30 @@
 using AutoFixture.Dsl;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
-using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class ChangeNotificationFixture : ApiFixture
     {
-        public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateApprenticeship(HttpClient client)
+        public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateVerifiedApprenticeship()
         {
-            var create = fixture.Build<CreateRegistrationCommand>()
-                .With(p => p.Email, (MailAddress adr) => adr.ToString())
-                .Create();
+            var approval = await CreateApprenticeship();
+            var account = await CreateAccount(approval);
+            await VerifyRegistration(approval.ApprenticeId, approval.ApprenticeId);
 
-            var createResponse = await client.PostValueAsync("apprenticeships", create);
-            createResponse.EnsureSuccessStatusCode();
+            var (response, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{approval.ApprenticeId}/apprenticeships");
+            response.Should().Be2XXSuccessful();
 
-            var verify = fixture.Build<VerifyRegistrationCommand>()
-                .With(x => x.ApprenticeId, create.ApprenticeId)
-                .With(p => p.Email, create.Email)
-                .With(p => p.DateOfBirth, create.DateOfBirth)
-                .Create();
+            context.Time.Now = approval.CommitmentsApprovedOn;
 
-            var verifyResponse = await client.PostValueAsync("registrations", verify);
-            verifyResponse.Should().Be200Ok();
-
-            var (getResponse, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
-            getResponse.Should().Be200Ok();
-
-            context.Time.Now = create.CommitmentsApprovedOn;
-
-            return (apprenticeships[0], create.CommitmentsApprovedOn);
+            return (apprenticeships[0], approval.CommitmentsApprovedOn);
         }
 
         protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
