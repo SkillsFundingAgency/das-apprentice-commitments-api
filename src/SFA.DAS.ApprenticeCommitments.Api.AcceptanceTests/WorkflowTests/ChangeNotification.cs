@@ -255,7 +255,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateVerifiedApprenticeship()
         {
-            var approval = await CreateApprenticeship();
+            var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.ApprenticeId, approval.ApprenticeId);
 

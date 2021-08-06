@@ -16,41 +16,15 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
-    public class RegisterRenewConfirm
+    public class RegisterRenewConfirm : ApiFixture
     {
-        private Fixture fixture;
-
-        [SetUp]
-        public void Setup()
-        {
-            fixture = new Fixture();
-        }
-
         [Test]
         public async Task ChangingApprenticeshipCreatesNewCommitmentStatementWhichIsLatest()
         {
-            var factory = Bindings.Api.CreateApiFactory();
-            var client = factory.CreateClient();
-            _ = new Bindings.Api(new TestContext());
-            var db = Bindings.Database.CreateDbContext();
-
-            var create = fixture.Build<CreateRegistrationCommand>()
-                .With(p => p.Email, (MailAddress adr) => adr.ToString())
-                .Create();
-
-            var r1 = await client.PostValueAsync("apprenticeships", create);
-            r1.EnsureSuccessStatusCode();
-
-            var verify = fixture.Build<VerifyRegistrationCommand>()
-                .With(x => x.ApprenticeId, create.ApprenticeId)
-                .With(p => p.Email, create.Email)
-                .With(p => p.DateOfBirth, create.DateOfBirth)
-                .Create();
-
-            var r2 = await client.PostValueAsync("registrations", verify);
-            r2.EnsureSuccessStatusCode();
-
-            var (r3, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
+            var create = await CreateRegistration();
+            var account = await CreateAccount(create);
+            await VerifyRegistration(create.ApprenticeId, create.ApprenticeId);
+            var apprenticeships = await GetApprenticeships(create.ApprenticeId);
             var apprenticeshipId = apprenticeships[0].Id;
 
             var r4 = await client.PostValueAsync(
@@ -67,8 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var r5 = await client.PostValueAsync("apprenticeships/change", change);
             r5.EnsureSuccessStatusCode();
 
-            (r3, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
-            r3.EnsureSuccessStatusCode();
+            apprenticeships = await GetApprenticeships(create.ApprenticeId);
 
             apprenticeships
                 .Should().ContainEquivalentOf(new
@@ -81,27 +54,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task ConfirmingCommitmentStatementConcurrentToApprovedChangeConfirmsCorrectStatement()
         {
-            var factory = Bindings.Api.CreateApiFactory();
-            var client = factory.CreateClient();
-            var db = Bindings.Database.CreateDbContext();
+            var create = await CreateRegistration();
+            var account = await CreateAccount(create);
+            await VerifyRegistration(create.ApprenticeId, create.ApprenticeId);
 
-            var create = fixture.Build<CreateRegistrationCommand>()
-                .With(p => p.Email, (MailAddress adr) => adr.ToString())
-                .Create();
-
-            var r1 = await client.PostValueAsync("apprenticeships", create);
-            r1.EnsureSuccessStatusCode();
-
-            var verify = fixture.Build<VerifyRegistrationCommand>()
-                .With(x => x.ApprenticeId, create.ApprenticeId)
-                .With(p => p.Email, create.Email)
-                .With(p => p.DateOfBirth, create.DateOfBirth)
-                .Create();
-
-            var r2 = await client.PostValueAsync("registrations", verify);
-            r2.EnsureSuccessStatusCode();
-
-            var (r3, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
+            var apprenticeships = await GetApprenticeships(create.ApprenticeId);
             var apprenticeshipId = apprenticeships[0].Id;
             var csId = apprenticeships[0].CommitmentStatementId;
 

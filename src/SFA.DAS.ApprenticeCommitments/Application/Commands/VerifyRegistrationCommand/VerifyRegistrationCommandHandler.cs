@@ -62,12 +62,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
             var registration = await _registrations.GetById(request.RegistrationId);
             var apprentice = await _apprentices.GetById(request.ApprenticeId);
 
-            if (registration.DateOfBirth.Date != apprentice.DateOfBirth.Date)
-            {
-                throw new IdentityNotVerifiedException(
-                    $"Verified DOB ({apprentice.DateOfBirth.Date}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth.Date})");
-            }
-
             registration.AssociateWithApprentice(apprentice);
 
             return Unit.Value;

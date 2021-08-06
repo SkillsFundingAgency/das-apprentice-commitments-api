@@ -1,13 +1,28 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using System;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
-    public class InvitationRework : ApiFixture
+    public class InvitationRework_RegisterApproval : ApiFixture
+    {
+        [Test]
+        public async Task Validates_command()
+        {
+            var create = fixture.Build<CreateRegistrationCommand>()
+                .Without(p => p.CommitmentsApprenticeshipId).
+                Create();
+            var response = await PostCreateRegistrationCommand(create);
+            response
+                .Should().Be400BadRequest()
+                .And.MatchInContent("*CommitmentsApprenticeshipId*");
+        }
+    }
+    public class InvitationRework_MatchApprenticeshipToApproval : ApiFixture
     {
         // create account
 
@@ -24,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Cannot_find_apprentice_that_doesnt_exist()
         {
-            var approval = await CreateApprenticeship();
+            var approval = await CreateRegistration();
 
             var response = await PostVerifyRegistrationCommand(approval.ApprenticeId, approval.ApprenticeId);
 
@@ -36,7 +51,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Cannot_match_incorrect_email()
         {
-            var approval = await CreateApprenticeship();
+            var approval = await CreateRegistration();
 
             await CreateAccount(approval, email: fixture.Create<MailAddress>());
             var response = await PostVerifyRegistrationCommand(approval.ApprenticeId, approval.ApprenticeId);
@@ -49,7 +64,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Cannot_match_incorrect_date_of_birth()
         {
-            var approval = await CreateApprenticeship();
+            var approval = await CreateRegistration();
 
             await CreateAccount(approval, dateOfBirth: fixture.Create<DateTime>());
             var response = await PostVerifyRegistrationCommand(approval.ApprenticeId, approval.ApprenticeId);
@@ -62,7 +77,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Valid_match_creates_apprenticeship()
         {
-            var approval = await CreateApprenticeship();
+            var approval = await CreateRegistration();
             await CreateAccount(approval);
 
             await VerifyRegistration(approval.ApprenticeId, approval.ApprenticeId);
@@ -74,6 +89,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 approval.CommitmentsApprenticeshipId,
                 //approval.CommitmentsApprovedOn,
             });
+        }
+
+        [Test]
+        public async Task Cannot_match_twice()
+        {
+            var approval = await CreateRegistration();
+            await CreateAccount(approval);
+            await VerifyRegistration(approval.ApprenticeId, approval.ApprenticeId);
+
+            var response = await PostVerifyRegistrationCommand(approval.ApprenticeId, approval.ApprenticeId);
+
+            response
+                .Should().Be400BadRequest()
+                .And.MatchInContent("*\"Registration * is already verified\"*");
         }
     }
 }

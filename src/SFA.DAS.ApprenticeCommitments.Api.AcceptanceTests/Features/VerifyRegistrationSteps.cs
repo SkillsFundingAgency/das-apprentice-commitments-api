@@ -237,7 +237,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             errors.Should().ContainEquivalentOf(new ErrorItem
             {
                 PropertyName = null,
-                ErrorMessage = $"Registration {_registration.ApprenticeId} id already verified",
+                ErrorMessage = $"Registration {_registration.ApprenticeId} is already verified",
             });
         }
 

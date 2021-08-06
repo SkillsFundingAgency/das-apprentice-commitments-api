@@ -36,15 +36,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             _ = Bindings.Database.CreateDbContext();
         }
 
-        public async Task<CreateRegistrationCommand> CreateApprenticeship()
+        public async Task<CreateRegistrationCommand> CreateRegistration()
         {
             var create = fixture.Build<CreateRegistrationCommand>()
                 .Create();
 
-            var response = await client.PostValueAsync("registrations2", create);
+            var response = await PostCreateRegistrationCommand(create);
             response.Should().Be2XXSuccessful();
 
             return create;
+        }
+
+        protected async Task<HttpResponseMessage> PostCreateRegistrationCommand(CreateRegistrationCommand create)
+        {
+            return await client.PostValueAsync("registrations2", create);
         }
 
         protected async Task<CreateAccountCommand> CreateAccount(CreateRegistrationCommand approval,

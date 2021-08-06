@@ -58,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public Apprentice ConvertToApprentice(string firstName, string lastName, MailAddress emailAddress, DateTime dateOfBirth, Guid userIdentityId)
         {
             EnsureNotAlreadyCompleted();
-            EnsureStatedEmailMatchesApproval(emailAddress);
+            EnsureApprenticeEmailMatchesApproval(emailAddress);
 
             UserIdentityId = userIdentityId;
             return CreateRegisteredApprentice(firstName, lastName, emailAddress, dateOfBirth);
@@ -66,8 +66,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void AssociateWithApprentice(Apprentice apprentice)
         {
-            //EnsureNotAlreadyCompleted();
-            EnsureStatedEmailMatchesApproval(apprentice.Email);
+            EnsureNotAlreadyCompleted();
+            EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
+            EnsureApprenticeEmailMatchesApproval(apprentice.Email);
 
             var apprenticeship = new CommitmentStatement(
                     CommitmentsApprenticeshipId,
@@ -75,6 +76,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     Apprenticeship);
 
             apprentice.AddApprenticeship(apprenticeship);
+            UserIdentityId = ApprenticeId;
         }
 
         public void ViewedByUser(DateTime viewedOn)
@@ -115,10 +117,19 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private void EnsureNotAlreadyCompleted()
         {
             if (HasBeenCompleted)
-                throw new DomainException($"Registration {ApprenticeId} id already verified");
+                throw new DomainException($"Registration {ApprenticeId} is already verified");
         }
 
-        private void EnsureStatedEmailMatchesApproval(MailAddress emailAddress)
+        private void EnsureApprenticeDateOfBirthMatchesApproval(DateTime dateOfBirth)
+        {
+            if (DateOfBirth.Date != dateOfBirth.Date)
+            {
+                throw new IdentityNotVerifiedException(
+                    $"Verified DOB ({dateOfBirth.Date}) did not match registration {ApprenticeId} ({DateOfBirth.Date})");
+            }
+        }
+
+        private void EnsureApprenticeEmailMatchesApproval(MailAddress emailAddress)
         {
             if (!emailAddress.ToString().Equals(Email.ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
