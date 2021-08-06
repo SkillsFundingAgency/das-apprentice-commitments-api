@@ -1,4 +1,4 @@
-﻿CREATE VIEW grafanaReporter.CommitmentStatementDashboardView
+﻿CREATE VIEW DashboardReporting.CommitmentStatementDashboardView
 AS
 SELECT
     Id,

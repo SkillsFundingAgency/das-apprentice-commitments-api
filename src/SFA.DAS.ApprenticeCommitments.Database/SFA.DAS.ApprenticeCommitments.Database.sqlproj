@@ -74,7 +74,7 @@
     <Build Include="Views\ApprenticeshipDashboardView.sql" />
     <Build Include="Views\CommitmentStatementDashboardView.sql" />
     <Build Include="Views\RegistrationDashboardView.sql" />
-    <Build Include="Schemas\grafanaReporter.sql" />
+    <Build Include="Schemas\DashboardReporting.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.ApprenticeCommitments.Database.refactorlog" />
