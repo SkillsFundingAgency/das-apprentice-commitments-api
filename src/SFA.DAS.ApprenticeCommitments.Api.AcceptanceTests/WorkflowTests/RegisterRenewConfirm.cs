@@ -3,15 +3,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.DTOs;
-using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
@@ -23,14 +17,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create);
-            await VerifyRegistration(create.RegistrationId, create.RegistrationId);
-            var apprenticeships = await GetApprenticeships(create.RegistrationId);
+            await VerifyRegistration(create.RegistrationId, account.ApprenticeId);
+            var apprenticeships = await GetApprenticeships(account.ApprenticeId);
             var apprenticeshipId = apprenticeships[0].Id;
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.RegistrationId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
+                $"apprentices/{account.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
-            r4.EnsureSuccessStatusCode();
+            r4.Should().Be2XXSuccessful();
 
             var change = fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
@@ -41,12 +35,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var r5 = await client.PostValueAsync("apprenticeships/change", change);
             r5.EnsureSuccessStatusCode();
 
-            apprenticeships = await GetApprenticeships(create.RegistrationId);
+            apprenticeships = await GetApprenticeships(account.ApprenticeId);
 
             apprenticeships
                 .Should().ContainEquivalentOf(new
                 {
-                    CommitmentsApprenticeshipId = change.CommitmentsApprenticeshipId,
+                    change.CommitmentsApprenticeshipId,
                     change.CourseName,
                 });
         }
@@ -55,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task ConfirmingCommitmentStatementConcurrentToApprovedChangeConfirmsCorrectStatement()
         {
             var create = await CreateRegistration();
-            var account = await CreateAccount(create);
+            var account = await CreateAccount(create, apprenticeId: create.RegistrationId);
             await VerifyRegistration(create.RegistrationId, create.RegistrationId);
 
             var apprenticeships = await GetApprenticeships(create.RegistrationId);

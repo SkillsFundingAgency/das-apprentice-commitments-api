@@ -81,11 +81,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Can_retrieve_apprentice()
         {
             var approval = fixture.Create<CreateRegistrationCommand>();
-            await CreateAccount(approval);
-            var apprentice = await GetApprentice(approval.RegistrationId);
+            var account = await CreateAccount(approval);
+            var apprentice = await GetApprentice(account.ApprenticeId);
             apprentice.Should().BeEquivalentTo(new
             {
-                Id = approval.RegistrationId,
+                Id = account.ApprenticeId,
                 approval.DateOfBirth,
                 approval.Email,
                 approval.FirstName,
@@ -113,7 +113,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
 
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, approval.RegistrationId);
+            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, Guid.NewGuid());
 
             response
                 .Should().Be400BadRequest()
@@ -125,8 +125,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
 
-            await CreateAccount(approval, email: fixture.Create<MailAddress>());
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, approval.RegistrationId);
+            var account = await CreateAccount(approval, email: fixture.Create<MailAddress>());
+            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
 
             response
                 .Should().Be400BadRequest()
@@ -138,8 +138,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
 
-            await CreateAccount(approval, dateOfBirth: fixture.Create<DateTime>());
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, approval.RegistrationId);
+            var account = await CreateAccount(approval, dateOfBirth: fixture.Create<DateTime>());
+            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
 
             response
                 .Should().Be400BadRequest()
@@ -150,14 +150,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Valid_match_creates_apprenticeship()
         {
             var approval = await CreateRegistration();
-            await CreateAccount(approval);
+            var account = await CreateAccount(approval);
 
-            await VerifyRegistration(approval.RegistrationId, approval.RegistrationId);
+            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
 
-            var apprenticeships = await GetApprenticeships(approval.RegistrationId);
+            var apprenticeships = await GetApprenticeships(account.ApprenticeId);
             apprenticeships.Should().ContainEquivalentOf(new
             {
-                ApprenticeId = approval.RegistrationId,
+                account.ApprenticeId,
                 approval.CommitmentsApprenticeshipId,
                 //approval.CommitmentsApprovedOn,
             });
@@ -167,10 +167,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Cannot_match_twice()
         {
             var approval = await CreateRegistration();
-            await CreateAccount(approval);
-            await VerifyRegistration(approval.RegistrationId, approval.RegistrationId);
+            var account = await CreateAccount(approval);
+            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
 
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, approval.RegistrationId);
+            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
 
             response
                 .Should().Be400BadRequest()

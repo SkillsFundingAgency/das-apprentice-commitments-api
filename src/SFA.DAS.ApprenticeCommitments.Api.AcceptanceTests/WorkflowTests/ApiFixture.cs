@@ -63,12 +63,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected async Task<CreateAccountCommand> CreateAccount(CreateRegistrationCommand approval,
             Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
-            apprenticeId ??= approval.RegistrationId;
             email ??= new MailAddress(approval.Email);
             dateOfBirth ??= approval.DateOfBirth;
 
             var create = fixture.Build<CreateAccountCommand>()
-                .With(p => p.ApprenticeId, apprenticeId)
+                .With(p => p.ApprenticeId, (Guid id) => apprenticeId ?? id)
                 .With(p => p.Email, email.ToString())
                 .With(p => p.DateOfBirth, dateOfBirth)
                 .With(p => p.FirstName, approval.FirstName)
