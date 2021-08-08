@@ -47,7 +47,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _command = _f.Build<VerifyRegistrationCommand>()
                 .With(p => p.Email, _registration.Email.ToString)
-                .With(p => p.ApprenticeId, _registration.ApprenticeId)
+                .With(p => p.ApprenticeId, _registration.RegistrationId)
                 .With(p=>p.DateOfBirth, _registration.DateOfBirth)
                 .Create();
         }
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _command = _f.Build<VerifyRegistrationCommand>()
                 .With(p => p.Email, "another@email.com")
-                .With(p => p.ApprenticeId, _registration.ApprenticeId)
+                .With(p => p.ApprenticeId, _registration.RegistrationId)
                 .With(p => p.DateOfBirth, _registration.DateOfBirth)
                 .Create();
         }
@@ -67,7 +67,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _command = _f.Build<VerifyRegistrationCommand>()
                 .With(p => p.Email, _registration.Email.ToString)
-                .With(p => p.ApprenticeId, _registration.ApprenticeId)
+                .With(p => p.ApprenticeId, _registration.RegistrationId)
                 .With(p => p.DateOfBirth, _registration.DateOfBirth.AddDays(90))
                 .Create();
         }
@@ -177,7 +177,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             {
                 Message = new ApprenticeshipConfirmationCommencedEvent
                 {
-                    ApprenticeId = _registration.ApprenticeId,
+                    ApprenticeId = _registration.RegistrationId,
                     ApprenticeshipId = latest.ApprenticeshipId,
                     ConfirmationId = latest.Id,
                     ConfirmationOverdueOn = latest.ConfirmBefore,
@@ -190,7 +190,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Then(@"the registration has been marked as completed")]
         public void ThenTheRegistrationHasBeenMarkedAsCompleted()
         {
-            var registration = _context.DbContext.Registrations.FirstOrDefault(x => x.ApprenticeId == _registration.ApprenticeId);
+            var registration = _context.DbContext.Registrations.FirstOrDefault(x => x.RegistrationId == _registration.RegistrationId);
             registration.UserIdentityId.Should().Be(_command.UserIdentityId);
         }
 
@@ -199,7 +199,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
-                _registration.ApprenticeId,
+                _registration.RegistrationId,
                 _registration.CreatedOn
             });
         }
@@ -237,7 +237,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             errors.Should().ContainEquivalentOf(new ErrorItem
             {
                 PropertyName = null,
-                ErrorMessage = $"Registration {_registration.ApprenticeId} is already verified",
+                ErrorMessage = $"Registration {_registration.RegistrationId} is already verified",
             });
         }
 

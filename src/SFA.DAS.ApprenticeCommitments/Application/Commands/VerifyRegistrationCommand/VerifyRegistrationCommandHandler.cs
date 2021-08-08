@@ -44,7 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
             if (registration.DateOfBirth.Date != command.DateOfBirth.Date)
             {
                 throw new IdentityNotVerifiedException(
-                    $"Verified DOB ({command.DateOfBirth}) did not match registration {registration.ApprenticeId} ({registration.DateOfBirth})");
+                    $"Verified DOB ({command.DateOfBirth}) did not match registration {registration.RegistrationId} ({registration.DateOfBirth})");
             }
 
             var apprentice = registration.ConvertToApprentice(

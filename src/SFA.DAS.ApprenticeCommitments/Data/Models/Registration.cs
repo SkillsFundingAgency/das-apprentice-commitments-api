@@ -20,14 +20,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         }
 
         public Registration(
-            Guid apprenticeId,
+            Guid registrationId,
             long commitmentsApprenticeshipId,
             DateTime commitmentsApprovedOn,
             PersonalInformation pii,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
-            ApprenticeId = apprenticeId;
+            RegistrationId = registrationId;
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
             FirstName = pii.FirstName;
@@ -39,8 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             AddDomainEvent(new RegistrationAdded(this));
         }
 
-        public Guid RegistrationId { get; private set; } = Guid.NewGuid();
-        public Guid ApprenticeId { get; private set; }
+        public Guid RegistrationId { get; private set; }
         public long CommitmentsApprenticeshipId { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
@@ -76,7 +75,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     Apprenticeship);
 
             apprentice.AddApprenticeship(apprenticeship);
-            UserIdentityId = ApprenticeId;
+            UserIdentityId = RegistrationId;
         }
 
         public void ViewedByUser(DateTime viewedOn)
@@ -117,7 +116,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private void EnsureNotAlreadyCompleted()
         {
             if (HasBeenCompleted)
-                throw new DomainException($"Registration {ApprenticeId} is already verified");
+                throw new DomainException($"Registration {RegistrationId} is already verified");
         }
 
         private void EnsureApprenticeDateOfBirthMatchesApproval(DateTime dateOfBirth)
@@ -125,7 +124,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (DateOfBirth.Date != dateOfBirth.Date)
             {
                 throw new IdentityNotVerifiedException(
-                    $"Verified DOB ({dateOfBirth.Date}) did not match registration {ApprenticeId} ({DateOfBirth.Date})");
+                    $"Verified DOB ({dateOfBirth.Date}) did not match registration {RegistrationId} ({DateOfBirth.Date})");
             }
         }
 
@@ -134,14 +133,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (!emailAddress.ToString().Equals(Email.ToString(), StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new IdentityNotVerifiedException(
-                    $"Email from account {ApprenticeId} doesn't match registration {RegistrationId}");
+                    $"Email from account {RegistrationId} doesn't match registration {RegistrationId}");
             }
         }
 
         private Apprentice CreateRegisteredApprentice(string firstName, string lastName, MailAddress emailAddress, DateTime dateOfBirth)
         {
             var apprentice = new Apprentice(
-                ApprenticeId, firstName, lastName, emailAddress, dateOfBirth);
+                RegistrationId, firstName, lastName, emailAddress, dateOfBirth);
 
             //apprentice.AddApprenticeship(new CommitmentStatement(CommitmentsApprenticeshipId, CommitmentsApprovedOn, Apprenticeship));
 

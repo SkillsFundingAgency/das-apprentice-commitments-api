@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [When(@"we receive a request to mark registration as been viewed")]
         public async Task WhenWeReceiveARequestToMarkRegistrationAsBeenViewed()
         {
-            await _context.Api.Post($"registrations/{_registration.ApprenticeId}/firstseen", _request);
+            await _context.Api.Post($"registrations/{_registration.RegistrationId}/firstseen", _request);
         }
 
         [Then(@"the response is Accepted")]
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"the registration record is updated")]
         public void ThenTheRegistrationRecordIsUpdated()
         {
-            var reg = _context.DbContext.Registrations.FirstOrDefault(x => x.ApprenticeId == _registration.ApprenticeId);
+            var reg = _context.DbContext.Registrations.FirstOrDefault(x => x.RegistrationId == _registration.RegistrationId);
             reg.Should().NotBeNull();
             reg.FirstViewedOn.Should().Be(_request.SeenOn);
         }
@@ -65,7 +65,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"the registration record is not updated")]
         public void ThenTheRegistrationRecordIsNotUpdated()
         {
-            var reg = _context.DbContext.Registrations.FirstOrDefault(x => x.ApprenticeId == _registration.ApprenticeId);
+            var reg = _context.DbContext.Registrations.FirstOrDefault(x => x.RegistrationId == _registration.RegistrationId);
             reg.Should().NotBeNull();
             reg.FirstViewedOn.Should().NotBe(_request.SeenOn);
         }

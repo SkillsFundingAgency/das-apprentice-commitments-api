@@ -85,7 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenTheRegistrationExistsInDatabase()
         {
             var registration = _context.DbContext.Registrations
-                .FirstOrDefault(x => x.ApprenticeId == _createApprenticeshipRequest.ApprenticeId);
+                .FirstOrDefault(x => x.RegistrationId == _createApprenticeshipRequest.ApprenticeId);
             registration.Should().NotBeNull();
             registration.FirstName.Should().Be(_createApprenticeshipRequest.FirstName);
             registration.LastName.Should().Be(_createApprenticeshipRequest.LastName);

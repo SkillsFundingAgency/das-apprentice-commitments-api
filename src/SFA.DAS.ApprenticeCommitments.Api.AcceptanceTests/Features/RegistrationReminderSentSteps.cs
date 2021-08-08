@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [When(@"we receive a request to say reminder has been sent")]
         public async Task WhenWeReceiveARequestToSayReminderHasBeenSent()
         {
-            await _context.Api.Post($"registrations/{_registration.ApprenticeId}/reminder", _request);
+            await _context.Api.Post($"registrations/{_registration.RegistrationId}/reminder", _request);
         }
 
         [Then(@"the response is Accepted")]
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"the registration record is updated")]
         public void ThenTheRegistrationRecordIsUpdated()
         {
-            var reg = _context.DbContext.Registrations.FirstOrDefault(x=>x.ApprenticeId == _registration.ApprenticeId);
+            var reg = _context.DbContext.Registrations.FirstOrDefault(x=>x.RegistrationId == _registration.RegistrationId);
             reg.Should().NotBeNull();
             reg.SignUpReminderSentOn.Should().Be(_request.SentOn);
         }
@@ -65,7 +65,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"the registration record is not updated")]
         public void ThenTheRegistrationRecordIsNotUpdated()
         {
-            var reg = _context.DbContext.Registrations.FirstOrDefault(x => x.ApprenticeId == _registration.ApprenticeId);
+            var reg = _context.DbContext.Registrations.FirstOrDefault(x => x.RegistrationId == _registration.RegistrationId);
             reg.Should().NotBeNull();
             reg.SignUpReminderSentOn.Should().NotBe(_request.SentOn);
         }

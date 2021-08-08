@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"we try to retrieve the registration")]
         public Task WhenWeTryToRetrieveTheRegistration()
         {
-            return _context.Api.Get($"registrations/{_registration.ApprenticeId}");
+            return _context.Api.Get($"registrations/{_registration.RegistrationId}");
         }
 
         [Given(@"there is an empty apprentice id")]
@@ -75,7 +75,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var response = JsonConvert.DeserializeObject<RegistrationResponse>(content);
             response.DateOfBirth.Should().Be(_registration.DateOfBirth);
             response.Email.Should().Be(_registration.Email.ToString());
-            response.ApprenticeId.Should().Be(_registration.ApprenticeId);
+            response.ApprenticeId.Should().Be(_registration.RegistrationId);
             response.HasViewedVerification.Should().Be(hasViewed);
             response.HasCompletedVerification.Should().Be(hasCompleted);
         }

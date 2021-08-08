@@ -40,12 +40,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 
             logger.LogInformation(
                 "RegistrationAdded - Publishing ApprenticeshipConfirmationCommencedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}",
-                notification.Registration.ApprenticeId,
+                notification.Registration.RegistrationId,
                 notification.Registration.CommitmentsApprenticeshipId);
 
             await messageSession.Publish(new ApprenticeshipConfirmationCommencedEvent
             {
-                ApprenticeId = notification.Registration.ApprenticeId,
+                ApprenticeId = notification.Registration.RegistrationId,
                 ConfirmationOverdueOn = pretend.ConfirmBefore,
                 CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
                 CommitmentsApprovedOn = notification.Registration.CommitmentsApprovedOn,
