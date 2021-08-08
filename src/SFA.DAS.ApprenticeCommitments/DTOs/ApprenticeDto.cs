@@ -6,7 +6,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
     public class ApprenticeDto
     {
-        public Guid Id { get; internal set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public Guid UserIdentityId { get; set; }

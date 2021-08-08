@@ -4,6 +4,7 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
@@ -52,6 +53,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return await client.PostValueAsync("registrations2", create);
         }
 
+        protected async Task<RegistrationResponse> GetRegistration(Guid apprenticeId)
+        {
+            var (response, registration) = await client.GetValueAsync<RegistrationResponse>($"registrations/{apprenticeId}");
+            response.Should().Be200Ok();
+            return registration;
+        }
+
         protected async Task<CreateAccountCommand> CreateAccount(CreateRegistrationCommand approval,
             Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
@@ -63,12 +71,26 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .With(p => p.ApprenticeId, apprenticeId)
                 .With(p => p.Email, email.ToString())
                 .With(p => p.DateOfBirth, dateOfBirth)
+                .With(p => p.FirstName, approval.FirstName)
+                .With(p => p.LastName, approval.LastName)
                 .Create();
 
-            var response = await client.PostValueAsync("apprentices", create);
+            var response = await PostCreateAccountCommand(create);
             response.Should().Be2XXSuccessful();
 
             return create;
+        }
+
+        protected async Task<ApprenticeDto> GetApprentice(Guid apprenticeId)
+        {
+            var (response, apprentice) = await client.GetValueAsync<ApprenticeDto>($"apprentices/{apprenticeId}");
+            response.Should().Be200Ok();
+            return apprentice;
+        }
+
+        protected async Task<HttpResponseMessage> PostCreateAccountCommand(CreateAccountCommand create)
+        {
+            return await client.PostValueAsync("apprentices", create);
         }
 
         protected async Task VerifyRegistration(Guid registrationId, Guid apprenticeId)

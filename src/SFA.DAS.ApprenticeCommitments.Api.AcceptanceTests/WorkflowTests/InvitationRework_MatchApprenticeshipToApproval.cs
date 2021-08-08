@@ -1,6 +1,9 @@
 ﻿using AutoFixture;
+using AutoFixture.NUnit3;
 using FluentAssertions;
+using FluentValidation.TestHelper;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using System;
 using System.Net.Mail;
@@ -21,7 +24,76 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .Should().Be400BadRequest()
                 .And.MatchInContent("*CommitmentsApprenticeshipId*");
         }
+
+        [Test, AutoData]
+        public void Validates_email(CreateRegistrationCommandValidator sut, CreateRegistrationCommand data)
+        {
+            data.Email = default;
+            var result = sut.TestValidate(data);
+            result.ShouldHaveValidationErrorFor(p => p.Email);
+        }
+
+        [Test]
+        public async Task Cannot_retrieve_missing_registration()
+        {
+            var response = await client.GetAsync($"registrations/{Guid.NewGuid()}");
+            response.Should().Be404NotFound();
+        }
+
+        [Test]
+        public async Task Can_retrieve_registration()
+        {
+            var create = await CreateRegistration();
+            var registration = await GetRegistration(create.ApprenticeId);
+            registration.Should().BeEquivalentTo(new
+            {
+                create.ApprenticeId,
+                create.DateOfBirth,
+                create.Email,
+                HasViewedVerification = false,
+                HasCompletedVerification = false,
+            });
+        }
     }
+
+    public class InvitationRework_CreateApprenticeAccount : ApiFixture
+    {
+        [Test]
+        public async Task Validates_command()
+        {
+            var create = fixture.Build<CreateAccountCommand>()
+                .Without(p => p.Email).
+                Create();
+            var response = await PostCreateAccountCommand(create);
+            response
+                .Should().Be400BadRequest()
+                .And.MatchInContent("*Email*");
+        }
+
+        [Test]
+        public async Task Cannot_retrieve_missing_apprentice()
+        {
+            var response = await client.GetAsync($"apprentices/{Guid.NewGuid()}");
+            response.Should().Be404NotFound();
+        }
+
+        [Test]
+        public async Task Can_retrieve_apprentice()
+        {
+            var approval = fixture.Create<CreateRegistrationCommand>();
+            await CreateAccount(approval);
+            var apprentice = await GetApprentice(approval.ApprenticeId);
+            apprentice.Should().BeEquivalentTo(new
+            {
+                Id = approval.ApprenticeId,
+                approval.DateOfBirth,
+                approval.Email,
+                approval.FirstName,
+                approval.LastName,
+            });
+        }
+    }
+
     public class InvitationRework_MatchApprenticeshipToApproval : ApiFixture
     {
         // create account
