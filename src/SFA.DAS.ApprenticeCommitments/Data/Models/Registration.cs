@@ -75,7 +75,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     Apprenticeship);
 
             apprentice.AddApprenticeship(apprenticeship);
-            UserIdentityId = RegistrationId;
+            UserIdentityId = apprentice.Id;
         }
 
         public void ViewedByUser(DateTime viewedOn)

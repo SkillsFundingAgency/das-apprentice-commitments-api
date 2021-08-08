@@ -36,7 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _createApprenticeshipRequest = new CreateRegistrationCommand
             {
-                ApprenticeId = Guid.NewGuid(),
+                RegistrationId = Guid.NewGuid(),
                 CommitmentsApprenticeshipId = 1233,
                 FirstName = "Bob",
                 LastName = "Bobbertson",
@@ -85,7 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenTheRegistrationExistsInDatabase()
         {
             var registration = _context.DbContext.Registrations
-                .FirstOrDefault(x => x.RegistrationId == _createApprenticeshipRequest.ApprenticeId);
+                .FirstOrDefault(x => x.RegistrationId == _createApprenticeshipRequest.RegistrationId);
             registration.Should().NotBeNull();
             registration.FirstName.Should().Be(_createApprenticeshipRequest.FirstName);
             registration.LastName.Should().Be(_createApprenticeshipRequest.LastName);
@@ -108,7 +108,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             {
                 Message = new ApprenticeshipConfirmationCommencedEvent
                 {
-                    ApprenticeId = _createApprenticeshipRequest.ApprenticeId,
+                    ApprenticeId = _createApprenticeshipRequest.RegistrationId,
                     ApprenticeshipId = (long?)null,
                     ConfirmationId = (long?)null,
                     ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(CommitmentStatement.DaysBeforeOverdue),

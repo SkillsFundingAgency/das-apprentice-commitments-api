@@ -63,7 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected async Task<CreateAccountCommand> CreateAccount(CreateRegistrationCommand approval,
             Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
-            apprenticeId ??= approval.ApprenticeId;
+            apprenticeId ??= approval.RegistrationId;
             email ??= new MailAddress(approval.Email);
             dateOfBirth ??= approval.DateOfBirth;
 

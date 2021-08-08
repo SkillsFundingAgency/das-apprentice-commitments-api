@@ -257,9 +257,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
-            await VerifyRegistration(approval.ApprenticeId, approval.ApprenticeId);
+            await VerifyRegistration(approval.RegistrationId, approval.RegistrationId);
 
-            var (response, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{approval.ApprenticeId}/apprenticeships");
+            var (response, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{approval.RegistrationId}/apprenticeships");
             response.Should().Be2XXSuccessful();
 
             context.Time.Now = approval.CommitmentsApprovedOn;

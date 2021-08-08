@@ -23,12 +23,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create);
-            await VerifyRegistration(create.ApprenticeId, create.ApprenticeId);
-            var apprenticeships = await GetApprenticeships(create.ApprenticeId);
+            await VerifyRegistration(create.RegistrationId, create.RegistrationId);
+            var apprenticeships = await GetApprenticeships(create.RegistrationId);
             var apprenticeshipId = apprenticeships[0].Id;
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
+                $"apprentices/{create.RegistrationId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.EnsureSuccessStatusCode();
 
@@ -41,7 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var r5 = await client.PostValueAsync("apprenticeships/change", change);
             r5.EnsureSuccessStatusCode();
 
-            apprenticeships = await GetApprenticeships(create.ApprenticeId);
+            apprenticeships = await GetApprenticeships(create.RegistrationId);
 
             apprenticeships
                 .Should().ContainEquivalentOf(new
@@ -56,9 +56,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create);
-            await VerifyRegistration(create.ApprenticeId, create.ApprenticeId);
+            await VerifyRegistration(create.RegistrationId, create.RegistrationId);
 
-            var apprenticeships = await GetApprenticeships(create.ApprenticeId);
+            var apprenticeships = await GetApprenticeships(create.RegistrationId);
             var apprenticeshipId = apprenticeships[0].Id;
             var csId = apprenticeships[0].CommitmentStatementId;
 
@@ -72,11 +72,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             r5.EnsureSuccessStatusCode();
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{create.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{csId}/EmployerConfirmation",
+                $"apprentices/{create.RegistrationId}/apprenticeships/{apprenticeshipId}/revisions/{csId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var (r6, apprenticeships2) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.ApprenticeId}/apprenticeships");
+            var (r6, apprenticeships2) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.RegistrationId}/apprenticeships");
             r5.EnsureSuccessStatusCode();
 
             apprenticeships2.Should()

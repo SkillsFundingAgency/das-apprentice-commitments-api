@@ -75,7 +75,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var response = JsonConvert.DeserializeObject<RegistrationResponse>(content);
             response.DateOfBirth.Should().Be(_registration.DateOfBirth);
             response.Email.Should().Be(_registration.Email.ToString());
-            response.ApprenticeId.Should().Be(_registration.RegistrationId);
+            response.RegistrationId.Should().Be(_registration.RegistrationId);
             response.HasViewedVerification.Should().Be(hasViewed);
             response.HasCompletedVerification.Should().Be(hasCompleted);
         }
