@@ -10,7 +10,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
     public class ApprenticeshipConfirmation
     {
         private Fixture _f = new Fixture();
-        private CommitmentStatement _existingCommitmentStatement;
+        private Revision _existingCommitmentStatement;
         private Apprenticeship _apprenticeship;
         private ApprenticeshipDetails _details;
         private long _commitmentsApprenticeshipId;
@@ -19,7 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         public void Arrange()
         {
             _commitmentsApprenticeshipId = _f.Create<long>();
-            _existingCommitmentStatement = _f.Create<CommitmentStatement>();
+            _existingCommitmentStatement = _f.Create<Revision>();
             _existingCommitmentStatement.SetProperty(p => p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
             _apprenticeship = new Apprenticeship(_existingCommitmentStatement);
             _details = _existingCommitmentStatement.Details;
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().ApprenticeshipDetailsCorrect.Should().BeNull();
+            _apprenticeship.Revisions.Last().ApprenticeshipDetailsCorrect.Should().BeNull();
         }
 
         [TestCase(true)]
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingCommitmentStatement.Details.Clone(), DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().ApprenticeshipDetailsCorrect.Should().Be(confirmationStatus);
+            _apprenticeship.Revisions.Last().ApprenticeshipDetailsCorrect.Should().Be(confirmationStatus);
         }
 
         [TestCase(true)]
@@ -56,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().ApprenticeshipDetailsCorrect.Should().BeNull();
+            _apprenticeship.Revisions.Last().ApprenticeshipDetailsCorrect.Should().BeNull();
         }
     }
 }

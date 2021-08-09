@@ -96,7 +96,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
             services.AddControllersWithViews().AddNewtonsoftJson();
 
             var overdueDays = Configuration.GetValue<int?>("DaysUntilCommitmentStatementOverdue");
-            if (overdueDays > 0) CommitmentStatement.DaysBeforeOverdue = overdueDays.Value;
+            if (overdueDays > 0) Revision.DaysBeforeOverdue = overdueDays.Value;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

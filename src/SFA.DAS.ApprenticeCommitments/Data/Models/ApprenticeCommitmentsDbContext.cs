@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public virtual DbSet<Registration> Registrations { get; set; } = null!;
         public virtual DbSet<Apprentice> Apprentices { get; set; } = null!;
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; } = null!;
-        public virtual DbSet<CommitmentStatement> CommitmentStatements { get; set; } = null!;
+        public virtual DbSet<Revision> CommitmentStatements { get; set; } = null!;
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
@@ -61,12 +61,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
             });
 
-            modelBuilder.Entity<CommitmentStatement>(a =>
+            modelBuilder.Entity<Revision>(a =>
             {
                 a.HasKey("Id");
             });
 
-            modelBuilder.Entity<CommitmentStatement>()
+            modelBuilder.Entity<Revision>()
                 .OwnsOne(e => e.Details, details =>
                 {
                     details.Property(p => p.EmployerAccountLegalEntityId).HasColumnName("EmployerAccountLegalEntityId");

@@ -143,7 +143,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenAnApprenticeshipRecordIsNotYetCreated()
         {
             var apprentice = _context.DbContext
-                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.CommitmentStatements)
+                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.Revisions)
                 .Should().Contain(x => x.Id == _command.ApprenticeId)
                 .Which.Apprenticeships.Should().BeEmpty();
         }
@@ -152,10 +152,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenAnApprenticeshipRecordIsCreated()
         {
             var apprentice = _context.DbContext
-                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.CommitmentStatements)
+                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.Revisions)
                 .FirstOrDefault(x => x.Id == _command.ApprenticeId);
 
-            apprentice.Apprenticeships.SelectMany(a => a.CommitmentStatements)
+            apprentice.Apprenticeships.SelectMany(a => a.Revisions)
                 .Should().ContainEquivalentOf(new
                 {
                     CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,

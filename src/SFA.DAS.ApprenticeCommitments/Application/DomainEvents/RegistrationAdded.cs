@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
             // confirms their identity, however it's possible that the apprentice
             // never does.  Approvals can use this event to prompt the apprentice
             // when the confirmation is overdue.
-            var pretend = new CommitmentStatement(
+            var pretend = new Revision(
                 notification.Registration.CommitmentsApprenticeshipId,
                 notification.Registration.CommitmentsApprovedOn,
                 notification.Registration.Apprenticeship);

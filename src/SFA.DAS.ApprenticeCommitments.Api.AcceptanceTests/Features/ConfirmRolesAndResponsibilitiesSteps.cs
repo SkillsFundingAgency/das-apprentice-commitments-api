@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly CommitmentStatement _commitmentStatement;
+        private readonly Revision _commitmentStatement;
         private bool? RolesAndResponsibilitiesCorrect { get; set; }        
 
         public ConfirmRolesAndResponsibilitiesSteps(TestContext context)
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
 
             _apprentice = _fixture.Create<Apprentice>();
-            _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _commitmentStatement = _fixture.Create<Revision>();
             _apprentice.AddApprenticeship(_commitmentStatement);
         }
 

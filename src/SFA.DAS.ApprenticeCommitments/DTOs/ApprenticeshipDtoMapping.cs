@@ -12,7 +12,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         {
             if (apprenticeship == null) return null;
 
-            var latest = apprenticeship.LatestCommitmentStatement;
+            var latest = apprenticeship.LatestRevision;
 
             return new ApprenticeshipDto
             {

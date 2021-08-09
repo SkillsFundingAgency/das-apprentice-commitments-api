@@ -8,15 +8,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("CommitmentStatement")]
-    public class CommitmentStatement : Entity
+    public class Revision : Entity
     {
         public static int DaysBeforeOverdue { get; set; } = 14;
 
-        private CommitmentStatement()
+        private Revision()
         {
         }
 
-        public CommitmentStatement(long commitmentsApprenticeshipId,
+        public Revision(long commitmentsApprenticeshipId,
             DateTime approvedOn,
             ApprenticeshipDetails details)
         {
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             AddDomainEvent(new CommitmentStatementConfirmed(this));
         }
 
-        internal CommitmentStatement? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
+        internal Revision? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
         {
             bool EmployerIsEquivalent() => details.EmployerIsEquivalent(Details);
             bool ProviderIsEquivalent() => details.ProviderIsEquivalent(Details);
@@ -85,7 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             if (Details.Equals(details)) return null;
 
-            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
+            var newStatement = new Revision(commitmentsApprenticeshipId, approvedOn, details);
 
             if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect;
             if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;

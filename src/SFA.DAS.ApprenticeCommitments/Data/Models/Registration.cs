@@ -61,7 +61,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             EnsureApprenticeEmailMatchesApproval(apprentice.Email);
             EnsureApprenticeNameMatchesApproval(apprentice, matcher);
 
-            var apprenticeship = new CommitmentStatement(
+            var apprenticeship = new Revision(
                     CommitmentsApprenticeshipId,
                     CommitmentsApprovedOn,
                     Apprenticeship);

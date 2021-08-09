@@ -10,7 +10,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
     public class DeliveryConfirmation
     {
         Fixture _f = new Fixture();
-        private CommitmentStatement _existingCommitmentStatement;
+        private Revision _existingCommitmentStatement;
         private Apprenticeship _apprenticeship;
         private long _commitmentsApprenticeshipId;
 
@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
         public void Arrange()
         {
             _commitmentsApprenticeshipId = _f.Create<long>();
-            _existingCommitmentStatement = _f.Create<CommitmentStatement>();
+            _existingCommitmentStatement = _f.Create<Revision>();
             _existingCommitmentStatement.SetProperty(p => p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
             _apprenticeship = new Apprenticeship(_existingCommitmentStatement);
         }
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
 
-            _apprenticeship.CommitmentStatements.Last().HowApprenticeshipDeliveredCorrect.Should().BeNull();
+            _apprenticeship.Revisions.Last().HowApprenticeshipDeliveredCorrect.Should().BeNull();
         }
 
         [TestCase(true, true)]
@@ -47,7 +47,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTes
 
             _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
             
-            _apprenticeship.CommitmentStatements.Last().HowApprenticeshipDeliveredCorrect.Should().Be(confirmationStatus);
+            _apprenticeship.Revisions.Last().HowApprenticeshipDeliveredCorrect.Should().Be(confirmationStatus);
         }
     }
 }

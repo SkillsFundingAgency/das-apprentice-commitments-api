@@ -18,8 +18,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
-        private CommitmentStatement _commitmentStatement;
-        private CommitmentStatement _newerCommitmentStatement;
+        private Revision _commitmentStatement;
+        private Revision _newerCommitmentStatement;
 
         public GetApprenticeshipSteps(TestContext context)
         {
@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _fixture.Create("CourseName"), 1, null,
                 startDate, startDate.AddMonths(32), 33));
 
-            _commitmentStatement = _fixture.Build<CommitmentStatement>()
+            _commitmentStatement = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations
                 {
                     EmployerCorrect = true,
@@ -43,7 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 }, DateTime.Now))
                 .Create();
 
-            _newerCommitmentStatement = _fixture.Build<CommitmentStatement>()
+            _newerCommitmentStatement = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations
                 {
                     TrainingProviderCorrect = true,
@@ -70,8 +70,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             // the GetApprenticeship feature finds our one as the latest approval
             _fixture.Register((int i) => _commitmentStatement.CommitmentsApprovedOn.AddDays(-i));
             
-            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
-            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
+            _apprentice.AddApprenticeship(_fixture.Create<Revision>());
+            _apprentice.AddApprenticeship(_fixture.Create<Revision>());
             _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
@@ -89,7 +89,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _fixture.Create<ApprenticeshipDetails>(),
                 _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
 
-            _newerCommitmentStatement = _apprentice.Apprenticeships.First().CommitmentStatements.Last();
+            _newerCommitmentStatement = _apprentice.Apprenticeships.First().Revisions.Last();
             _newerCommitmentStatement.Confirm(new Confirmations
             {
                 TrainingProviderCorrect = true,
@@ -181,7 +181,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenAllCommitmentStatementsShouldHaveTheSameApprenticeshipID()
         {
             var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
-            apprentice.Apprenticeships.SelectMany(x => x.CommitmentStatements)
+            apprentice.Apprenticeships.SelectMany(x => x.Revisions)
                 .Should().NotBeEmpty()
                 .And.OnlyContain(a => a.ApprenticeshipId == _commitmentStatement.ApprenticeshipId);
         }

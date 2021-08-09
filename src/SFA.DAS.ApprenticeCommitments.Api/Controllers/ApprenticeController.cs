@@ -44,6 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPost("apprentices/{id}/email")]
+        [Obsolete("Use PATCH /apprentices/{id}")]
         public async Task<IActionResult> CreateRegistration(Guid id, ChangeEmailAddressRequest request)
         {
             await _mediator.Send(new ChangeEmailAddressCommand(id, request.Email));

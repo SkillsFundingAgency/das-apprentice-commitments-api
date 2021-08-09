@@ -111,7 +111,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                     ApprenticeId = _createApprenticeshipRequest.RegistrationId,
                     ApprenticeshipId = (long?)null,
                     ConfirmationId = (long?)null,
-                    ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(CommitmentStatement.DaysBeforeOverdue),
+                    ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(Revision.DaysBeforeOverdue),
                     CommitmentsApprovedOn = _createApprenticeshipRequest.CommitmentsApprovedOn,
                     CommitmentsApprenticeshipId = _createApprenticeshipRequest.CommitmentsApprenticeshipId,
                 }

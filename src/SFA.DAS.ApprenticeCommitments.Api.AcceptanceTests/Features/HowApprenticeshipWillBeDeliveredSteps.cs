@@ -16,14 +16,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly CommitmentStatement _commitmentStatement;
+        private readonly Revision _commitmentStatement;
         private bool? HowApprenticeshipDeliveredCorrect { get; set; }
 
         public HowApprenticeshipWillBeDeliveredSteps(TestContext context)
         {
             _context = context;
             _apprentice = _fixture.Create<Apprentice>();
-            _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _commitmentStatement = _fixture.Create<Revision>();
             _apprentice.AddApprenticeship(_commitmentStatement);
         }
 

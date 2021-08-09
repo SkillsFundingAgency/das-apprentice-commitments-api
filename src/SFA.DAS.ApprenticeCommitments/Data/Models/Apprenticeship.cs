@@ -14,9 +14,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
         }
 
-        public Apprenticeship(CommitmentStatement apprenticeship)
+        public Apprenticeship(Revision apprenticeship)
         {
-            AddCommitmentStatement(apprenticeship);
+            AddRevision(apprenticeship);
         }
 
         public long Id { get; private set; }
@@ -25,23 +25,23 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public DateTime LastViewed { get; set; }
 
-        private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
+        private readonly List<Revision> _revisions = new List<Revision>();
 
-        public IReadOnlyCollection<CommitmentStatement> CommitmentStatements => _commitmentStatements;
+        public IReadOnlyCollection<Revision> Revisions => _revisions;
 
-        public CommitmentStatement LatestCommitmentStatement
-            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
+        public Revision LatestRevision
+            => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
 
         public bool DisplayChangeNotification
         {
             get
             {
-                if (CommitmentStatements.Count == 1) return false;
+                if (Revisions.Count == 1) return false;
 
-                var statements = CommitmentStatements.OrderBy(x => x.CommitmentsApprovedOn).ToList();
-                var latest = statements[CommitmentStatements.Count - 1];
-                var previous = statements[CommitmentStatements.Count - 2];
+                var statements = Revisions.OrderBy(x => x.CommitmentsApprovedOn).ToList();
+                var latest = statements[Revisions.Count - 1];
+                var previous = statements[Revisions.Count - 2];
 
                 if (latest.EmployerCorrect == null &&
                     !latest.Details.EmployerIsEquivalent(previous.Details))
@@ -65,34 +65,34 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        private void AddCommitmentStatement(CommitmentStatement apprenticeship)
-            => _commitmentStatements.Add(apprenticeship);
+        private void AddRevision(Revision apprenticeship)
+            => _revisions.Add(apprenticeship);
 
-        private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
+        private Revision GetRevision(long revisionId)
         {
             // Remove around the end of May 2021
             // https://skillsfundingagency.atlassian.net/browse/CS-655
-            if (commitmentStatementId == 0)
+            if (revisionId == 0)
             {
-                return LatestCommitmentStatement;
+                return LatestRevision;
             }
             else
             {
-                return CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId)
+                return Revisions.FirstOrDefault(x => x.Id == revisionId)
                     ?? throw new DomainException(
-                        $"Commitment Statement {commitmentStatementId} not found in apprenticeship {Id}");
+                        $"Commitment Statement {revisionId} not found in apprenticeship {Id}");
             }
         }
 
-        internal void Confirm(long commitmentStatementId, Confirmations confirmations, DateTimeOffset now)
-            => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations, now);
+        internal void Confirm(long revisionId, Confirmations confirmations, DateTimeOffset now)
+            => GetRevision(revisionId).Confirm(confirmations, now);
 
         public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
+            var renewed = LatestRevision.Renew(commitmentsApprenticeshipId, approvedOn, details);
             if (renewed != null)
             {
-                AddCommitmentStatement(renewed);
+                AddRevision(renewed);
                 AddDomainEvent(new ApprenticeshipChanged(this));
             }
         }

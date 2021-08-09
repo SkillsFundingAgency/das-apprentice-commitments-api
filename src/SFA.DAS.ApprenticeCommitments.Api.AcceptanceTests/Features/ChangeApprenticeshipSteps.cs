@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private ChangeApprenticeshipCommand _request = null!;
-        private CommitmentStatement _commitmentStatement;
+        private Revision _commitmentStatement;
         private long _newApprenticeshipId;
         private long _commitmentsApprenticeshipId;
 
@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context = context;
             _commitmentsApprenticeshipId = _fixture.Create<long>();
-            _commitmentStatement = _fixture.Create<CommitmentStatement>();
+            _commitmentStatement = _fixture.Create<Revision>();
             _commitmentStatement.SetProperty(p => p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
             _newApprenticeshipId = _fixture.Create<long>();
         }

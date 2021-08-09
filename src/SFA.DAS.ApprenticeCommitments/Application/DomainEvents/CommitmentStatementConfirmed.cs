@@ -11,9 +11,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 {
     internal class CommitmentStatementConfirmed : INotification
     {
-        public CommitmentStatement CommitmentStatement { get; }
+        public Revision CommitmentStatement { get; }
 
-        public CommitmentStatementConfirmed(CommitmentStatement commitmentStatement)
+        public CommitmentStatementConfirmed(Revision commitmentStatement)
             => CommitmentStatement = commitmentStatement;
     }
 
