@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private ChangeApprenticeshipCommand _request = null!;
-        private Revision _commitmentStatement;
+        private Revision _revision;
         private long _newApprenticeshipId;
         private long _commitmentsApprenticeshipId;
 
@@ -31,8 +31,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context = context;
             _commitmentsApprenticeshipId = _fixture.Create<long>();
-            _commitmentStatement = _fixture.Create<Revision>();
-            _commitmentStatement.SetProperty(p => p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
+            _revision = _fixture.Create<Revision>();
+            _revision.SetProperty(p => p.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
             _newApprenticeshipId = _fixture.Create<long>();
         }
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
             var apprentice = _fixture.Create<Apprentice>();
-            apprentice.AddApprenticeship(_commitmentStatement);
+            apprentice.AddApprenticeship(_revision);
 
             _context.DbContext.Apprentices.Add(apprentice);
             await _context.DbContext.SaveChangesAsync();
@@ -84,7 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
-                .With(x => x.CommitmentsApprovedOn, (long days) => _commitmentStatement.CommitmentsApprovedOn.AddDays(days))
+                .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days + 1))
                 .Create();
@@ -96,15 +96,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _request = _fixture.Build<ChangeApprenticeshipCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
-                .With(x => x.EmployerAccountLegalEntityId, _commitmentStatement.Details.EmployerAccountLegalEntityId)
-                .With(x => x.EmployerName, _commitmentStatement.Details.EmployerName)
-                .With(x => x.TrainingProviderId, _commitmentStatement.Details.TrainingProviderId)
-                .With(x => x.TrainingProviderName, _commitmentStatement.Details.TrainingProviderName)
-                .With(x => x.CourseName, _commitmentStatement.Details.Course.Name)
-                .With(x => x.CourseLevel, _commitmentStatement.Details.Course.Level)
-                .With(x => x.CourseOption, _commitmentStatement.Details.Course.Option)
-                .With(x => x.PlannedStartDate, _commitmentStatement.Details.Course.PlannedStartDate)
-                .With(x => x.PlannedEndDate, _commitmentStatement.Details.Course.PlannedEndDate)
+                .With(x => x.EmployerAccountLegalEntityId, _revision.Details.EmployerAccountLegalEntityId)
+                .With(x => x.EmployerName, _revision.Details.EmployerName)
+                .With(x => x.TrainingProviderId, _revision.Details.TrainingProviderId)
+                .With(x => x.TrainingProviderName, _revision.Details.TrainingProviderName)
+                .With(x => x.CourseName, _revision.Details.Course.Name)
+                .With(x => x.CourseLevel, _revision.Details.Course.Level)
+                .With(x => x.CourseOption, _revision.Details.Course.Option)
+                .With(x => x.PlannedStartDate, _revision.Details.Course.PlannedStartDate)
+                .With(x => x.PlannedEndDate, _revision.Details.Course.PlannedEndDate)
                 .Create();
         }
 
@@ -199,7 +199,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
             {
                 CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _commitmentStatement.CommitmentsApprenticeshipId
+                CommitmentsApprenticeshipId = _revision.CommitmentsApprenticeshipId
             });
         }
 
@@ -264,7 +264,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 Message = new ApprenticeshipConfirmationCommencedEvent
                 {
                     ApprenticeId = _context.DbContext.Apprentices.Single().Id,
-                    ApprenticeshipId = _commitmentStatement.ApprenticeshipId,
+                    ApprenticeshipId = _revision.ApprenticeshipId,
                     ConfirmationId = latest.Id,
                     ConfirmationOverdueOn = latest.ConfirmBefore,
                     CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
@@ -293,7 +293,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     Message = new
                     {
                         ApprenticeId = _context.DbContext.Apprentices.Single().Id,
-                        _commitmentStatement.ApprenticeshipId,
+                        _revision.ApprenticeshipId,
                     }
                 });
         }

@@ -21,7 +21,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmCommand
         public async Task<Unit> Handle(ConfirmCommand request, CancellationToken cancellationToken)
         {
             var apprenticeship = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
-            apprenticeship.Confirm(request.CommitmentStatementId, request.Confirmations, _time.Now);
+            apprenticeship.Confirm(request.RevisionId, request.Confirmations, _time.Now);
             return Unit.Value;
         }
     }
