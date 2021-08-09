@@ -12,8 +12,6 @@ namespace SFA.DAS.ApprenticeCommitments.Exceptions
     [Serializable]
     public class IdentityNotVerifiedException : ValidationException
     {
-        // todo - ensure these exceptions are logged even if handled
-
         public IdentityNotVerifiedException(string message)
             : base(message, new[]
             {
