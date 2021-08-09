@@ -42,13 +42,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             return new OkObjectResult(response);
         }
 
-        [HttpPost("registrations")]
-        public async Task<IActionResult> VerifiedRegistration(VerifyRegistrationCommand command)
-        {
-            await _mediator.Send(command);
+        //[HttpPost("registrations")]
+        //public async Task<IActionResult> VerifiedRegistration(VerifyRegistrationCommand command)
+        //{
+        //    await _mediator.Send(command);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
         [HttpPost("registrations2")]
         public async Task VerifiedRegistration(CreateRegistrationCommand command)
