@@ -1,7 +1,8 @@
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using FluentValidation.TestHelper;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
@@ -90,6 +91,22 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 approval.Email,
                 approval.FirstName,
                 approval.LastName,
+            });
+        }
+
+        [Test]
+        public async Task Stored_email_address_history()
+        {
+            var approval = fixture.Create<CreateRegistrationCommand>();
+
+            var account = await CreateAccount(approval);
+
+            var apprentice = await Database.Apprentices
+                .Include(x => x.PreviousEmailAddresses)
+                .FirstOrDefaultAsync(x => x.Id == account.ApprenticeId);
+            apprentice.PreviousEmailAddresses.Should().ContainEquivalentOf(new
+            {
+                EmailAddress = new MailAddress(account.Email),
             });
         }
     }

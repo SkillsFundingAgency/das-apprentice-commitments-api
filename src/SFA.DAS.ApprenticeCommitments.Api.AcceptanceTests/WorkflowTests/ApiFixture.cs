@@ -1,10 +1,11 @@
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
     public class ApiFixture
     {
         private protected Fixture fixture;
-        private protected HttpClient client;
         private protected TestContext context;
+        private protected HttpClient client;
+        protected ApprenticeCommitmentsDbContext Database { get; private set; }
 
         private protected TimeSpan TimeBetweenActions = TimeSpan.FromDays(2);
 
@@ -34,7 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             context = new TestContext();
             _ = new Bindings.Api(context);
             client = factory.CreateClient();
-            _ = Bindings.Database.CreateDbContext();
+            Database = Bindings.Database.CreateDbContext();
         }
 
         public async Task<CreateRegistrationCommand> CreateRegistration()
