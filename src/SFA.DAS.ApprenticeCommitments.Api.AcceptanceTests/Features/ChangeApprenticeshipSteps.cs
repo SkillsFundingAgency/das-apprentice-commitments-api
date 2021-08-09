@@ -126,10 +126,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.Api.Post("apprenticeships/change", _request);
         }
 
-        [Then("the result should return accepted")]
-        public void ThenTheResultShouldReturnAccepted()
+        [Then("the result should return OK")]
+        public void ThenTheResultShouldReturnOk()
         {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+            _context.Api.Response.Should().Be200Ok();
         }
 
         [Then("the result should return Not Found")]

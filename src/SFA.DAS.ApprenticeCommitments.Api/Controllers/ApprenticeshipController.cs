@@ -28,11 +28,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             => await _mediator.Send(request);
 
         [HttpPost("apprenticeships/change")]
-        public async Task<IActionResult> ChangeApprenticeship([FromBody] ChangeApprenticeshipCommand request)
-        {
-            await _mediator.Send(request);
-            return Accepted();
-        }
+        public async Task ChangeApprenticeship([FromBody] ChangeApprenticeshipCommand request)
+            => await _mediator.Send(request);
 
         [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}")]
         public async Task<IActionResult> GetApprenticeship(Guid apprenticeId, long apprenticeshipId)
@@ -57,24 +54,22 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPatch("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}")]
-        public async Task<IActionResult> PostApprenticeship(
+        public async Task PatchApprenticeship(
             Guid apprenticeId,
             long apprenticeshipId,
             [FromBody] JsonPatchDocument<Apprenticeship> changes)
         {
             await _mediator.Send(new UpdateApprenticeshipCommand(apprenticeId, apprenticeshipId, changes));
-            return Ok();
         }
 
         [HttpPatch("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{revisionId}/confirmations")]
-        public async Task<IActionResult> ConfirmApprenticeship(
+        public async Task ConfirmApprenticeship(
             Guid apprenticeId,
             long apprenticeshipId,
             long revisionId,
             [FromBody] Confirmations confirmations)
         {
             await _mediator.Send(new ConfirmCommand(apprenticeId, apprenticeshipId, revisionId, confirmations));
-            return Ok();
         }
     }
 }

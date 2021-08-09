@@ -30,15 +30,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             {
                 return NotFound();
             }
-            return new OkObjectResult(response);
+            return Ok(response);
         }
 
         [HttpGet("registrations/reminders")]
         public async Task<IActionResult> GetRegistrationsNeedingReminders(DateTime invitationCutOffTime)
         {
             var response = await _mediator.Send(new RegistrationRemindersQuery { CutOffDateTime = invitationCutOffTime });
-
-            return new OkObjectResult(response);
+            return Ok(response);
         }
 
         [HttpPost("registrations")]
@@ -46,17 +45,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             => await _mediator.Send(command);
 
         [HttpPost("registrations/{apprenticeId}/reminder")]
-        public async Task<IActionResult> RegistrationReminderSent(Guid apprenticeId, [FromBody] RegistrationReminderSentRequest request)
-        {
-            await _mediator.Send(new RegistrationReminderSentCommand(apprenticeId, request.SentOn));
-            return Accepted();
-        }
+        public async Task RegistrationReminderSent(Guid apprenticeId, [FromBody] RegistrationReminderSentRequest request)
+            => await _mediator.Send(new RegistrationReminderSentCommand(apprenticeId, request.SentOn));
 
         [HttpPost("registrations/{apprenticeId}/firstseen")]
-        public async Task<IActionResult> RegistrationFirstSeen(Guid apprenticeId, [FromBody] RegistrationFirstSeenRequest request)
-        {
-            await _mediator.Send(new RegistrationFirstSeenCommand(apprenticeId, request.SeenOn));
-            return Accepted();
-        }
+        public async Task RegistrationFirstSeen(Guid apprenticeId, [FromBody] RegistrationFirstSeenRequest request)
+            => await _mediator.Send(new RegistrationFirstSeenCommand(apprenticeId, request.SeenOn));
     }
 }

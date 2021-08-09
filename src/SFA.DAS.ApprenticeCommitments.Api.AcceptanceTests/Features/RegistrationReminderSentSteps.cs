@@ -48,10 +48,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.Api.Post($"registrations/{_registration.RegistrationId}/reminder", _request);
         }
 
-        [Then(@"the response is Accepted")]
-        public void ThenTheResponseIsAccepted()
+        [Then(@"the response is OK")]
+        public void ThenTheResponseIsOk()
         {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+            _context.Api.Response.Should().Be200Ok();
         }
 
         [Then(@"the registration record is updated")]
