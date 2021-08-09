@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<HttpResponseMessage> PostCreateRegistrationCommand(CreateRegistrationCommand create)
         {
-            return await client.PostValueAsync("registrations2", create);
+            return await client.PostValueAsync("registrations", create);
         }
 
         protected async Task<RegistrationResponse> GetRegistration(Guid apprenticeId)

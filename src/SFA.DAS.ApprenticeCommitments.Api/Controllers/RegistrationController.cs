@@ -1,14 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Api.Types;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
+using System;
+using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
@@ -42,22 +41,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             return new OkObjectResult(response);
         }
 
-        //[HttpPost("registrations")]
-        //public async Task<IActionResult> VerifiedRegistration(VerifyRegistrationCommand command)
-        //{
-        //    await _mediator.Send(command);
-
-        //    return Ok();
-        //}
-
-        [HttpPost("registrations2")]
+        [HttpPost("registrations")]
         public async Task VerifiedRegistration(CreateRegistrationCommand command)
             => await _mediator.Send(command);
 
         [HttpPost("registrations/{apprenticeId}/reminder")]
         public async Task<IActionResult> RegistrationReminderSent(Guid apprenticeId, [FromBody] RegistrationReminderSentRequest request)
         {
-            await _mediator.Send(new RegistrationReminderSentCommand( apprenticeId, request.SentOn));
+            await _mediator.Send(new RegistrationReminderSentCommand(apprenticeId, request.SentOn));
             return Accepted();
         }
 
@@ -67,6 +58,5 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             await _mediator.Send(new RegistrationFirstSeenCommand(apprenticeId, request.SeenOn));
             return Accepted();
         }
-
     }
 }

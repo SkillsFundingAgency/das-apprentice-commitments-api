@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
@@ -98,7 +99,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _registration = _f.Create<Registration>();
             GivenWeHaveAnExistingAccount();
-            _registration.AssociateWithApprentice(_apprentice);
+            _registration.AssociateWithApprentice(_apprentice, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.Registrations.Add(_registration);
             _context.DbContext.SaveChanges();
         }

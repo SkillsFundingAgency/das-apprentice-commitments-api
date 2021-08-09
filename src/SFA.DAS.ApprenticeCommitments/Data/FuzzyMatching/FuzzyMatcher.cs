@@ -7,6 +7,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching
 {
     public class FuzzyMatcher
     {
+        public static FuzzyMatcher AlwaysMatcher = new FuzzyMatcher(0);
+
         public int _similarityThreshold { get; set; } = 0;
 
         public FuzzyMatcher(int similarityThreshold)
