@@ -80,6 +80,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return create;
         }
 
+        protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship()
+        {
+            var approval = await CreateRegistration();
+            var account = await CreateAccount(approval);
+            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
+            var apprenticeship = await GetApprenticeships(account.ApprenticeId);
+            return apprenticeship[0];
+        }
+
         protected async Task<ApprenticeDto> GetApprentice(Guid apprenticeId)
         {
             var (response, apprentice) = await client.GetValueAsync<ApprenticeDto>($"apprentices/{apprenticeId}");

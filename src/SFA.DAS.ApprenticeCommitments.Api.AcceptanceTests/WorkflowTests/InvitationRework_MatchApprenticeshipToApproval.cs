@@ -3,6 +3,7 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using System;
@@ -96,8 +97,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
     public class InvitationRework_MatchApprenticeshipToApproval : ApiFixture
     {
-        // create account
-
         [Test]
         public async Task Cannot_find_registration_that_doesnt_exist()
         {
@@ -160,6 +159,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 account.ApprenticeId,
                 approval.CommitmentsApprenticeshipId,
                 //approval.CommitmentsApprovedOn,
+                EmployerCorrect = (bool?)null,
+                TrainingProviderCorrect = (bool?)null,
+                ApprenticeshipDetailsCorrect = (bool?)null,
+                HowApprenticeshipDeliveredCorrect = (bool?)null,
+                RolesAndResponsibilitiesCorrect = (bool?)null,
             });
         }
 
@@ -175,6 +179,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             response
                 .Should().Be400BadRequest()
                 .And.MatchInContent("*\"Registration * is already verified\"*");
+        }
+    }
+
+    public class InvitationRework_Confirmations : ApiFixture
+    { 
+        [Test]
+        public async Task Can_confirm_employer()
+        {
+            var apprenticeship = await CreateVerifiedApprenticeship();
+
+            var r4 = await client.PostValueAsync(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.CommitmentStatementId}/EmployerConfirmation",
+                new ConfirmEmployerRequest { EmployerCorrect = true });
+            r4.Should().Be2XXSuccessful();
+
+            apprenticeship = (await GetApprenticeships(apprenticeship.ApprenticeId))[0];
+            apprenticeship.EmployerCorrect.Should().BeTrue();
         }
     }
 }
