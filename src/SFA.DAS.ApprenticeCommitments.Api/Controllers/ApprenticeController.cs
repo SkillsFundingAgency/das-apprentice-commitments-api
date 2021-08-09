@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticesQuery;
@@ -33,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPost("apprentices")]
-        public async Task PostApprentice(CreateAccountCommand command)
+        public async Task PostApprentice(CreateApprenticeAccountCommand command)
             => await _mediator.Send(command);
 
         [HttpGet("apprentices/{id}/apprenticeships")]

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using System;
 using System.Net.Mail;
@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Validates_command()
         {
-            var create = fixture.Build<CreateAccountCommand>()
+            var create = fixture.Build<CreateApprenticeAccountCommand>()
                 .Without(p => p.Email).
                 Create();
             var response = await PostCreateAccountCommand(create);

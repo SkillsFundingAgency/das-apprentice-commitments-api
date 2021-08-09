@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand
 {
-    public class CreateAccountCommandValidator : AbstractValidator<CreateAccountCommand>
+    public class CreateApprenticeAccountCommandValidator : AbstractValidator<CreateApprenticeAccountCommand>
     {
-        public CreateAccountCommandValidator()
+        public CreateApprenticeAccountCommandValidator()
         {
             RuleFor(model => model.ApprenticeId).Must(id => id != default).WithMessage("The Apprentice Id must be valid");
             RuleFor(model => model.FirstName).NotNull().NotEmpty().WithMessage("FirstName is required");

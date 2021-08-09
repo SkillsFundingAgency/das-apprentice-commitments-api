@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
@@ -62,13 +62,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return registration;
         }
 
-        protected async Task<CreateAccountCommand> CreateAccount(CreateRegistrationCommand approval,
+        protected async Task<CreateApprenticeAccountCommand> CreateAccount(CreateRegistrationCommand approval,
             Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
             email ??= new MailAddress(approval.Email);
             dateOfBirth ??= approval.DateOfBirth;
 
-            var create = fixture.Build<CreateAccountCommand>()
+            var create = fixture.Build<CreateApprenticeAccountCommand>()
                 .With(p => p.ApprenticeId, (Guid id) => apprenticeId ?? id)
                 .With(p => p.Email, email.ToString())
                 .With(p => p.DateOfBirth, dateOfBirth)
@@ -99,7 +99,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return apprentice;
         }
 
-        protected async Task<HttpResponseMessage> PostCreateAccountCommand(CreateAccountCommand create)
+        protected async Task<HttpResponseMessage> PostCreateAccountCommand(CreateApprenticeAccountCommand create)
         {
             return await client.PostValueAsync("apprentices", create);
         }

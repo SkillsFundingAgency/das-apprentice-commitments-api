@@ -5,16 +5,16 @@ using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand
 {
-    public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand>
+    public class CreateApprenticeAccountCommandHandler : IRequestHandler<CreateApprenticeAccountCommand>
     {
         private readonly IApprenticeContext _apprentices;
 
-        public CreateAccountCommandHandler(IApprenticeContext apprentices)
+        public CreateApprenticeAccountCommandHandler(IApprenticeContext apprentices)
             => _apprentices = apprentices;
 
-        public Task<Unit> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
+        public Task<Unit> Handle(CreateApprenticeAccountCommand request, CancellationToken cancellationToken)
         {
             _apprentices.Add(new Apprentice(
                 request.ApprenticeId,
