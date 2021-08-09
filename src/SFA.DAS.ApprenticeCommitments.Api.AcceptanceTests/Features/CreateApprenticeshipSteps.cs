@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"the apprenticeship is posted")]
         public async Task WhenTheApprenticeshipIsPosted()
         {
-            await _context.Api.Post("apprenticeships", _createApprenticeshipRequest);
+            await _context.Api.Post("registrations", _createApprenticeshipRequest);
         }
 
         [Then(@"the result should return bad request")]
@@ -75,10 +75,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             errors.Count.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Then(@"the result should return accepted")]
-        public void ThenTheResultShouldReturnAccepted()
+        [Then(@"the result should return OK")]
+        public void ThenTheResultShouldReturnOk()
         {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+            _context.Api.Response.Should().Be200Ok();
         }
 
         [Then(@"the registration exists in database")]
