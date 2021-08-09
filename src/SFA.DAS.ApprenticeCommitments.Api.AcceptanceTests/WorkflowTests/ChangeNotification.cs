@@ -10,26 +10,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class ChangeNotification : ApiFixture
     {
-        //private Fixture fixture;
-        //private HttpClient client;
-        //private TestContext context;
-
-        //[SetUp]
-        //public void Setup()
-        //{
-        //    fixture = new Fixture();
-
-        //    var factory = Bindings.Api.CreateApiFactory();
-        //    context = new TestContext();
-        //    _ = new Bindings.Api(context);
-        //    client = factory.CreateClient();
-        //    _ = Bindings.Database.CreateDbContext();
-        //}
-
         [Test]
         public async Task Incomplete_and_not_changed_does_not_show_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
@@ -41,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Incomplete_and_then_changed_shows_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
@@ -55,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Confirmed_and_not_changed_does_not_show_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
 
@@ -69,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Confirmed_and_then_changed_shows_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -84,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Negatively_confirmed_and_not_changed_does_not_show_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
 
@@ -98,7 +82,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Negatively_confirmed_and_then_changed_shows_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -113,7 +97,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task One_section_confirmed_and_then_all_changed_shows_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer());
@@ -128,7 +112,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Employer_section_changed_and_then_confirmed_hides_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyEmployer());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer());
@@ -144,7 +128,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Provider_section_changed_and_then_confirmed_hides_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyProvider());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider());
@@ -159,7 +143,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Provider_section_confirmed_and_then_changed_shows_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyProvider());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider());
@@ -175,7 +159,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Confirmed_and_then_changed_and_also_reconfirmed_does_not_show_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -191,7 +175,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Negatively_confirmed_and_then_changed_and_also_reconfirmed_does_not_show_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().AsIncomplete());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -207,7 +191,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Negatively_confirmed_and_then_changed_and_negatively_confirmed_again_does_not_show_notification()
         {
-            var (apprenticeship, _) = await CreateVerifiedApprenticeship();
+            var apprenticeship = await CreateVerifiedApprenticeship();
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().AsIncomplete());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -253,7 +237,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return apprenticeships.Last(); ;
         }
 
-        public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateVerifiedApprenticeship()
+        public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateVerifiedApprenticeship2()
         {
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);

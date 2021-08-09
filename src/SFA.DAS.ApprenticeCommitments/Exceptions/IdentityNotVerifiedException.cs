@@ -21,7 +21,7 @@ namespace SFA.DAS.ApprenticeCommitments.Exceptions
         }
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        private IdentityNotVerifiedException(SerializationInfo info, StreamingContext context)
+        protected IdentityNotVerifiedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

@@ -2,8 +2,8 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -19,10 +19,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class ApiFixture
     {
-        private protected Fixture fixture;
-        private protected TestContext context;
-        private protected HttpClient client;
-        protected ApprenticeCommitmentsDbContext Database { get; private set; }
+        private protected Fixture fixture = null!;
+        private protected TestContext context = null!;
+        private protected HttpClient client = null!;
+        protected ApprenticeCommitmentsDbContext Database { get; private set; } = null!;
 
         private protected TimeSpan TimeBetweenActions = TimeSpan.FromDays(2);
 
@@ -88,6 +88,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
             var apprenticeship = await GetApprenticeships(account.ApprenticeId);
+            context.Time.Now = approval.CommitmentsApprovedOn;
             return apprenticeship[0];
         }
 

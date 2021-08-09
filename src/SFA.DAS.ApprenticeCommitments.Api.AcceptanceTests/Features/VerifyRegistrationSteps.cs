@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
     public class VerifyRegistrationSteps
     {
         private readonly TestContext _context;
-        private CreateApprenticeshipFromRegistrationCommand? _command;
+        private CreateApprenticeshipFromRegistrationCommand _command;
         private Fixture _f;
         private Registration _registration;
         private Apprentice _apprentice;
