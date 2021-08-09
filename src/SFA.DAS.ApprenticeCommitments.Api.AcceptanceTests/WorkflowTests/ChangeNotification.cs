@@ -236,19 +236,5 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             apprenticeships.Should().NotBeEmpty();
             return apprenticeships.Last(); ;
         }
-
-        public async Task<(ApprenticeshipDto, DateTime approvedOn)> CreateVerifiedApprenticeship2()
-        {
-            var approval = await CreateRegistration();
-            var account = await CreateAccount(approval);
-            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
-
-            var (response, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{account.ApprenticeId}/apprenticeships");
-            response.Should().Be2XXSuccessful();
-
-            context.Time.Now = approval.CommitmentsApprovedOn;
-
-            return (apprenticeships[0], approval.CommitmentsApprovedOn);
-        }
     }
 }
