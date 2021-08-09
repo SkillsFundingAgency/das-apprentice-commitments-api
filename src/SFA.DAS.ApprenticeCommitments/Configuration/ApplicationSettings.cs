@@ -8,6 +8,6 @@ namespace SFA.DAS.ApprenticeCommitments.Configuration
     {
         public string DbConnectionString { get; set; }
         public TimeSpan TimeToWaitBeforeChangeOfApprenticeshipEmail { get; set; } = TimeSpan.FromHours(24);
-        public int SimilarityThreshold { get; set; }
+        public int FuzzyMatchingSimilarityThreshold { get; set; }
     }
 }

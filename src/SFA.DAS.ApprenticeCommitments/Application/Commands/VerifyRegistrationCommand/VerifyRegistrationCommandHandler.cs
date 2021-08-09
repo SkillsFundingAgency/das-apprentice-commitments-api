@@ -34,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
         {
             var registration = await _registrations.GetById(command.ApprenticeId);
                         
-            var matcher = new FuzzyMatcher(_applicationSettings.SimilarityThreshold);
+            var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold);
 
             if (!matcher.IsSimilar(registration.LastName, command.LastName))
             {
