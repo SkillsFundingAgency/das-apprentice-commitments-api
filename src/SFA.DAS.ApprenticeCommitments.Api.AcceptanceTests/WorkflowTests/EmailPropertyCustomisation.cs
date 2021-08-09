@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using System;
 using System.Net.Http;
 using System.Net.Mail;

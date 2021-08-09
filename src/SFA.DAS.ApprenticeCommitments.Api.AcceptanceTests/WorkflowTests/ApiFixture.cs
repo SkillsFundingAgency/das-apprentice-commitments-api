@@ -3,7 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
@@ -109,12 +109,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<HttpResponseMessage> PostVerifyRegistrationCommand(Guid registrationId, Guid apprenticeId)
         {
-            var create = fixture.Build<VerifyRegistrationCommand2>()
+            var create = fixture.Build<CreateApprenticeshipFromRegistrationCommand>()
                              .With(p => p.RegistrationId, registrationId)
                              .With(p => p.ApprenticeId, apprenticeId)
                              .Create();
 
-            var response = await client.PostValueAsync("apprenticeships2", create);
+            var response = await client.PostValueAsync("apprenticeships", create);
             return response;
         }
 

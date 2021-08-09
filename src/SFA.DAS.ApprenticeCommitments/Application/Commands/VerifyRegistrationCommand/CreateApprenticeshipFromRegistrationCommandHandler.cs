@@ -6,19 +6,19 @@ using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand
 {
-    public class VerifyRegistrationCommandHandler : IRequestHandler<VerifyRegistrationCommand2>
+    public class CreateApprenticeshipFromRegistrationCommandHandler : IRequestHandler<CreateApprenticeshipFromRegistrationCommand>
     {
         private readonly IRegistrationContext _registrations;
         private readonly IApprenticeContext _apprentices;
-        private readonly ILogger<VerifyRegistrationCommandHandler> _logger;
+        private readonly ILogger<CreateApprenticeshipFromRegistrationCommandHandler> _logger;
         private readonly ApplicationSettings _applicationSettings;
 
-        public VerifyRegistrationCommandHandler(
+        public CreateApprenticeshipFromRegistrationCommandHandler(
             IRegistrationContext registrations,
             IApprenticeContext apprenticeRepository,
-            ILogger<VerifyRegistrationCommandHandler> logger,
+            ILogger<CreateApprenticeshipFromRegistrationCommandHandler> logger,
             ApplicationSettings applicationSettings)
         {
             _registrations = registrations;
@@ -27,13 +27,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
             _applicationSettings = applicationSettings;
         }
 
-        public async Task<Unit> Handle(VerifyRegistrationCommand2 request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateApprenticeshipFromRegistrationCommand request, CancellationToken cancellationToken)
         {
             var registration = await _registrations.GetById(request.RegistrationId);
             var apprentice = await _apprentices.GetById(request.ApprenticeId);
 
-            var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold);
-
+            var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold); 
+            
             registration.AssociateWithApprentice(apprentice, matcher);
 
             return Unit.Value;

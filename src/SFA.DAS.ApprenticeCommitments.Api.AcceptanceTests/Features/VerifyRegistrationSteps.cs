@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Api.Extensions;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
@@ -23,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
     public class VerifyRegistrationSteps
     {
         private readonly TestContext _context;
-        private VerifyRegistrationCommand2? _command;
+        private CreateApprenticeshipFromRegistrationCommand? _command;
         private Fixture _f;
         private Registration _registration;
         private Apprentice _apprentice;
@@ -88,7 +88,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given("the request is for the account")]
         public void GivenTheRequestMatchesRegistrationDetails()
         {
-            _command = _f.Build<VerifyRegistrationCommand2>()
+            _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
                 .With(p => p.ApprenticeId, _apprentice.Id)
                 .With(p => p.RegistrationId, _registration.RegistrationId)
                 .Create();
@@ -118,13 +118,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"a valid registration request is submitted")]
         public void GivenAValidRegistrationRequestIsSubmitted()
         {
-            _command = _f.Create<VerifyRegistrationCommand2>();
+            _command = _f.Create<CreateApprenticeshipFromRegistrationCommand>();
         }
 
         [When(@"we verify that registration")]
         public async Task WhenWeVerifyThatRegistration()
         {
-            await _context.Api.Post("apprenticeships2", _command);
+            await _context.Api.Post("apprenticeships", _command);
         }
 
         [Then(@"the apprentice record is created")]
