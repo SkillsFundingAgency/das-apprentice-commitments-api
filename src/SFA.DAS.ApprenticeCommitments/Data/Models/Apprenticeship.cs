@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Revision LatestRevision
             => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
-                ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
+                ?? throw new DomainException($"No revisions found in apprenticeship {Id}");
 
         public bool DisplayChangeNotification
         {

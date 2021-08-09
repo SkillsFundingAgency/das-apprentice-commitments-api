@@ -77,7 +77,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             await _context.DbContext.SaveChangesAsync();
         }
 
-        [Given("the apprenticeships exists, has many commitment statements, and is associated with this apprentice")]
+        [Given("the apprenticeships exists, has many revisions, and is associated with this apprentice")]
         public async Task GivenTheApprenticeshipsExistsHasManyCommitmentStatementsAndIsAssociatedWithThisApprentice()
         {
             _apprentice.AddApprenticeship(_commitmentStatement);
@@ -177,7 +177,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 
 
 
-        [Then("all commitment statements should have the same apprenticeship ID")]
+        [Then("all revisions should have the same apprenticeship ID")]
         public async Task ThenAllCommitmentStatementsShouldHaveTheSameApprenticeshipID()
         {
             var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);

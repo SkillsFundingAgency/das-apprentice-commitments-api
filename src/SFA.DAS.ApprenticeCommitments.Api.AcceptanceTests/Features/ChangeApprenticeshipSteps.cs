@@ -138,7 +138,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        [Then("the new commitment statement exists in database")]
+        [Then("the new revision exists in database")]
         public void ThenTheCommitmentStatementExistsInDatabase()
         {
             var cs = _context.DbContext.CommitmentStatements.ToList();
@@ -193,7 +193,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
-        [Then("the new commitment statement has same commitments apprenticeship Id")]
+        [Then("the new revision has same commitments apprenticeship Id")]
         public void ThenTheCommitmentStatementHasSameCommitmentsApprenticeshipId()
         {
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
@@ -203,7 +203,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
-        [Then(@"the new commitment statement has a new commitments apprenticeship Id")]
+        [Then(@"the new revision has a new commitments apprenticeship Id")]
         public void ThenTheNewCommitmentStatementHasANewCommitmentsApprenticeshipId()
         {
             _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
@@ -226,13 +226,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
-        [Then("there should only be the original commitment statement in the database")]
+        [Then("there should only be the original revision in the database")]
         public void ThenThereShouldOnlyBeTheOriginalCommitmentStatementInTheDatabase()
         {
             _context.DbContext.CommitmentStatements.Should().HaveCount(1);
         }
 
-        [Then("there should be no commitment statements in the database")]
+        [Then("there should be no revisions in the database")]
         public void ThenThereShouldBeNoCommitmentStatementsInTheDatabase()
         {
             _context.DbContext.CommitmentStatements.Should().BeEmpty();

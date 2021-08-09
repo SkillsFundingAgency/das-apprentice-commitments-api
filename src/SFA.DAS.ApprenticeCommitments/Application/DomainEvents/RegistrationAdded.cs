@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 
         public async Task Handle(RegistrationAdded notification, CancellationToken cancellationToken)
         {
-            // The commitment statement isn't technically added until the apprentice
+            // The revision isn't technically added until the apprentice
             // confirms their identity, however it's possible that the apprentice
             // never does.  Approvals can use this event to prompt the apprentice
             // when the confirmation is overdue.

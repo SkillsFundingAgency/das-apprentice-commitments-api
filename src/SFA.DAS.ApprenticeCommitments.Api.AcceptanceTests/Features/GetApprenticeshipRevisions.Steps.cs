@@ -77,7 +77,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.DbContext.SaveChangesAsync();
         }
 
-        [Given("the apprenticeships exists, has many commitment statements, and is associated with this apprentice")]
+        [Given("the apprenticeships exists, has many revisions, and is associated with this apprentice")]
         public async Task GivenTheApprenticeshipsExistsHasManyCommitmentStatementsAndIsAssociatedWithThisApprentice()
         {
             _apprentice.AddApprenticeship(_commitmentStatement);
