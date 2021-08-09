@@ -74,7 +74,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private void ConfirmCommitmentStatement(DateTimeOffset time)
         {
             ConfirmedOn = time.UtcDateTime;
-            AddDomainEvent(new CommitmentStatementConfirmed(this));
+            AddDomainEvent(new RevisionConfirmed(this));
         }
 
         internal Revision? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
