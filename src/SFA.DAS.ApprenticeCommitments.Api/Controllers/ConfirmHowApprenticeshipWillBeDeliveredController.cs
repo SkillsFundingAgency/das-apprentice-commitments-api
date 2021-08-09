@@ -20,6 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public ConfirmHowApprenticeshipWillBeDeliveredController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{revisionId}/HowApprenticeshipWillBeDeliveredConfirmation")]
+        [Obsolete("Use PATCH /apprentices/{id}/apprenticeships/{id}/revisions/{id}/confirmations")]
         public async Task HowApprenticeshipWillBeDelivered(
             Guid apprenticeId, long apprenticeshipId, long revisionId,
             [FromBody] ConfirmHowApprenticeshipWillBeDeliveredRequest request)

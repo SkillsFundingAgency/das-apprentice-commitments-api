@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShownCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionsQuery;
@@ -62,6 +63,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             [FromBody] JsonPatchDocument<Apprenticeship> changes)
         {
             await _mediator.Send(new UpdateApprenticeshipCommand(apprenticeId, apprenticeshipId, changes));
+            return Ok();
+        }
+
+        [HttpPatch("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{revisionId}/confirmations")]
+        public async Task<IActionResult> ConfirmApprenticeship(
+            Guid apprenticeId,
+            long apprenticeshipId,
+            long revisionId,
+            [FromBody] Confirmations confirmations)
+        {
+            await _mediator.Send(new ConfirmCommand(apprenticeId, apprenticeshipId, revisionId, confirmations));
             return Ok();
         }
     }

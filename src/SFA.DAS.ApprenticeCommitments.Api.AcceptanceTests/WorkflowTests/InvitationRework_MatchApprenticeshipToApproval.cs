@@ -1,9 +1,8 @@
-﻿using AutoFixture;
+using AutoFixture;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using FluentValidation.TestHelper;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using System;
@@ -183,19 +182,43 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
     }
 
     public class InvitationRework_Confirmations : ApiFixture
-    { 
-        [Test]
-        public async Task Can_confirm_employer()
+    {
+        [TestCase("EmployerCorrect", true)]
+        [TestCase("EmployerCorrect", false)]
+        [TestCase("EmployerCorrect", null)]
+        [TestCase("TrainingProviderCorrect", true)]
+        [TestCase("TrainingProviderCorrect", false)]
+        [TestCase("TrainingProviderCorrect", null)]
+        [TestCase("ApprenticeshipDetailsCorrect", true)]
+        [TestCase("ApprenticeshipDetailsCorrect", false)]
+        [TestCase("ApprenticeshipDetailsCorrect", null)]
+        [TestCase("HowApprenticeshipDeliveredCorrect", true)]
+        [TestCase("HowApprenticeshipDeliveredCorrect", false)]
+        [TestCase("HowApprenticeshipDeliveredCorrect", null)]
+        [TestCase("RolesAndResponsibilitiesCorrect", true)]
+        [TestCase("RolesAndResponsibilitiesCorrect", false)]
+        [TestCase("RolesAndResponsibilitiesCorrect", null)]
+        public async Task Can_confirm_new_api(string confirmation, bool? value)
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
 
-            var r4 = await client.PostValueAsync(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.CommitmentStatementId}/EmployerConfirmation",
-                new ConfirmEmployerRequest { EmployerCorrect = true });
+            object data = confirmation switch
+            {
+                "EmployerCorrect" => new { EmployerCorrect = value },
+                "TrainingProviderCorrect" => new { TrainingProviderCorrect = value },
+                "ApprenticeshipDetailsCorrect" => new { ApprenticeshipDetailsCorrect = value },
+                "HowApprenticeshipDeliveredCorrect" => new { TrainingProviderCorrect = value },
+                "RolesAndResponsibilitiesCorrect" => new { TrainingProviderCorrect = value },
+                _ => throw new ArgumentOutOfRangeException(nameof(confirmation)),
+            };
+
+            var r4 = await client.PatchValueAsync(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.CommitmentStatementId}/confirmations",
+                data);
             r4.Should().Be2XXSuccessful();
 
             apprenticeship = (await GetApprenticeships(apprenticeship.ApprenticeId))[0];
-            apprenticeship.EmployerCorrect.Should().BeTrue();
+            apprenticeship.Should().BeEquivalentTo(data);
         }
     }
 }
