@@ -139,13 +139,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Then("the new revision exists in database")]
-        public void ThenTheCommitmentStatementExistsInDatabase()
+        public void ThenTheRevisionExistsInDatabase()
         {
-            var cs = _context.DbContext.CommitmentStatements.ToList();
+            var cs = _context.DbContext.Revisions.ToList();
 
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
+                _request.CommitmentsApprovedOn,
                 Details = new
                 {
                     _request.EmployerAccountLegalEntityId,
@@ -194,22 +194,22 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Then("the new revision has same commitments apprenticeship Id")]
-        public void ThenTheCommitmentStatementHasSameCommitmentsApprenticeshipId()
+        public void ThenTheCommitmentRevisionHasSameCommitmentsApprenticeshipId()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _revision.CommitmentsApprenticeshipId
+                _request.CommitmentsApprovedOn,
+                _revision.CommitmentsApprenticeshipId
             });
         }
 
         [Then(@"the new revision has a new commitments apprenticeship Id")]
-        public void ThenTheNewCommitmentStatementHasANewCommitmentsApprenticeshipId()
+        public void ThenTheNewCommitmentRevisionHasANewCommitmentsApprenticeshipId()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprovedOn = _request.CommitmentsApprovedOn,
-                CommitmentsApprenticeshipId = _request.CommitmentsApprenticeshipId
+                _request.CommitmentsApprovedOn,
+                _request.CommitmentsApprenticeshipId
             });
         }
 
@@ -227,15 +227,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Then("there should only be the original revision in the database")]
-        public void ThenThereShouldOnlyBeTheOriginalCommitmentStatementInTheDatabase()
+        public void ThenThereShouldOnlyBeTheOriginalCommitmentRevisionInTheDatabase()
         {
-            _context.DbContext.CommitmentStatements.Should().HaveCount(1);
+            _context.DbContext.Revisions.Should().HaveCount(1);
         }
 
         [Then("there should be no revisions in the database")]
-        public void ThenThereShouldBeNoCommitmentStatementsInTheDatabase()
+        public void ThenThereShouldBeNoCommitmentRevisionsInTheDatabase()
         {
-            _context.DbContext.CommitmentStatements.Should().BeEmpty();
+            _context.DbContext.Revisions.Should().BeEmpty();
         }
 
         [Then(@"a domain exception is thrown")]
@@ -257,7 +257,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the Confirmation Commenced event is published")]
         public void ThenTheConfirmationStartedEventIsPublished()
         {
-            var latest = _context.DbContext.CommitmentStatements.OrderBy(x => x.Id).Last();
+            var latest = _context.DbContext.Revisions.OrderBy(x => x.Id).Last();
 
             _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
             {
@@ -284,7 +284,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("send a Change of Circumstance email to the user")]
         public void ThenSendAChangeOfCircumstanceEmailToTheUser()
         {
-            var latest = _context.DbContext.CommitmentStatements.OrderBy(x => x.Id).Last();
+            var latest = _context.DbContext.Revisions.OrderBy(x => x.Id).Last();
 
             _context.Messages.PublishedMessages
                 .Where(x => x.Message is ApprenticeshipChangedEvent)

@@ -74,7 +74,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated")]
         public void ThenTheApprenticeshipRecordIsUpdated()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
                 HowApprenticeshipDeliveredCorrect
@@ -90,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record remains unchanged")]
         public void ThenTheApprenticeshipRecordRemainsUnchanged()
         {
-            _context.DbContext.CommitmentStatements
+            _context.DbContext.Revisions
                 .Should().ContainEquivalentOf(_commitmentStatement);
         }
     }

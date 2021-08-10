@@ -180,7 +180,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Then("the Confirmation Commenced event is published")]
         public void ThenTheConfirmationStartedEventIsPublished()
         {
-            var latest = _context.DbContext.CommitmentStatements.Single();
+            var latest = _context.DbContext.Revisions.Single();
 
             _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
             {

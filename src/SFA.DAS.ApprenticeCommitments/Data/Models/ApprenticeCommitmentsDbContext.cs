@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public virtual DbSet<Registration> Registrations { get; set; } = null!;
         public virtual DbSet<Apprentice> Apprentices { get; set; } = null!;
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; } = null!;
-        public virtual DbSet<Revision> CommitmentStatements { get; set; } = null!;
+        public virtual DbSet<Revision> Revisions { get; set; } = null!;
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;

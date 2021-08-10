@@ -86,7 +86,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated to show confirmed")]
         public void ThenTheApprenticeshipRecordIsUpdatedToShoConfirmed()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
                 ConfirmedOn = _context.Time.Now,
@@ -96,7 +96,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is untouched")]
         public void ThenTheApprenticeshipRecordIsUntouched()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
                 _commitmentStatement.ApprenticeshipId,
                 ConfirmedOn = (DateTime?)null,
@@ -106,7 +106,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the Confirmation Confirmed event is published")]
         public void ThenTheConfirmationStartedEventIsPublished()
         {
-            var latest = _context.DbContext.CommitmentStatements.Single();
+            var latest = _context.DbContext.Revisions.Single();
 
             _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
             {

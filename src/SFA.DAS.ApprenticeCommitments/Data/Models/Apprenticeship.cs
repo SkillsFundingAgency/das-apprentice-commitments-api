@@ -39,9 +39,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 if (Revisions.Count == 1) return false;
 
-                var statements = Revisions.OrderBy(x => x.CommitmentsApprovedOn).ToList();
-                var latest = statements[Revisions.Count - 1];
-                var previous = statements[Revisions.Count - 2];
+                var revisions = Revisions.OrderBy(x => x.CommitmentsApprovedOn).ToList();
+                var latest = revisions[Revisions.Count - 1];
+                var previous = revisions[Revisions.Count - 2];
 
                 if (latest.EmployerCorrect == null &&
                     !latest.Details.EmployerIsEquivalent(previous.Details))
