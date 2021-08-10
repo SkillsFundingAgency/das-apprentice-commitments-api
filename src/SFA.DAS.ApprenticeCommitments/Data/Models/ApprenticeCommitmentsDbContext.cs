@@ -36,6 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Revision>().ToTable("Revision");
             modelBuilder.Entity<Apprenticeship>().ToTable("Apprenticeship");
             modelBuilder.Entity<Apprentice>(a =>
             {

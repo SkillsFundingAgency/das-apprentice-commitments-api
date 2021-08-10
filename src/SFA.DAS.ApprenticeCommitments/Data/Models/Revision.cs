@@ -1,13 +1,11 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable enable
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    [Table("CommitmentStatement")]
     public class Revision : Entity
     {
         public static int DaysBeforeOverdue { get; set; } = 14;

@@ -23,5 +23,5 @@ SELECT
     ConfirmedOn,
     CourseDuration
 FROM
-    dbo.CommitmentStatement
+    dbo.Revision
 GO
