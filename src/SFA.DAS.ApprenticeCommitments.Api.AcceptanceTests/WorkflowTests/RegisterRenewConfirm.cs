@@ -46,7 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task ConfirmingCommitmentStatementConcurrentToApprovedChangeConfirmsCorrectStatement()
+        public async Task ConfirmingCommitmentStatementConcurrentToApprovedChangeConfirmsCorrectRevision()
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create, apprenticeId: create.RegistrationId);

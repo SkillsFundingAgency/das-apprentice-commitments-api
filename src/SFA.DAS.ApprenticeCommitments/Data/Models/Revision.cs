@@ -62,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     && RolesAndResponsibilitiesCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
-                    ConfirmCommitmentStatement(time);
+                    ConfirmRevision(time);
                 }
                 else
                 {
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        private void ConfirmCommitmentStatement(DateTimeOffset time)
+        private void ConfirmRevision(DateTimeOffset time)
         {
             ConfirmedOn = time.UtcDateTime;
             AddDomainEvent(new RevisionConfirmed(this));

@@ -80,7 +80,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 return Revisions.FirstOrDefault(x => x.Id == revisionId)
                     ?? throw new DomainException(
-                        $"Commitment Statement {revisionId} not found in apprenticeship {Id}");
+                        $"Apprenticeship {Id} revision {revisionId} not found");
             }
         }
 
