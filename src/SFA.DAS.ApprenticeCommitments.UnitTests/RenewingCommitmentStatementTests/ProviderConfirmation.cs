@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
         {
             var details = withSameData ? _existingRevision.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, details, DateTime.Now);
 
             _apprenticeship.Revisions.Last().TrainingProviderCorrect.Should().BeNull();
         }
@@ -40,7 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
         {
             _existingRevision.Confirm(new Confirmations { TrainingProviderCorrect = confirmationStatus }, DateTime.UtcNow);
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, _existingRevision.Details.Clone(), DateTime.Now);
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, _existingRevision.Details.Clone(), DateTime.Now);
 
             _apprenticeship.Revisions.Last().TrainingProviderCorrect.Should().Be(confirmationStatus);
         }
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
             var newDetails = _f.Create<ApprenticeshipDetails>();
             newDetails.SetProperty(p=>p.TrainingProviderId, _existingRevision.Details.TrainingProviderId);
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
 
             _apprenticeship.Revisions.Last().TrainingProviderCorrect.Should().BeNull();
         }
@@ -66,7 +66,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
             var newDetails = _f.Create<ApprenticeshipDetails>();
             newDetails.SetProperty(p => p.TrainingProviderName, _existingRevision.Details.TrainingProviderName);
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
             _apprenticeship.Revisions.Last().TrainingProviderCorrect.Should().BeNull();
         }
     }

@@ -84,7 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _apprentice.Apprenticeships.First().RenewCommitment(
+            _apprentice.Apprenticeships.First().Revise(
                 _revision.CommitmentsApprenticeshipId,
                 _fixture.Create<ApprenticeshipDetails>(),
                 _revision.CommitmentsApprovedOn.AddDays(1));

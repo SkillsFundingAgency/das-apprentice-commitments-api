@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
         {
             var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipDto>(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.CommitmentStatementId}");
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.RevisionId}");
             r2.EnsureSuccessStatusCode();
 
             apprenticeships.Should().NotBeNull();
@@ -52,7 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             foreach (var payload in confirm.BuildAll())
             {
                 var r4 = await client.PostValueAsync(
-                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.CommitmentStatementId}/{payload.Item1}",
+                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/{payload.Item1}",
                     payload.Item2);
                 r4.EnsureSuccessStatusCode();
             }

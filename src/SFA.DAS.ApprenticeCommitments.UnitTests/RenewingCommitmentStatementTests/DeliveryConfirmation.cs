@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
 
             var details = withSameData ? _existingRevision.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, details, DateTime.Now);
 
             _apprenticeship.Revisions.Last().HowApprenticeshipDeliveredCorrect.Should().BeNull();
         }
@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
             _existingRevision.SetProperty(p => p.HowApprenticeshipDeliveredCorrect, confirmationStatus);
             var details = withSameData ? _existingRevision.Details.Clone() : _f.Create<ApprenticeshipDetails>();
 
-            _apprenticeship.RenewCommitment(_commitmentsApprenticeshipId, details, DateTime.Now);
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, details, DateTime.Now);
             
             _apprenticeship.Revisions.Last().HowApprenticeshipDeliveredCorrect.Should().Be(confirmationStatus);
         }

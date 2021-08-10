@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var apprenticeshipId = apprenticeships[0].Id;
 
             var r4 = await client.PostValueAsync(
-                $"apprentices/{account.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].CommitmentStatementId}/EmployerConfirmation",
+                $"apprentices/{account.ApprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{apprenticeships[0].RevisionId}/EmployerConfirmation",
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.Should().Be2XXSuccessful();
 
@@ -54,7 +54,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             var apprenticeships = await GetApprenticeships(create.RegistrationId);
             var apprenticeshipId = apprenticeships[0].Id;
-            var csId = apprenticeships[0].CommitmentStatementId;
+            var csId = apprenticeships[0].RevisionId;
 
             var change = fixture.Build<ChangeApprenticeshipCommand>()
                 .With(x => x.CommitmentsApprenticeshipId, create.CommitmentsApprenticeshipId)
@@ -77,7 +77,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .ContainEquivalentOf(new
                 {
                     Id = apprenticeshipId,
-                    CommitmentStatementId = csId + 1,
+                    RevisionId = csId + 1,
                     EmployerCorrect = (bool?)null,
                 });
         }
