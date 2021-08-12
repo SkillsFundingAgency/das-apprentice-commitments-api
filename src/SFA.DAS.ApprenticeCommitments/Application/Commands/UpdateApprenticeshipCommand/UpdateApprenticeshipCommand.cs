@@ -9,7 +9,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShownCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeshipCommand
 {
     public class UpdateApprenticeshipCommand : IUnitOfWorkCommand
     {
