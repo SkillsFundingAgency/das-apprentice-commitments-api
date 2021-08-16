@@ -48,7 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task Stored_email_address_history()
+        public async Task Stores_email_address_history()
         {
             var approval = fixture.Create<CreateRegistrationCommand>();
 
@@ -60,6 +60,27 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             apprentice.PreviousEmailAddresses.Should().ContainEquivalentOf(new
             {
                 EmailAddress = new MailAddress(account.Email),
+            });
+        }
+
+        [Test]
+        public async Task Can_update_apprentice_before_matched()
+        {
+            var approval = fixture.Create<CreateRegistrationCommand>();
+            var account = await CreateAccount(approval);
+
+            account.FirstName = fixture.Create("updated first name");
+            account.LastName = fixture.Create("updated last name");
+            account.DateOfBirth = fixture.Create<DateTime>().Date;
+
+            await UpdateAccount(account.ApprenticeId, account.FirstName, account.LastName, account.DateOfBirth);
+
+            Database.Apprentices.Should().ContainEquivalentOf(new
+            {
+                account.FirstName,
+                account.LastName,
+                account.DateOfBirth,
+                Email = new MailAddress(account.Email),
             });
         }
     }

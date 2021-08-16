@@ -1,9 +1,13 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticesQuery;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Threading.Tasks;
 
@@ -35,6 +39,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPost("apprentices")]
         public async Task PostApprentice(CreateApprenticeAccountCommand command)
             => await _mediator.Send(command);
+
+        [HttpPatch("apprentices/{id}")]
+        public async Task UpdateApprentice(Guid id, JsonPatchDocument<Apprentice> changes)
+            => await _mediator.Send(new UpdateApprenticeCommand(id, changes));
 
         [HttpGet("apprentices/{id}/apprenticeships")]
         public async Task<IActionResult> GetApprenticeApprenticeships(Guid id)

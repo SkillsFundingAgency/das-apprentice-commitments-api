@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
@@ -80,6 +81,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             response.Should().Be2XXSuccessful();
 
             return create;
+        }
+
+        protected async Task UpdateAccount(Guid apprenticeId, string firstName, string lastName, DateTime dateOfBirth)
+        {
+            var patch = new JsonPatchDocument<ApprenticeDto>()
+                .Replace(x => x.FirstName, firstName)
+                .Replace(x => x.LastName, lastName)
+                .Replace(x => x.DateOfBirth, dateOfBirth);
+
+            var response = await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
+            response.Should().Be2XXSuccessful();
         }
 
         protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship()
