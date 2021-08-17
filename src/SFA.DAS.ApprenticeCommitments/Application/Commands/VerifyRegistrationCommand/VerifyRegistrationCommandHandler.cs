@@ -1,9 +1,10 @@
 ﻿using MediatR;
+using SFA.DAS.ApprenticeCommitments.Configuration;
 using SFA.DAS.ApprenticeCommitments.Data;
+using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Exceptions;
 using Microsoft.Extensions.Logging;
 using FluentValidation;
 using FluentValidation.Results;
@@ -15,17 +16,34 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.VerifyRegistrationC
         private readonly IRegistrationContext _registrations;
         private readonly IApprenticeContext _apprentices;
         private readonly ILogger<VerifyRegistrationCommandHandler> _logger;
+        private readonly ApplicationSettings _applicationSettings;
 
-        public VerifyRegistrationCommandHandler(IRegistrationContext registrations, IApprenticeContext apprenticeRepository, ILogger<VerifyRegistrationCommandHandler> logger)
+        public VerifyRegistrationCommandHandler(
+            IRegistrationContext registrations, 
+            IApprenticeContext apprenticeRepository, 
+            ILogger<VerifyRegistrationCommandHandler> logger,
+            ApplicationSettings applicationSettings)
         {
             _registrations = registrations;
             _apprentices = apprenticeRepository;
             _logger = logger;
+            _applicationSettings = applicationSettings;
         }
 
         public async Task<Unit> Handle(VerifyRegistrationCommand command, CancellationToken cancellationToken)
         {
             var registration = await _registrations.GetById(command.ApprenticeId);
+                        
+            var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold);
+
+            if (!matcher.IsSimilar(registration.LastName, command.LastName))
+            {
+                _logger.LogInformation($"Verified Lastname ({command.LastName}) did not match registration {registration.ApprenticeId} ({registration.LastName})");
+                throw new ValidationException(new[]
+                {
+                    new ValidationFailure("PersonalDetails", "Sorry, your identity has not been verified, please check your details"),
+                });
+            }
 
             if (registration.DateOfBirth.Date != command.DateOfBirth.Date)
             {
