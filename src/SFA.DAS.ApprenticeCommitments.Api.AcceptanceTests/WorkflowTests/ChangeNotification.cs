@@ -223,7 +223,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             context.Time.Now = context.Time.Now.AddDays(1);
             var data = change.ChangedOn(context.Time.Now).Build();
-            var r1 = await client.PostValueAsync("apprenticeships/change", data);
+            var r1 = await client.PutValueAsync("registrations", data);
             r1.Should().Be2XXSuccessful();
         }
 

@@ -32,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .With(p => p.CommitmentsApprovedOn, (int days) => create.CommitmentsApprovedOn.AddDays(days))
                 .Create();
 
-            var r5 = await client.PostValueAsync("apprenticeships/change", change);
+            var r5 = await client.PutValueAsync("registrations", change);
             r5.EnsureSuccessStatusCode();
 
             apprenticeships = await GetApprenticeships(account.ApprenticeId);
@@ -62,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .With(p => p.CommitmentsApprovedOn, (int days) => create.CommitmentsApprovedOn.AddDays(days))
                 .Create();
 
-            var r5 = await client.PostValueAsync("apprenticeships/change", change);
+            var r5 = await client.PutValueAsync("registrations", change);
             r5.EnsureSuccessStatusCode();
 
             var r4 = await client.PostValueAsync(

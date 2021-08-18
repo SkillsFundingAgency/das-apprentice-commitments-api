@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .Create();
 
-            await _context.Api.Post($"apprenticeships/change", change);
+            await _context.Api.Put("registrations", change);
         }
 
         [When("retrieving the apprenticeship")]
