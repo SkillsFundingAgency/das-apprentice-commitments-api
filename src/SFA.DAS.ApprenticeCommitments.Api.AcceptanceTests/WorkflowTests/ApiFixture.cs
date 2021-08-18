@@ -86,13 +86,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task UpdateAccount(Guid apprenticeId, string firstName, string lastName, DateTime dateOfBirth)
         {
+            var response = await SendUpdateAccountRequest(apprenticeId, firstName, lastName, dateOfBirth);
+            response.Should().Be2XXSuccessful();
+        }
+
+        protected async Task<HttpResponseMessage> SendUpdateAccountRequest(Guid apprenticeId, string firstName, string lastName, DateTime dateOfBirth)
+        {
             var patch = new JsonPatchDocument<ApprenticeDto>()
                 .Replace(x => x.FirstName, firstName)
                 .Replace(x => x.LastName, lastName)
                 .Replace(x => x.DateOfBirth, dateOfBirth);
 
-            var response = await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
-            response.Should().Be2XXSuccessful();
+            return await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
         }
 
         protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship()

@@ -8,6 +8,7 @@ using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using static SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand.CreateApprenticeAccountCommandValidator;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCommand
 {
@@ -39,6 +40,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCom
             _logger.LogInformation($"Updating {request.ApprenticeId} - {JsonConvert.SerializeObject(request.Updates)}");
             var app = await _apprentices.GetById(request.ApprenticeId);
             request.Updates.ApplyTo(app);
+            var validation = new ApprenticeValidator().Validate(app);
+            if (!validation.IsValid) throw new FluentValidation.ValidationException(validation.Errors);
             return Unit.Value;
         }
     }

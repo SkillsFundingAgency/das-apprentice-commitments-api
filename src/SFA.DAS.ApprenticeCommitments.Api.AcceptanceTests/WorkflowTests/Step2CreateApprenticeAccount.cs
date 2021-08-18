@@ -83,5 +83,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 Email = new MailAddress(account.Email),
             });
         }
+
+        [Test]
+        public async Task Update_apprentice_must_use_valid_values()
+        {
+            var approval = fixture.Create<CreateRegistrationCommand>();
+            var account = await CreateAccount(approval);
+
+            var response = await SendUpdateAccountRequest(account.ApprenticeId, null, "", DateTime.MinValue);
+            response.Should().Be400BadRequest().And.BeAs(new[]
+            {
+                new { PropertyName = "FirstName", ErrorMessage = "'First Name' must not be empty." },
+                new { PropertyName = "LastName", ErrorMessage = "'Last Name' must not be empty." },
+                new { PropertyName = "DateOfBirth", ErrorMessage = "'Date Of Birth' must be valid." },
+            });
+
+            Database.Apprentices.Should().ContainEquivalentOf(new
+            {
+                account.FirstName,
+                account.LastName,
+                account.DateOfBirth,
+                Email = new MailAddress(account.Email),
+            });
+        }
     }
 }
