@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -135,9 +136,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<List<ApprenticeshipDto>> GetApprenticeships(Guid apprenticeId)
         {
-            var (response, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{apprenticeId}/apprenticeships");
+            var (response, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>($"apprentices/{apprenticeId}/apprenticeships");
             response.Should().Be200Ok();
-            return apprenticeships;
+            return apprenticeships.Apprenticeships;
         }
     }
 }

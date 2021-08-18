@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
@@ -229,12 +230,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         private async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
         {
-            var (r2, apprenticeships) = await client.GetValueAsync<List<ApprenticeshipDto>>(
+            var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>(
                 $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
             r2.Should().Be2XXSuccessful();
 
-            apprenticeships.Should().NotBeEmpty();
-            return apprenticeships.Last(); ;
+            apprenticeships.Apprenticeships.Should().NotBeEmpty();
+            return apprenticeships.Apprenticeships.Last();
         }
     }
 }

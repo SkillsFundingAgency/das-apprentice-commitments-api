@@ -3,6 +3,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Collections.Generic;
 using System.Net;
@@ -70,10 +71,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var (r6, apprenticeships2) = await client.GetValueAsync<List<ApprenticeshipDto>>($"apprentices/{create.RegistrationId}/apprenticeships");
+            var (r6, apprenticeships2) = await client.GetValueAsync<ApprenticeshipsResponse>($"apprentices/{create.RegistrationId}/apprenticeships");
             r5.EnsureSuccessStatusCode();
 
-            apprenticeships2.Should()
+            apprenticeships2.Apprenticeships.Should()
                 .ContainEquivalentOf(new
                 {
                     Id = apprenticeshipId,
