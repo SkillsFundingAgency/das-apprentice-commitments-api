@@ -1,12 +1,11 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -238,14 +237,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.Revisions.Should().BeEmpty();
         }
 
-        [Then(@"a domain exception is thrown")]
-        public async Task ThenADomainExceptionIsThrown()
+        [Then(@"a domain exception is thrown: ""(.*)""")]
+        public async Task ThenADomainExceptionIsThrown(string detail)
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-            errors.Count.Should().Be(1);
-            errors[0].PropertyName.Should().BeNull();
-            errors[0].ErrorMessage.Should().NotBeNull();
+            var problem = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
+            problem.Detail.Should().StartWith(detail);
         }
 
         [Then("the response is bad request")]

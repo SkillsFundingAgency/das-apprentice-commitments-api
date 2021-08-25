@@ -1,6 +1,10 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -9,14 +13,17 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using SFA.DAS.ApprenticeCommitments.Api.Authentication;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Configuration;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using SFA.DAS.ApprenticeCommitments.Extensions;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using SFA.DAS.Configuration.AzureTableStorage;
 using SFA.DAS.UnitOfWork.EntityFrameworkCore.DependencyResolution.Microsoft;
 using SFA.DAS.UnitOfWork.NServiceBus.Features.ClientOutbox.DependencyResolution.Microsoft;
+using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 
@@ -93,10 +100,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                     }
                 }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            services.AddControllersWithViews().AddNewtonsoftJson();
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ApprenticeValidator>());
+
+            services.AddProblemDetails(ConfigureProblemDetails);
 
             var overdueDays = Configuration.GetValue<int?>("DaysUntilCommitmentStatementOverdue");
             if (overdueDays > 0) Revision.DaysBeforeOverdue = overdueDays.Value;
+        }
+
+        private void ConfigureProblemDetails(ProblemDetailsOptions o)
+        {
+            o.ValidationProblemStatusCode = StatusCodes.Status400BadRequest;
+            o.Map<ValidationException>(ex => ex.ToProblemDetails());
+            o.Map<DomainException>(ex => ex.ToProblemDetails());
+            o.MapToStatusCode<DBConcurrencyException>(StatusCodes.Status409Conflict);
+            o.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,6 +127,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseProblemDetails();
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -114,8 +136,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                 c.RoutePrefix = string.Empty;
             });
 
-            app.UseHttpsRedirection()
-               .UseApiGlobalExceptionHandler();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 

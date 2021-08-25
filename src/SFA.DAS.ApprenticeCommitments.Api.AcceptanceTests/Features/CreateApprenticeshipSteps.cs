@@ -1,11 +1,10 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -40,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 CommitmentsApprenticeshipId = 1233,
                 FirstName = "Bob",
                 LastName = "Bobbertson",
-                DateOfBirth = new DateTime(2000, 1,2),
+                DateOfBirth = new DateTime(2000, 1, 2),
                 Email = "paul@fff.com",
                 EmployerName = "My Company",
                 EmployerAccountLegalEntityId = 61234,
@@ -71,8 +70,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
 
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-            errors.Count.Should().BeGreaterOrEqualTo(1);
+            var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
+            errors.Errors.Count.Should().BeGreaterOrEqualTo(1);
         }
 
         [Then(@"the result should return OK")]

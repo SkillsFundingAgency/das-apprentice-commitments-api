@@ -3,13 +3,11 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
-using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -226,30 +224,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenAEmailDomainErrorIsReturned()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-            errors.Count.Should().Be(1);
-            errors[0].PropertyName.Should().Be("PersonalDetails");
-            errors[0].ErrorMessage.Should().Be("Sorry, your identity has not been verified, please check your details");
+            var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
+            errors.Errors.Should().ContainKey("PersonalDetails")
+                .WhichValue.Should().Contain("Sorry, your identity has not been verified, please check your details");
         }
 
         [Then(@"an identity mismatch domain error is returned")]
         public async Task ThenAnIdentityMismatchDomainErrorIsReturned()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-            errors.Count.Should().Be(1);
-            errors[0].PropertyName.Should().Be("PersonalDetails");
+            var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
+            errors.Errors.Should().ContainKey("PersonalDetails")
+                .WhichValue.Should().Contain("Sorry, your identity has not been verified, please check your details");
         }
 
         [Then(@"an 'already verified' domain error is returned")]
         public async Task ThenAnAlreadyVerifiedDomainErrorIsReturned()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-            errors.Should().ContainEquivalentOf(new ErrorItem
+            var errors = JsonConvert.DeserializeObject<ProblemDetails>(content);
+            errors.Should().BeEquivalentTo(new
             {
-                PropertyName = null,
-                ErrorMessage = $"Registration {_registration.RegistrationId} is already verified",
+                Detail = $"Registration {_registration.RegistrationId} is already verified",
             });
         }
 
@@ -267,10 +263,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenResponseContainsTheNotFoundErrorMessage()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-
-            errors.Count().Should().Be(1);
-            errors[0].ErrorMessage.Should().Be($"Registration for Apprentice {_command.RegistrationId} not found");
+            var errors = JsonConvert.DeserializeObject<ProblemDetails>(content);
+            errors.Should().BeEquivalentTo(new
+            {
+                Detail = $"Registration for Apprentice {_command.RegistrationId} not found",
+            });
         }
 
         [Then("do not send a Change of Circumstance email to the user")]

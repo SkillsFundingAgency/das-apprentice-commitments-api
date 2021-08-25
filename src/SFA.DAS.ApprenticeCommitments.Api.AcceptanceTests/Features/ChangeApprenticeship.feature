@@ -41,7 +41,7 @@ Scenario: No apprenticeship or registation details found
 	And we have an update apprenticeship request
 	When the update is posted
 	Then the response is bad request
-	And a domain exception is thrown
+	And a domain exception is thrown: "No registration record found for commitments apprenticeship id"
 
 Scenario: No apprenticeship exist, but registation details are marked as completed
 	Given we do not have an existing apprenticeship
@@ -49,7 +49,7 @@ Scenario: No apprenticeship exist, but registation details are marked as complet
 	And we have an update apprenticeship request
 	When the update is posted
 	Then the response is bad request
-	And a domain exception is thrown
+	And a domain exception is thrown: "Cannot update registration as user has confirmed their identity"
 
 Scenario: Do not update an apprenticeship when no consequential change is made
 	Given we have an existing apprenticeship

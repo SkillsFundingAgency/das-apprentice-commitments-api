@@ -5,6 +5,7 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using System;
+using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -91,11 +92,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var account = await CreateAccount(approval);
 
             var response = await SendUpdateAccountRequest(account.ApprenticeId, null, "", DateTime.MinValue);
-            response.Should().Be400BadRequest().And.BeAs(new[]
+            response.Should().Be400BadRequest().And.BeAs(new
             {
-                new { PropertyName = "FirstName", ErrorMessage = "'First Name' must not be empty." },
-                new { PropertyName = "LastName", ErrorMessage = "'Last Name' must not be empty." },
-                new { PropertyName = "DateOfBirth", ErrorMessage = "'Date Of Birth' must be valid." },
+                Errors = new Dictionary<string, string[]>
+                {
+                    { "FirstName", new[]{ "'First Name' must not be empty." } },
+                    { "LastName", new[]{ "'Last Name' must not be empty." } },
+                    { "DateOfBirth", new[]{ "'Date Of Birth' is not a valid date." } },
+                },
             });
 
             Database.Apprentices.Should().ContainEquivalentOf(new
