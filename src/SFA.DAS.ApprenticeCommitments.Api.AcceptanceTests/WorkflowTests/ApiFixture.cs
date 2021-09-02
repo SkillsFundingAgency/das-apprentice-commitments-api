@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
+using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
@@ -26,6 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         private protected TestContext context = null!;
         private protected HttpClient client = null!;
         protected ApprenticeCommitmentsDbContext Database { get; private set; } = null!;
+        protected TestableMessageSession Messages => context.Messages;
 
         private protected TimeSpan TimeBetweenActions = TimeSpan.FromDays(2);
 

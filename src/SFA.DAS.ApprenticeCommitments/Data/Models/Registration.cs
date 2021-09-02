@@ -123,6 +123,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
             Email = pii.Email;
+
+            DomainEvents.Add(new RegistrationUpdated(this));
         }
     }
 }

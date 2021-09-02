@@ -2,15 +2,16 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
-    class Step5ChangeOfCircumstances : ApiFixture
+    class When_personal_change_of_circumstances_before_apprenticeship_is_matched : ApiFixture
     {
-        [TestCase]
-        public async Task Can_update_email_from_ChangeOfCircumstances_before_ther_is_a_matching_account()
+        [Test]
+        public async Task Updates_personal_details_in_registration()
         {
             var approval = await CreateRegistration();
             var create = fixture.Create<ChangeApprenticeshipCommand>();
@@ -26,6 +27,24 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 create.LastName,
                 create.DateOfBirth,
                 Email = new MailAddress(create.Email),
+            });
+        }
+
+        [Test]
+        public async Task Triggers_ApprenticeshipRegisteredEvent()
+        {
+            var approval = await CreateRegistration();
+            var create = fixture.Create<ChangeApprenticeshipCommand>();
+            create.CommitmentsApprenticeshipId = approval.CommitmentsApprenticeshipId;
+
+            await ChangeOfCircumstances(create);
+
+            Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipRegisteredEvent
+{
+                    RegistrationId = approval.RegistrationId,
+                }
             });
         }
     }
