@@ -20,8 +20,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
                 request.RegistrationId,
                 request.CommitmentsApprenticeshipId,
                 request.CommitmentsApprovedOn,
-                new PersonalInformation(request.FirstName, request.LastName, request.DateOfBirth),
-                new MailAddress(request.Email),
+                new PersonalInformation(
+                    request.FirstName,
+                    request.LastName,
+                    request.DateOfBirth,
+                    new MailAddress(request.Email)),
                 new ApprenticeshipDetails(
                     request.EmployerAccountLegalEntityId,
                     request.EmployerName,

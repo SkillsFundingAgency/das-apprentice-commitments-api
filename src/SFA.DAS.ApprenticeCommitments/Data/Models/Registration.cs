@@ -24,7 +24,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             long commitmentsApprenticeshipId,
             DateTime commitmentsApprovedOn,
             PersonalInformation pii,
-            MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
             RegistrationId = registrationId;
@@ -33,7 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
-            Email = email;
+            Email = pii.Email;
             Apprenticeship = apprenticeship;
 
             AddDomainEvent(new RegistrationAdded(this));
@@ -125,7 +124,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
-            Email = pii.Email ?? Email;
+            Email = pii.Email;
         }
     }
 }

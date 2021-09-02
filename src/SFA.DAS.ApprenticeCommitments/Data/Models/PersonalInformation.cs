@@ -9,7 +9,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             string firstName,
             string lastName,
             DateTime dateOfBirth,
-            MailAddress? email = null)
+            MailAddress email)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -20,6 +20,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public DateTime DateOfBirth { get; private set; }
-        public MailAddress? Email { get; }
+        public MailAddress Email { get; }
     }
 }
