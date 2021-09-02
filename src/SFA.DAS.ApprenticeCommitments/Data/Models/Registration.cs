@@ -125,6 +125,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
+            Email = pii.Email ?? Email;
         }
     }
 }

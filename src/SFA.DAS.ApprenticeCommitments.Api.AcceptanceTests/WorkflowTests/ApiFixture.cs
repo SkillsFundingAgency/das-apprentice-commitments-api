@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
@@ -33,6 +34,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             fixture = new Fixture();
             fixture.Customizations.Add(new EmailPropertyCustomisation());
+            fixture.Customize<ChangeApprenticeshipCommand>(c => c
+                .Without(p => p.CommitmentsContinuedApprenticeshipId));
 
             var factory = Bindings.Api.CreateApiFactory();
             context = new TestContext();
@@ -144,6 +147,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var (response, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>($"apprentices/{apprenticeId}/apprenticeships");
             response.Should().Be200Ok();
             return apprenticeships.Apprenticeships;
+        }
+
+        protected async Task ChangeOfCircumstances(ChangeApprenticeshipCommand command)
+        {
+            var response = await client.PutValueAsync("registrations", command);
+            response.Should().Be2XXSuccessful();
         }
     }
 }
