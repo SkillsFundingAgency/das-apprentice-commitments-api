@@ -39,16 +39,24 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             fixture.Customize<ChangeApprenticeshipCommand>(c => c
                 .Without(p => p.CommitmentsContinuedApprenticeshipId));
 
+            Database = Bindings.Database.CreateDbContext();
+            Reset();
+        }
+
+        public void Reset()
+        {
             var factory = Bindings.Api.CreateApiFactory();
             context = new TestContext();
             _ = new Bindings.Api(context);
             client = factory.CreateClient();
-            Database = Bindings.Database.CreateDbContext();
         }
 
-        public async Task<CreateRegistrationCommand> CreateRegistration()
+        public async Task<CreateRegistrationCommand> CreateRegistration(MailAddress? email = null)
         {
+            email ??= fixture.Create<MailAddress>();
+
             var create = fixture.Build<CreateRegistrationCommand>()
+                .With(x => x.Email, email.ToString())
                 .Create();
 
             var response = await PostCreateRegistrationCommand(create);
@@ -105,9 +113,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
         }
 
-        protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship()
+        protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship(MailAddress? email = null)
         {
-            var approval = await CreateRegistration();
+            var approval = await CreateRegistration(email);
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
             var apprenticeship = await GetApprenticeships(account.ApprenticeId);
