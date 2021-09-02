@@ -12,11 +12,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
     [Table("Registration")]
     public class Registration : Entity
     {
-#pragma warning disable CS8618 // Private constructor for entity framework
-
         private Registration()
-#pragma warning restore CS8618
         {
+            // Private constructor for entity framework
         }
 
         public Registration(
@@ -40,12 +38,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid RegistrationId { get; private set; }
         public long CommitmentsApprenticeshipId { get; private set; }
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
+        public string FirstName { get; private set; } = null!;
+        public string LastName { get; private set; } = null!;
         public DateTime DateOfBirth { get; private set; }
-        public MailAddress Email { get; private set; }
+        public MailAddress Email { get; private set; } = null!;
         public Guid? UserIdentityId { get; private set; }
-        public ApprenticeshipDetails Apprenticeship { get; private set; }
+        public ApprenticeshipDetails Apprenticeship { get; private set; } = null!;
         public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
