@@ -116,6 +116,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship(MailAddress? email = null)
         {
             var approval = await CreateRegistration(email);
+            return await VerifyRegistration(approval);
+        }
+
+        protected async Task<ApprenticeshipDto> VerifyRegistration(CreateRegistrationCommand approval)
+        {
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
             var apprenticeship = await GetApprenticeships(account.ApprenticeId);
@@ -161,8 +166,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task ChangeOfCircumstances(ChangeApprenticeshipCommand command)
         {
-            var response = await client.PutValueAsync("registrations", command);
+            var response = await PutChangeOfCircumstances(command);
             response.Should().Be2XXSuccessful();
         }
+
+        protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeApprenticeshipCommand command)
+            => client.PutValueAsync("registrations", command);
     }
 }
