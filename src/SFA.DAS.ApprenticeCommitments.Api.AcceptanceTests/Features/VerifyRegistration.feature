@@ -21,8 +21,11 @@ Scenario: A registration is submitted with a different email
 	And we have an account with a non-matching email
 	And the request is for the account
 	When we verify that registration
-	Then a bad request is returned
-	And a email domain error is returned
+	Then the response is OK
+	And an apprenticeship record is created
+	And the registration has been marked as completed
+	And the registration CreatedOn field is unchanged
+	And do not send a Change of Circumstance email to the user
 
 Scenario: A registration is submitted with the wrong Date of birth
 	Given we have an existing registration

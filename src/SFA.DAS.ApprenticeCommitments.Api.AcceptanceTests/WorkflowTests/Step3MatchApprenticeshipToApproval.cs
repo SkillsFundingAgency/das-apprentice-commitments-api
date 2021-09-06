@@ -32,16 +32,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task Cannot_match_incorrect_email()
+        public async Task Can_match_incorrect_email()
         {
             var approval = await CreateRegistration();
 
             var account = await CreateAccount(approval, email: fixture.Create<MailAddress>());
             var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
 
-            response
-                .Should().Be400BadRequest()
-                .And.MatchInContent("*\"Sorry, your identity has not been verified, please check your details\"*");
+            response.Should().Be2XXSuccessful();
         }
 
         [Test]

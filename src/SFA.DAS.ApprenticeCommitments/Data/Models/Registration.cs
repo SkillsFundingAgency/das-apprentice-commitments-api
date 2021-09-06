@@ -58,7 +58,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
             EnsureNotAlreadyCompleted();
             EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
-            EnsureApprenticeEmailMatchesApproval(apprentice.Email);
             EnsureApprenticeNameMatchesApproval(apprentice, matcher);
 
             var apprenticeship = new Revision(
@@ -84,16 +83,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     $"Verified DOB ({dateOfBirth.Date}) did not match registration {RegistrationId} ({DateOfBirth.Date})");
             }
         }
-
-        private void EnsureApprenticeEmailMatchesApproval(MailAddress emailAddress)
-        {
-            if (!emailAddress.ToString().Equals(Email.ToString(), StringComparison.InvariantCultureIgnoreCase))
-            {
-                throw new IdentityNotVerifiedException(
-                    $"Email from account {RegistrationId} doesn't match registration {RegistrationId}");
-            }
-        }
-
         private void EnsureApprenticeNameMatchesApproval(Apprentice apprentice, FuzzyMatcher matcher)
         {
             if (!matcher.IsSimilar(LastName, apprentice.LastName))
