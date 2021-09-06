@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
-using System.Data;
 using System.Linq;
 
 namespace SFA.DAS.ApprenticeCommitments.Api
