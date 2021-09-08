@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly CommitmentStatement _commitmentStatement;
+        private readonly Revision _revision;
         private bool ApprenticeshipConfirmed { get; set; }
 
         public ConfirmApprenticeshipSteps(TestContext context)
@@ -26,14 +26,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
 
             _apprentice = _fixture.Create<Apprentice>();
-            _commitmentStatement = _fixture.Create<CommitmentStatement>();
-            _apprentice.AddApprenticeship(_commitmentStatement);
+            _revision = _fixture.Create<Revision>();
+            _apprentice.AddApprenticeship(_revision);
         }
 
         [Given("we have an apprenticeship waiting to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipWaitingToBeConfirmed()
         {
-            _commitmentStatement.Confirm(new Confirmations
+            _revision.Confirm(new Confirmations
             {
                 EmployerCorrect = true,
                 TrainingProviderCorrect = true,
@@ -67,7 +67,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/revisions/{_commitmentStatement.Id}/ApprenticeshipConfirmation",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/ApprenticeshipConfirmation",
                 command);
         }
 
@@ -86,9 +86,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated to show confirmed")]
         public void ThenTheApprenticeshipRecordIsUpdatedToShoConfirmed()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                _commitmentStatement.ApprenticeshipId,
+                _revision.ApprenticeshipId,
                 ConfirmedOn = _context.Time.Now,
             });
         }
@@ -96,9 +96,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is untouched")]
         public void ThenTheApprenticeshipRecordIsUntouched()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                _commitmentStatement.ApprenticeshipId,
+                _revision.ApprenticeshipId,
                 ConfirmedOn = (DateTime?)null,
             });
         }
@@ -106,7 +106,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the Confirmation Confirmed event is published")]
         public void ThenTheConfirmationStartedEventIsPublished()
         {
-            var latest = _context.DbContext.CommitmentStatements.Single();
+            var latest = _context.DbContext.Revisions.Single();
 
             _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
             {

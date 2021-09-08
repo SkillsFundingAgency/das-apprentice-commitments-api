@@ -1,13 +1,15 @@
-﻿using System;
-using System.Linq;
-using F23.StringSimilarity;
+﻿using F23.StringSimilarity;
 using NinjaNye.SearchExtensions.Soundex;
+using System;
+using System.Linq;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching
 {
     public class FuzzyMatcher
     {
-        public int _similarityThreshold { get; set; } = 0;
+        public static readonly FuzzyMatcher AlwaysMatcher = new FuzzyMatcher(0);
+
+        private readonly int _similarityThreshold;
 
         public FuzzyMatcher(int similarityThreshold)
             => _similarityThreshold = similarityThreshold;
@@ -19,24 +21,22 @@ namespace SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching
                 return true;
             }
 
-            string1 = string1.Trim();
-            string2 = string2.Trim();
+            var allCombinations =
+                from a in SplitByWord(string1)
+                from b in SplitByWord(string2)
+                select (a, b);
 
-            var s1 = string1.Split(new char[] { ' ', '-' });
-            var s2 = string2.Split(new char[] { ' ', '-' });
-
-            if (s1.Any(s => s2.Any(r => GetSimilarity(s, r) >= _similarityThreshold)))
-            {
+            if (allCombinations.Any(x => GetSimilarity(x.a, x.b) >= _similarityThreshold))
                 return true;
-            }
 
             if (string1.ToSoundex() == string2.ToSoundex())
-            {
                 return true;
-            }
 
             return false;
         }
+
+        private static string[] SplitByWord(string stringList)
+            => stringList.Trim().Split(new char[] { ' ', '-' });
 
         public double GetSimilarity(string string1, string string2)
         {

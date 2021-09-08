@@ -12,13 +12,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
 {
     public class ChangeApprenticeshipCommandHandler : IRequestHandler<ChangeApprenticeshipCommand>
     {
-        private readonly IApprenticeshipContext _statements;
+        private readonly IApprenticeshipContext _apprenticeships;
         private readonly IRegistrationContext _registrations;
         private readonly ILogger<ChangeApprenticeshipCommandHandler> _logger;
 
-        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext statements, IRegistrationContext registrations, ILogger<ChangeApprenticeshipCommandHandler> logger)
+        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext apprenticeships, IRegistrationContext registrations, ILogger<ChangeApprenticeshipCommandHandler> logger)
         {
-            _statements = statements;
+            _apprenticeships = apprenticeships;
             _registrations = registrations;
             _logger = logger;
         }
@@ -27,9 +27,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
         {
             var apprenticeshipId = command.CommitmentsContinuedApprenticeshipId ?? command.CommitmentsApprenticeshipId;
 
-            var existingStatement = await _statements.FindByCommitmentsApprenticeshipId(apprenticeshipId);
+            var apprenticeship = await _apprenticeships.FindByCommitmentsApprenticeshipId(apprenticeshipId);
 
-            if (existingStatement == null)
+            if (apprenticeship == null)
             {
                 _logger.LogWarning("No confirmed apprenticeship {apprenticeshipId} found", apprenticeshipId);
                 await UpdateRegistration(command, apprenticeshipId);
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             else
             {
                 _logger.LogInformation("Updating apprenticeship {apprenticeshipId}", apprenticeshipId);
-                existingStatement.RenewCommitment(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
+                apprenticeship.Revise(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
             }
 
             return Unit.Value;

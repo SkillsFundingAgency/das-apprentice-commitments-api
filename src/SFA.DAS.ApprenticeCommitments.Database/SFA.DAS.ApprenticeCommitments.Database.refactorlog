@@ -182,4 +182,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="CommitmentsApprovedOn" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e9bdbd9a-1d88-4e64-8234-fe02e8fcaa3b" ChangeDateTime="08/05/2021 11:35:44">
+    <Property Name="ElementName" Value="[dbo].[Registration].[ApprenticeId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Registration]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[RegistrationId]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c8171c13-aeec-4302-937c-b8f3d5229209" ChangeDateTime="08/10/2021 05:32:36">
+    <Property Name="ElementName" Value="[dbo].[CommitmentStatement]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="Revision" />
+  </Operation>
 </Operations>

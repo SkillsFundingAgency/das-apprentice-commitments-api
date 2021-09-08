@@ -1,4 +1,5 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,14 +20,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         }
 
         public Registration(
-            Guid apprenticeId,
+            Guid registrationId,
             long commitmentsApprenticeshipId,
             DateTime commitmentsApprovedOn,
             PersonalInformation pii,
             MailAddress email,
             ApprenticeshipDetails apprenticeship)
         {
-            ApprenticeId = apprenticeId;
+            RegistrationId = registrationId;
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
             FirstName = pii.FirstName;
@@ -38,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             AddDomainEvent(new RegistrationAdded(this));
         }
 
-        public Guid ApprenticeId { get; private set; }
+        public Guid RegistrationId { get; private set; }
         public long CommitmentsApprenticeshipId { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
@@ -53,13 +54,42 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public bool HasBeenCompleted => UserIdentityId != null;
 
-        public Apprentice ConvertToApprentice(string firstName, string lastName, MailAddress emailAddress, DateTime dateOfBirth, Guid userIdentityId)
+        public void AssociateWithApprentice(Apprentice apprentice, FuzzyMatcher matcher)
         {
             EnsureNotAlreadyCompleted();
-            EnsureStatedEmailMatchesApproval(emailAddress);
+            EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
+            EnsureApprenticeNameMatchesApproval(apprentice, matcher);
 
-            UserIdentityId = userIdentityId;
-            return CreateRegisteredApprentice(firstName, lastName, emailAddress, dateOfBirth);
+            var apprenticeship = new Revision(
+                    CommitmentsApprenticeshipId,
+                    CommitmentsApprovedOn,
+                    Apprenticeship);
+
+            apprentice.AddApprenticeship(apprenticeship);
+            UserIdentityId = apprentice.Id;
+        }
+
+        private void EnsureNotAlreadyCompleted()
+        {
+            if (HasBeenCompleted)
+                throw new DomainException($"Registration {RegistrationId} is already verified");
+        }
+
+        private void EnsureApprenticeDateOfBirthMatchesApproval(DateTime dateOfBirth)
+        {
+            if (DateOfBirth.Date != dateOfBirth.Date)
+            {
+                throw new IdentityNotVerifiedException(
+                    $"Verified DOB ({dateOfBirth.Date}) did not match registration {RegistrationId} ({DateOfBirth.Date})");
+            }
+        }
+        private void EnsureApprenticeNameMatchesApproval(Apprentice apprentice, FuzzyMatcher matcher)
+        {
+            if (!matcher.IsSimilar(LastName, apprentice.LastName))
+            {
+                throw new IdentityNotVerifiedException(
+                    $"Last name from account {apprentice.Id} did not match registration {RegistrationId}");
+            }
         }
 
         public void ViewedByUser(DateTime viewedOn)
@@ -95,28 +125,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
-        }
-
-        private void EnsureNotAlreadyCompleted()
-        {
-            if (HasBeenCompleted)
-                throw new DomainException($"Registration {ApprenticeId} id already verified");
-        }
-
-        private void EnsureStatedEmailMatchesApproval(MailAddress emailAddress)
-        {
-            if (!emailAddress.ToString().Equals(Email.ToString(), StringComparison.InvariantCultureIgnoreCase))
-                throw new DomainException($"Email from verifying user doesn't match registered user {ApprenticeId}");
-        }
-
-        private Apprentice CreateRegisteredApprentice(string firstName, string lastName, MailAddress emailAddress, DateTime dateOfBirth)
-        {
-            var apprentice = new Apprentice(
-                ApprenticeId, firstName, lastName, emailAddress, dateOfBirth);
-
-            apprentice.AddApprenticeship(new CommitmentStatement(CommitmentsApprenticeshipId, CommitmentsApprovedOn, Apprenticeship));
-
-            return apprentice;
         }
     }
 }

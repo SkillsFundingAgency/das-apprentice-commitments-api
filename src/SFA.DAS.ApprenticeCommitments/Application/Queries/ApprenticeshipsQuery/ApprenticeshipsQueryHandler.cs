@@ -3,7 +3,6 @@ using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,23 +11,23 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
 {
     public class ApprenticeshipsQueryHandler
-        : IRequestHandler<ApprenticeshipsQuery, List<ApprenticeshipDto>>
+        : IRequestHandler<ApprenticeshipsQuery, ApprenticeshipsResponse>
     {
         private readonly IApprenticeshipContext _apprenticeshipRepository;
 
         public ApprenticeshipsQueryHandler(IApprenticeshipContext apprenticeshipRepository)
             => _apprenticeshipRepository = apprenticeshipRepository;
 
-        public async Task<List<ApprenticeshipDto>> Handle(
+        public async Task<ApprenticeshipsResponse> Handle(
             ApprenticeshipsQuery request,
             CancellationToken cancellationToken)
         {
             List<Apprenticeship> apprenticeships = await _apprenticeshipRepository
                 .FindAllForApprentice(request.ApprenticeId);
 
-            return apprenticeships
-                .Select(x => x.MapToApprenticeshipDto()!)
-                .ToList();
+            var dtos = apprenticeships.ConvertAll(x => x.MapToApprenticeshipDto());
+
+            return new ApprenticeshipsResponse(dtos);
         }
     }
 }

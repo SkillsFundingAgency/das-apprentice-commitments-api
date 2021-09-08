@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 
-namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingCommitmentStatementTests
+namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
 {
     public class CourseComparison
     {

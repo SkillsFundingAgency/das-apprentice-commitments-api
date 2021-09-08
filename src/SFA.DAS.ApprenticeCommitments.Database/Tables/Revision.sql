@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[CommitmentStatement]
+CREATE TABLE [dbo].Revision
 (
     [Id] BIGINT IDENTITY(1,1) NOT NULL, 
 	[ApprenticeshipId] BIGINT NOT NULL,
@@ -27,5 +27,5 @@ CREATE TABLE [dbo].[CommitmentStatement]
 
 GO
 
-CREATE INDEX [IX_CommitmentStatement_ApprenticeshipId] ON [CommitmentStatement] ([ApprenticeshipId]);
+CREATE INDEX [IX_CommitmentStatement_ApprenticeshipId] ON Revision ([ApprenticeshipId]);
 GO

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 
@@ -23,16 +24,28 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid Id { get; private set; }
 
-        public void AddApprenticeship(CommitmentStatement apprenticeship)
+        public void AddApprenticeship(Revision apprenticeship)
         {
             Apprenticeships.Add(new Apprenticeship(apprenticeship));
         }
 
-        public string FirstName { get; private set; } = null!;
-        public string LastName { get; private set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public MailAddress Email { get; private set; } = null!;
         public ICollection<ApprenticeEmailAddressHistory> PreviousEmailAddresses { get; private set; } = null!;
-        public DateTime DateOfBirth { get; private set; }
+
+        private DateTime _dateOfBirth;
+
+        public DateTime DateOfBirth
+        {
+            get => _dateOfBirth;
+            set
+            {
+                // domain validation to go here
+                if (false) throw new DomainException("validation error");
+                _dateOfBirth = value;
+            }
+        }
 
         public ICollection<Apprenticeship> Apprenticeships { get; private set; }
             = new List<Apprenticeship>();

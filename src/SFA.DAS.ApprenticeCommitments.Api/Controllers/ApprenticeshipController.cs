@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ApprenticeshipShownCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -23,18 +23,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPost("apprenticeships")]
-        public async Task<IActionResult> CreateRegistration([FromBody] CreateRegistrationCommand request)
-        {
-            await _mediator.Send(request);
-            return Accepted();
-        }
-
-        [HttpPost("apprenticeships/change")]
-        public async Task<IActionResult> ChangeApprenticeship([FromBody] ChangeApprenticeshipCommand request)
-        {
-            await _mediator.Send(request);
-            return Accepted();
-        }
+        public async Task CreateApprenticeship([FromBody] CreateApprenticeshipFromRegistrationCommand request)
+            => await _mediator.Send(request);
 
         [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}")]
         public async Task<IActionResult> GetApprenticeship(Guid apprenticeId, long apprenticeshipId)
@@ -59,13 +49,22 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPatch("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}")]
-        public async Task<IActionResult> PostApprenticeship(
+        public async Task PatchApprenticeship(
             Guid apprenticeId,
             long apprenticeshipId,
             [FromBody] JsonPatchDocument<Apprenticeship> changes)
         {
             await _mediator.Send(new UpdateApprenticeshipCommand(apprenticeId, apprenticeshipId, changes));
-            return Ok();
+        }
+
+        [HttpPatch("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{revisionId}/confirmations")]
+        public async Task ConfirmApprenticeship(
+            Guid apprenticeId,
+            long apprenticeshipId,
+            long revisionId,
+            [FromBody] Confirmations confirmations)
+        {
+            await _mediator.Send(new ConfirmCommand(apprenticeId, apprenticeshipId, revisionId, confirmations));
         }
     }
 }

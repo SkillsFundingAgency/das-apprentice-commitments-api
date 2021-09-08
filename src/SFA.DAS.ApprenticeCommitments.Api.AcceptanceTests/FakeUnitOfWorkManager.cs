@@ -18,9 +18,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
             return Task.CompletedTask;
         }
 
-        public Task EndAsync(Exception ex = null)
+        public async Task EndAsync(Exception ex = null)
         {
-            return _dbContext.Value.SaveChangesAsync();
+            if (ex == null) await _dbContext.Value.SaveChangesAsync();
         }
     }
 }

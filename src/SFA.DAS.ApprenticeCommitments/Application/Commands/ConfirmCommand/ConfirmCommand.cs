@@ -9,18 +9,18 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmCommand
     public class ConfirmCommand : IUnitOfWorkCommand
     {
         public ConfirmCommand(
-            Guid apprenticeId, long apprenticeshipId, long commitmentStatementId,
+            Guid apprenticeId, long apprenticeshipId, long revisionId,
             Confirmations confirmations)
         {
             ApprenticeId = apprenticeId;
             ApprenticeshipId = apprenticeshipId;
-            CommitmentStatementId = commitmentStatementId;
+            RevisionId = revisionId;
             Confirmations = confirmations;
         }
 
         public Guid ApprenticeId { get; }
         public long ApprenticeshipId { get; }
-        public long CommitmentStatementId { get; }
+        public long RevisionId { get; }
         public Confirmations Confirmations { get; }
     }
 }

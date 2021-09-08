@@ -1,22 +1,20 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable enable
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    [Table("CommitmentStatement")]
-    public class CommitmentStatement : Entity
+    public class Revision : Entity
     {
         public static int DaysBeforeOverdue { get; set; } = 14;
 
-        private CommitmentStatement()
+        private Revision()
         {
         }
 
-        public CommitmentStatement(long commitmentsApprenticeshipId,
+        public Revision(long commitmentsApprenticeshipId,
             DateTime approvedOn,
             ApprenticeshipDetails details)
         {
@@ -25,7 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             ConfirmBefore = CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
             Details = details;
 
-            AddDomainEvent(new CommitmentStatementAdded(this));
+            AddDomainEvent(new RevisionAdded(this));
         }
 
         public long Id { get; private set; }
@@ -62,7 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     && RolesAndResponsibilitiesCorrect == true
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
-                    ConfirmCommitmentStatement(time);
+                    ConfirmRevision(time);
                 }
                 else
                 {
@@ -71,13 +69,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        private void ConfirmCommitmentStatement(DateTimeOffset time)
+        private void ConfirmRevision(DateTimeOffset time)
         {
             ConfirmedOn = time.UtcDateTime;
-            AddDomainEvent(new CommitmentStatementConfirmed(this));
+            AddDomainEvent(new RevisionConfirmed(this));
         }
 
-        internal CommitmentStatement? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
+        internal Revision? Renew(long commitmentsApprenticeshipId, DateTime approvedOn, ApprenticeshipDetails details)
         {
             bool EmployerIsEquivalent() => details.EmployerIsEquivalent(Details);
             bool ProviderIsEquivalent() => details.ProviderIsEquivalent(Details);
@@ -85,15 +83,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             if (Details.Equals(details)) return null;
 
-            var newStatement = new CommitmentStatement(commitmentsApprenticeshipId, approvedOn, details);
+            var revision = new Revision(commitmentsApprenticeshipId, approvedOn, details);
 
-            if (EmployerIsEquivalent()) newStatement.EmployerCorrect = EmployerCorrect;
-            if (ProviderIsEquivalent()) newStatement.TrainingProviderCorrect = TrainingProviderCorrect;
-            if (ApprenticeshipIsEquivalent()) newStatement.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
-            newStatement.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
-            newStatement.RolesAndResponsibilitiesCorrect = RolesAndResponsibilitiesCorrect;
+            if (EmployerIsEquivalent()) revision.EmployerCorrect = EmployerCorrect;
+            if (ProviderIsEquivalent()) revision.TrainingProviderCorrect = TrainingProviderCorrect;
+            if (ApprenticeshipIsEquivalent()) revision.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
+            revision.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
+            revision.RolesAndResponsibilitiesCorrect = RolesAndResponsibilitiesCorrect;
 
-            return newStatement;
+            return revision;
         }
     }
 }

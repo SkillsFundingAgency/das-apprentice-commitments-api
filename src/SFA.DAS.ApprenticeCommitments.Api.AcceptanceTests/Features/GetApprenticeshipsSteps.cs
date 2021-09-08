@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Newtonsoft.Json;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 
             _apprentice = _fixture.Build<Apprentice>()
                 .Create();
-            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
+            _apprentice.AddApprenticeship(_fixture.Create<Revision>());
         }
 
         [Given("there is one apprenticeship")]
@@ -57,11 +58,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
-            var response = JsonConvert.DeserializeObject<List<ApprenticeshipDto>>(content);
-            response.Should().BeEquivalentTo(_apprentice.Apprenticeships.Select(a => new
+            var response = JsonConvert.DeserializeObject<ApprenticeshipsResponse>(content);
+            response.Apprenticeships.Should().BeEquivalentTo(_apprentice.Apprenticeships.Select(a => new
             {
                 a.Id,
-                a.CommitmentStatements.OrderByDescending(b => b.Id).First().CommitmentsApprenticeshipId
+                a.Revisions.OrderByDescending(b => b.Id).First().CommitmentsApprenticeshipId
             }));
         }
 
@@ -70,8 +71,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
-            var response = JsonConvert.DeserializeObject<List<ApprenticeshipDto>>(content);
-            response.Should().BeEmpty();
+            var response = JsonConvert.DeserializeObject<ApprenticeshipsResponse>(content);
+            response.Apprenticeships.Should().BeEmpty();
         }
     }
 }

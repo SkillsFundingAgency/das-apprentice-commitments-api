@@ -6,7 +6,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
     {
         public CreateRegistrationCommandValidator()
         {
-            RuleFor(model => model.ApprenticeId).Must(id => id != default).WithMessage("The Apprentice Id must be valid");
+            RuleFor(model => model.RegistrationId).Must(id => id != default).WithMessage("The Apprentice Id must be valid");
             RuleFor(model => model.CommitmentsApprenticeshipId).Must(id => id > 0).WithMessage("The ApprenticeshipId must be positive");
             RuleFor(model => model.EmployerAccountLegalEntityId).Must(id => id > 0).WithMessage("The EmployerAccountLegalEntityId must be positive");
             RuleFor(model => model.FirstName).NotNull().NotEmpty().WithMessage("FirstName is required");

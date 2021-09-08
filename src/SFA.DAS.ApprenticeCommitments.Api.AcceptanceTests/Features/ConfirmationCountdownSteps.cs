@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly TestContext _context;
         private readonly Fixture _fixture = new Fixture();
         private readonly Apprentice _apprentice;
-        private CommitmentStatement _apprenticeship;
+        private Revision _apprenticeship;
 
         public ConfirmationCountdownSteps(TestContext context)
         {
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                              typeof(DateTime),
                              "approvedOn")));
 
-            _apprenticeship = _fixture.Create<CommitmentStatement>();
+            _apprenticeship = _fixture.Create<Revision>();
             _apprentice.AddApprenticeship(_apprenticeship);
 
             _context.DbContext.Apprentices.Add(_apprentice);
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .Create();
 
-            await _context.Api.Post($"apprenticeships/change", change);
+            await _context.Api.Put("registrations", change);
         }
 
         [When("retrieving the apprenticeship")]

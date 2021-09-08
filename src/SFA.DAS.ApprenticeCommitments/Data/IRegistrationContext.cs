@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                 ?? throw new DomainException($"Registration for Apprentice {apprenticeId} not found");
 
         internal async Task<Registration?> Find(Guid apprenticeId)
-            => await Entities.FirstOrDefaultAsync(x => x.ApprenticeId == apprenticeId);
+            => await Entities.FirstOrDefaultAsync(x => x.RegistrationId == apprenticeId);
 
         internal async Task<Registration?> FindByCommitmentsApprenticeshipId(long commitmentsApprenticeshipId)
             => await Entities.FirstOrDefaultAsync(x => x.CommitmentsApprenticeshipId == commitmentsApprenticeshipId);

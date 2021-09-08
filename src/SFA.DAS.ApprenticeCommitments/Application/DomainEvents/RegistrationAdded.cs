@@ -29,23 +29,23 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 
         public async Task Handle(RegistrationAdded notification, CancellationToken cancellationToken)
         {
-            // The commitment statement isn't technically added until the apprentice
+            // The revision isn't technically added until the apprentice
             // confirms their identity, however it's possible that the apprentice
             // never does.  Approvals can use this event to prompt the apprentice
             // when the confirmation is overdue.
-            var pretend = new CommitmentStatement(
+            var pretend = new Revision(
                 notification.Registration.CommitmentsApprenticeshipId,
                 notification.Registration.CommitmentsApprovedOn,
                 notification.Registration.Apprenticeship);
 
             logger.LogInformation(
                 "RegistrationAdded - Publishing ApprenticeshipConfirmationCommencedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}",
-                notification.Registration.ApprenticeId,
+                notification.Registration.RegistrationId,
                 notification.Registration.CommitmentsApprenticeshipId);
 
             await messageSession.Publish(new ApprenticeshipConfirmationCommencedEvent
             {
-                ApprenticeId = notification.Registration.ApprenticeId,
+                ApprenticeId = notification.Registration.RegistrationId,
                 ConfirmationOverdueOn = pretend.ConfirmBefore,
                 CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
                 CommitmentsApprovedOn = notification.Registration.CommitmentsApprovedOn,
