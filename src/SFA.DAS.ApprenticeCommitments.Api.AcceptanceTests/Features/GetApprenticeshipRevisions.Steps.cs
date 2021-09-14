@@ -25,7 +25,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public GetApprenticeshipRevisionsSteps(TestContext context)
         {
             _context = context;
-            _apprentice = _fixture.Build<Apprentice>().Create();
+            _apprentice = _fixture.Build<Apprentice>()
+                .With(e => e.TermsOfUseAccepted, true)
+                .Create();
 
             var startDate = new DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(

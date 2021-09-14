@@ -39,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
                 a.Sources.Clear();
                 a.AddInMemoryCollection(_config);
             });
-            builder.UseEnvironment("LOCAL");
+            builder.UseEnvironment("Development");
         }
     }
 }

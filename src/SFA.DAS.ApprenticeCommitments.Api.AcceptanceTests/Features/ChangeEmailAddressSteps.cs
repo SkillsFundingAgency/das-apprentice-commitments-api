@@ -27,7 +27,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"we have an existing apprentice")]
         public void GivenWeHaveAnExistingApprentice()
         {
-            _apprentice = _fixture.Build<Apprentice>().Create();
+            _apprentice = _fixture.Build<Apprentice>()
+                .Without(a => a.TermsOfUseAccepted)
+                .Create();
 
             _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
