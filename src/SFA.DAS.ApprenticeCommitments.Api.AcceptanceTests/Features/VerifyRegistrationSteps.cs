@@ -255,11 +255,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenAnAlreadyVerifiedDomainErrorIsReturned()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<ProblemDetails>(content);
-            errors.Should().BeEquivalentTo(new
-            {
-                Detail = $"Registration {_registration.RegistrationId} is already verified",
-            });
+            content.Should().Contain($"Registration {_registration.RegistrationId} is already verified");
         }
 
         [Then("response contains the expected error messages")]
