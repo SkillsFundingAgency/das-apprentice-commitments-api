@@ -92,6 +92,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 .Create();
         }
 
+        [Given("the request is for a different account")]
+        public void GivenTheRequestIsForADifferentAccount()
+        {
+            var apprentice = _f.Create<Apprentice>();
+            _context.DbContext.Apprentices.Add(apprentice);
+            _context.DbContext.SaveChanges();
+
+            _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
+                .With(p => p.ApprenticeId, apprentice.Id)
+                .With(p => p.RegistrationId, _registration.RegistrationId)
+                .Create();
+        }
+
         [Given(@"we have an existing already verified registration")]
         public void GivenWeHaveAnExistingAlreadyVerifiedRegistration()
         {

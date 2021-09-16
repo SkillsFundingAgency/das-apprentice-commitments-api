@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void AssociateWithApprentice(Apprentice apprentice, FuzzyMatcher matcher)
         {
-            EnsureNotAlreadyCompleted();
+            if (EnsureNotAlreadyCompleted(apprentice.Id)) return;
             EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
             EnsureApprenticeNameMatchesApproval(apprentice, matcher);
 
@@ -66,10 +66,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             UserIdentityId = apprentice.Id;
         }
 
-        private void EnsureNotAlreadyCompleted()
+        private bool EnsureNotAlreadyCompleted(Guid apprenticeId)
         {
             if (HasBeenCompleted)
-                throw new DomainException($"Registration {RegistrationId} is already verified");
+            {
+                if (UserIdentityId == apprenticeId) return true;
+
+                throw new RegistrationAlreadyMatchedException(RegistrationId);
+            }
+
+            return false;
         }
 
         private void EnsureApprenticeDateOfBirthMatchesApproval(DateTime dateOfBirth)
