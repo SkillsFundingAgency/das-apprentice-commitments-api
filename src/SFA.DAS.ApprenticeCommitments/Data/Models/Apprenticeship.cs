@@ -88,7 +88,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         internal void Confirm(long revisionId, Confirmations confirmations, DateTimeOffset now)
         {
-            GetRevision(revisionId).Confirm(confirmations, now);
+            var result = GetRevision(revisionId).Confirm(confirmations, now);
+
+            if(result == ConfirmationResult.Completed) ConfirmedOn = now.DateTime;
         }
 
         public void Revise(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
