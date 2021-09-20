@@ -1,4 +1,4 @@
-﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
@@ -34,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
             Email = email;
-            Apprenticeship = apprenticeship;
+            ApprenticeshipDetails = apprenticeship;
 
             AddDomainEvent(new RegistrationAdded(this));
         }
@@ -46,7 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime DateOfBirth { get; private set; }
         public MailAddress Email { get; private set; }
         public Guid? UserIdentityId { get; private set; }
-        public ApprenticeshipDetails Apprenticeship { get; private set; }
+        public ApprenticeshipDetails ApprenticeshipDetails { get; private set; }
         public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
@@ -63,7 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             var apprenticeship = new Revision(
                     CommitmentsApprenticeshipId,
                     CommitmentsApprovedOn,
-                    Apprenticeship);
+                    ApprenticeshipDetails));
 
             apprentice.AddApprenticeship(apprenticeship);
             UserIdentityId = apprentice.Id;
@@ -121,7 +121,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
-            Apprenticeship = apprenticeshipDetails;
+            ApprenticeshipDetails = apprenticeshipDetails;
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;

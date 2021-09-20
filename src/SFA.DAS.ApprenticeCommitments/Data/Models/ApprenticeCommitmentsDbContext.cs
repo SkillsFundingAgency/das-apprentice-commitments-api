@@ -99,7 +99,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             modelBuilder.Entity<Registration>(entity =>
             {
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
-                entity.OwnsOne(e => e.Apprenticeship, apprenticeship =>
+                entity.OwnsOne(e => e.ApprenticeshipDetails, apprenticeship =>
                 {
                     apprenticeship.Property(p => p.EmployerAccountLegalEntityId)
                         .HasColumnName("EmployerAccountLegalEntityId");

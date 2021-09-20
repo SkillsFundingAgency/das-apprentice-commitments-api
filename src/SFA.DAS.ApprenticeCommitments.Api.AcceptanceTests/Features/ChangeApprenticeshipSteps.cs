@@ -174,7 +174,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
-                Apprenticeship = new
+                ApprenticeshipDetails = new
                 {
                     _request.EmployerAccountLegalEntityId,
                     _request.EmployerName,
