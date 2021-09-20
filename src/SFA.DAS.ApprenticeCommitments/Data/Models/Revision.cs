@@ -28,10 +28,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public long Id { get; private set; }
         public long ApprenticeshipId { get; private set; }
+        public Apprenticeship Apprenticeship { get; private set; } = null!;
         public ApprenticeshipDetails Details { get; private set; } = null!;
         public long CommitmentsApprenticeshipId { get; private set; }
         public DateTime CommitmentsApprovedOn { get; private set; }
-        public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
         public bool? EmployerCorrect { get; private set; }
         public bool? TrainingProviderCorrect { get; private set; }
@@ -61,6 +61,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
                     ConfirmRevision(time);
+                    Apprenticeship.ConfirmedOn = time.DateTime;
                 }
                 else
                 {

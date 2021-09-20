@@ -1,7 +1,9 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
+using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -42,21 +44,43 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 registration.SetProperty(x => x.FirstName, reg.FirstName);
                 registration.SetProperty(x => x.LastName, reg.LastName);
                 registration.SetProperty(x => x.Email, new MailAddress(reg.Email));
-                registration.SetProperty(x => x.FirstViewedOn, reg.FirstViewedOn);
-                registration.SetProperty(x => x.UserIdentityId, reg.UserIdentityId);
                 registration.SetProperty(x => x.SignUpReminderSentOn, reg.SignUpReminderSentOn);
 
                 _registrations.Add(registration);
-            }
+                _context.DbContext.Registrations.Add(registration);
+                await _context.DbContext.SaveChangesAsync();
 
-            _context.DbContext.Registrations.AddRange(_registrations);
-            await _context.DbContext.SaveChangesAsync();
+                if(reg.ApprenticeshipConfirmed != null)
+                {
+                    var apprentice = _fixture.Build<Apprentice>()
+                        .With(x => x.LastName, registration.LastName)
+                        .With(x => x.DateOfBirth, registration.DateOfBirth)
+                        .Create();
+                    _context.DbContext.Add(apprentice);
+                    await _context.DbContext.SaveChangesAsync();
+
+                    var revision = _fixture.Create<Revision>();
+                    revision.SetProperty(x => x.CommitmentsApprenticeshipId, registration.CommitmentsApprenticeshipId);
+
+                    var apprenticeship = new Apprenticeship(revision);
+
+                    apprenticeship.SetProperty(x => x.ApprenticeId, apprentice.Id);
+                    registration.SetProperty(x => x.Apprenticeship, apprenticeship);
+
+                    if (reg.ApprenticeshipConfirmed == true)
+                        apprenticeship.SetProperty(x => x.ConfirmedOn, DateTime.Now);
+
+                    _context.DbContext.Apprenticeships.Add(apprenticeship);
+
+                    await _context.DbContext.SaveChangesAsync();
+                }
+            }
         }
 
         [When(@"we want reminders before cut off date (.*)")]
         public async Task WhenWeGetRemindersBeforeCutOffDate(DateTime cutOffTime)
         {
-            await _context.Api.Get($"registrations/reminders/?invitationCutOffTime={cutOffTime.ToString("yyy-MM-dd")}");
+            await _context.Api.Get($"registrations/reminders/?invitationCutOffTime={cutOffTime:yyy-MM-dd}");
         }
 
         [Then(@"the result should return (.*) matching registration")]
@@ -68,20 +92,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             response.Registrations.Count.Should().Be(count);
         }
 
-        [Then(@"there should be a registration with the email (.*) and it's expected values")]
+        [Then("there should be a registration with the email (.*) and it's expected values")]
         public async Task ThenThatShouldBeHasARegistrationWithTheEmailAndItSExpectedValues(string email)
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<RegistrationRemindersResponse>(content);
             content.Should().NotBeNull();
 
-            var expected = _testData.FirstOrDefault(x => x.Email == email);
-            var match = response.Registrations.FirstOrDefault(x => x.Email == email);
-            match.Should().NotBeNull();
-            match.CreatedOn.Should().Be(expected.CreatedOn);
-            match.UserIdentityId.Should().Be(expected.UserIdentityId);
-            match.FirstName.Should().Be(expected.FirstName);
-            match.LastName.Should().Be(expected.LastName);
+            var expected = _testData.Find(x => x.Email == email);
+            response.Registrations.Should().ContainEquivalentOf(new
+            {
+                expected.Email,
+                expected.FirstName,
+                expected.LastName,
+                expected.CreatedOn,
+            });
         }
 
         public class RegistrationTest
@@ -90,9 +115,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             public string LastName;
             public string Email;
             public DateTime? CreatedOn;
-            public DateTime? FirstViewedOn;
             public DateTime? SignUpReminderSentOn;
-            public Guid? UserIdentityId;
+            public bool? ApprenticeshipConfirmed;
         }
     }
 }

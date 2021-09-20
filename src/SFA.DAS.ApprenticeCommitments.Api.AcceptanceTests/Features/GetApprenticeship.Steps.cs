@@ -31,17 +31,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _fixture.Create("CourseName"), 1, null,
                 startDate, startDate.AddMonths(32), 33));
 
-            _revision = _fixture.Build<Revision>()
-                .Do(a => a.Confirm(new Confirmations
-                {
-                    EmployerCorrect = true,
-                    TrainingProviderCorrect = true,
-                    ApprenticeshipDetailsCorrect = true,
-                    RolesAndResponsibilitiesCorrect = true,
-                    HowApprenticeshipDeliveredCorrect = true,
-                    ApprenticeshipCorrect = true,
-                }, DateTime.Now))
-                .Create();
+            _revision = _fixture.Create<Revision>();
+            var apprenticeship = new Apprenticeship(_revision);
+            _revision.SetProperty(x => x.Apprenticeship, apprenticeship);
+            _revision.Confirm(new Confirmations
+            {
+                EmployerCorrect = true,
+                TrainingProviderCorrect = true,
+                ApprenticeshipDetailsCorrect = true,
+                RolesAndResponsibilitiesCorrect = true,
+                HowApprenticeshipDeliveredCorrect = true,
+                ApprenticeshipCorrect = true,
+            }, DateTime.Now);
 
             _newerRevision = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations

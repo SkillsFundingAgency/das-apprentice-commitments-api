@@ -1,4 +1,4 @@
-using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
+﻿using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
@@ -51,6 +51,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
+        public Apprenticeship? Apprenticeship { get; private set;  }
 
         public bool HasBeenCompleted => UserIdentityId != null;
 
@@ -60,12 +61,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
             EnsureApprenticeNameMatchesApproval(apprentice, matcher);
 
-            var apprenticeship = new Revision(
+            var apprenticeship = new Apprenticeship(new Revision(
                     CommitmentsApprenticeshipId,
                     CommitmentsApprovedOn,
                     ApprenticeshipDetails));
 
             apprentice.AddApprenticeship(apprenticeship);
+            Apprenticeship = apprenticeship;
             UserIdentityId = apprentice.Id;
         }
 

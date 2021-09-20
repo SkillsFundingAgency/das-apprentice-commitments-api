@@ -96,9 +96,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void GivenWeHaveAnExistingAlreadyVerifiedRegistration()
         {
             _registration = _f.Create<Registration>();
+            _context.DbContext.Registrations.Add(_registration);
+            _context.DbContext.SaveChanges();
+            
             GivenWeHaveAnExistingAccount();
             _registration.AssociateWithApprentice(_apprentice, FuzzyMatcher.AlwaysMatcher);
-            _context.DbContext.Registrations.Add(_registration);
             _context.DbContext.SaveChanges();
         }
 
