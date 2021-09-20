@@ -34,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
             Email = email;
-            Apprenticeship = apprenticeship;
+            ApprenticeshipDetails = apprenticeship;
 
             AddDomainEvent(new RegistrationAdded(this));
         }
@@ -46,11 +46,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime DateOfBirth { get; private set; }
         public MailAddress Email { get; private set; }
         public Guid? UserIdentityId { get; private set; }
-        public ApprenticeshipDetails Apprenticeship { get; private set; }
+        public ApprenticeshipDetails ApprenticeshipDetails { get; private set; }
         public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
+        public Apprenticeship? Apprenticeship { get; private set;  }
 
         public bool HasBeenCompleted => UserIdentityId != null;
 
@@ -60,12 +61,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
             EnsureApprenticeNameMatchesApproval(apprentice, matcher);
 
-            var apprenticeship = new Revision(
+            var apprenticeship = new Apprenticeship(new Revision(
                     CommitmentsApprenticeshipId,
                     CommitmentsApprovedOn,
-                    Apprenticeship);
+                    ApprenticeshipDetails));
 
             apprentice.AddApprenticeship(apprenticeship);
+            Apprenticeship = apprenticeship;
             UserIdentityId = apprentice.Id;
         }
 
@@ -121,7 +123,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
-            Apprenticeship = apprenticeshipDetails;
+            ApprenticeshipDetails = apprenticeshipDetails;
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;

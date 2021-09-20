@@ -4,7 +4,6 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 #nullable enable
@@ -24,10 +23,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data
             => await Entities.FirstOrDefaultAsync(x => x.CommitmentsApprenticeshipId == commitmentsApprenticeshipId);
 
         internal Task<List<Registration>> RegistrationsNeedingSignUpReminders(DateTime cutOffDateTime)
-            => Entities.Where(r =>
-                    r.FirstViewedOn == null && r.SignUpReminderSentOn == null && r.UserIdentityId == null &&
-                    r.CreatedOn < cutOffDateTime)
-                .ToListAsync(CancellationToken.None);
+        {
+            return Entities.Include(e => e.Apprenticeship)
+                .Where(r =>
+                    (r.Apprenticeship == null || r.Apprenticeship.ConfirmedOn == null) &&
+                    r.SignUpReminderSentOn == null && r.CreatedOn < cutOffDateTime)
+                .ToListAsync();
+        }
 
         public Task<bool> RegistrationsExist()
             => Entities.AnyAsync();

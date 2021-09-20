@@ -28,10 +28,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public long Id { get; private set; }
         public long ApprenticeshipId { get; private set; }
+        public Apprenticeship Apprenticeship { get; private set; } = null!;
         public ApprenticeshipDetails Details { get; private set; } = null!;
         public long CommitmentsApprenticeshipId { get; private set; }
         public DateTime CommitmentsApprovedOn { get; private set; }
-        public Apprenticeship Apprenticeship { get; internal set; } = null!;
 
         public bool? EmployerCorrect { get; private set; }
         public bool? TrainingProviderCorrect { get; private set; }
@@ -44,7 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
 
-        public void Confirm(Confirmations confirmations, DateTimeOffset time)
+        public ConfirmationResult Confirm(Confirmations confirmations, DateTimeOffset time)
         {
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
@@ -61,12 +61,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
                     ConfirmRevision(time);
+                    return ConfirmationResult.Completed;
                 }
                 else
                 {
                     throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
                 }
             }
+
+            return ConfirmationResult.Ongoing;
         }
 
         private void ConfirmRevision(DateTimeOffset time)
