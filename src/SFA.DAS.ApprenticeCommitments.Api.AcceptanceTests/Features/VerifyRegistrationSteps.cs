@@ -223,7 +223,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 {
                     ApprenticeId = _context.DbContext.Apprentices.Single().Id,
                     CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
-                    EmailAddress = _context.DbContext.Apprentices.Single().Email.ToString()
                 }
             });
         }

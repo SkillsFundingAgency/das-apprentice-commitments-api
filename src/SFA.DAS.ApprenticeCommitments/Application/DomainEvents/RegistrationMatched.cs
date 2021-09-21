@@ -42,7 +42,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
             {
                 ApprenticeId = notification.Apprentice.Id,
                 CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
-                EmailAddress = notification.Apprentice.Email.ToString()
             });
         }
     }
