@@ -3,11 +3,11 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 {
-    internal class RegistrationAdded : INotification
+    public class RegistrationUpdated : INotification
     {
         public Registration Registration { get; }
 
-        public RegistrationAdded(Registration registration)
+        public RegistrationUpdated(Registration registration)
             => Registration = registration;
     }
 }

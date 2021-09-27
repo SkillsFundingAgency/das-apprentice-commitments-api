@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -28,6 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 
         public ChangeApprenticeshipSteps(TestContext context)
         {
+            _fixture.Customizations.Add(new EmailPropertyCustomisation());
             _context = context;
             _commitmentsApprenticeshipId = _fixture.Create<long>();
             _revision = _fixture.Create<Revision>();
@@ -248,7 +250,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the response is bad request")]
         public void ThenTheResponseIsOK()
         {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            _context.Api.Response.Should().Be400BadRequest();
         }
 
         [Then("the Confirmation Commenced event is published")]
