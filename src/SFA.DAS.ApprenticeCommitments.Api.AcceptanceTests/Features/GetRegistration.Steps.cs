@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public Task GivenThereIsARegistrationWithAFirstViewedOnAndHasTheAssignedToIt(DateTime? viewedOn, Guid? userIdentityId)
         {
             _registration.SetProperty(x => x.FirstViewedOn, viewedOn);
-            _registration.SetProperty(x => x.UserIdentityId, userIdentityId);
+            _registration.SetProperty(x => x.ApprenticeId, userIdentityId);
             _context.DbContext.Registrations.Add(_registration);
             return _context.DbContext.SaveChangesAsync();
         }

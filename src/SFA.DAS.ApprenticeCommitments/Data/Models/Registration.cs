@@ -42,14 +42,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public string LastName { get; private set; } = null!;
         public DateTime DateOfBirth { get; private set; }
         public MailAddress Email { get; private set; } = null!;
-        public Guid? UserIdentityId { get; private set; }
+        public Guid? ApprenticeId { get; private set; }
         public ApprenticeshipDetails Apprenticeship { get; private set; } = null!;
         public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
 
-        public bool HasBeenCompleted => UserIdentityId != null;
+        public bool HasBeenCompleted => ApprenticeId != null;
 
         public void AssociateWithApprentice(Apprentice apprentice, FuzzyMatcher matcher)
         {
@@ -65,11 +65,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     Apprenticeship);
 
             apprentice.AddApprenticeship(apprenticeship);
-            UserIdentityId = apprentice.Id;
+            ApprenticeId = apprentice.Id;
         }
 
         private bool AlreadyCompletedByApprentice(Guid apprenticeId)
-            => UserIdentityId == apprenticeId;
+            => ApprenticeId == apprenticeId;
 
         private void EnsureNotAlreadyCompleted()
         {

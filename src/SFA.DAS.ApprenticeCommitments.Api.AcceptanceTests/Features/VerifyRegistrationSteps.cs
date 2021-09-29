@@ -214,7 +214,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenTheRegistrationHasBeenMarkedAsCompleted()
         {
             var registration = _context.DbContext.Registrations.FirstOrDefault(x => x.RegistrationId == _registration.RegistrationId);
-            registration.UserIdentityId.Should().Be(_command.ApprenticeId);
+            registration.ApprenticeId.Should().Be(_command.ApprenticeId);
         }
 
         [Then(@"the registration CreatedOn field is unchanged")]
