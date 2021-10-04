@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.ApprenticeCommitments.Types;
 
 #nullable disable
 
@@ -27,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime ConfirmBefore { get; set; }
         public DateTime? ConfirmedOn { get; set; }
         public long RevisionId { get; set; }
-        public bool DisplayChangeNotification { get; set; }
+        public ChangeOfCircumstanceNotification DisplayChangeNotification { get; set; }
         public DateTime ApprovedOn { get; set; }
         public DateTime? LastViewed { get; set; }
     }

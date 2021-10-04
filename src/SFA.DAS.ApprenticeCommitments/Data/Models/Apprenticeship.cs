@@ -3,6 +3,7 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SFA.DAS.ApprenticeCommitments.Types;
 
 #nullable enable
 
@@ -33,35 +34,37 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No revisions found in apprenticeship {Id}");
 
-        public bool DisplayChangeNotification
+        public ChangeOfCircumstanceNotification DisplayChangeNotification
         {
             get
             {
-                if (Revisions.Count == 1) return false;
+                if (Revisions.Count == 1) return ChangeOfCircumstanceNotification.None;
 
                 var revisions = Revisions.OrderBy(x => x.CommitmentsApprovedOn).ToList();
                 var latest = revisions[Revisions.Count - 1];
                 var previous = revisions[Revisions.Count - 2];
 
+                var notification = ChangeOfCircumstanceNotification.None;
+
                 if (latest.EmployerCorrect == null &&
                     !latest.Details.EmployerIsEquivalent(previous.Details))
                 {
-                    return true;
+                    notification |= ChangeOfCircumstanceNotification.EmployerDetailsChanged;
                 }
 
                 if (latest.TrainingProviderCorrect == null &&
                     !latest.Details.ProviderIsEquivalent(previous.Details))
                 {
-                    return true;
+                    notification |= ChangeOfCircumstanceNotification.ProviderDetailsChanged;
                 }
 
                 if (latest.ApprenticeshipDetailsCorrect == null &&
                     !latest.Details.ApprenticeshipIsEquivalent(previous.Details))
                 {
-                    return true;
+                    notification |= ChangeOfCircumstanceNotification.ApprenticeshipDetailsChanged;
                 }
 
-                return false;
+                return notification;
             }
         }
 
