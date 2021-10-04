@@ -48,5 +48,5 @@ jobs:
   - template: azure-pipelines-templates/build/step/nuget-pack.yml@das-platform-building-blocks
     parameters:
       DotNetStandardPackagesToPack: |
-        src/SFA.DAS.ApprenticeCommitments.Messages/SFA.DAS.ApprenticeCommitments.Messages.csproj
-        src/SFA.DAS.ApprenticeCommitments.Types/SFA.DAS.ApprenticeCommitments.Types.csproj
+        src/SFA.DAS.ApprenticeCommitments.Messages/SFA.DAS.ApprenticeCommitments.Messages.csproj;
+        src/SFA.DAS.ApprenticeCommitments.Types/SFA.DAS.ApprenticeCommitments.Types.csproj;
