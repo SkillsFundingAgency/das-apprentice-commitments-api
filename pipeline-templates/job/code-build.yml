@@ -49,3 +49,4 @@ jobs:
     parameters:
       DotNetStandardPackagesToPack: |
         src/SFA.DAS.ApprenticeCommitments.Messages/SFA.DAS.ApprenticeCommitments.Messages.csproj
+        src/SFA.DAS.ApprenticeCommitments.Types/SFA.DAS.ApprenticeCommitments.Types.csproj
