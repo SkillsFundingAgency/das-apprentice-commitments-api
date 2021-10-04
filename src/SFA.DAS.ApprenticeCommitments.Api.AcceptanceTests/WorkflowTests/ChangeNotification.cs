@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.Should().BeEquivalentTo(new
             {
-                DisplayChangeNotification = ChangeOfCircumstanceNotifications.None,
+                ChangeOfCircumstanceNotifications = ChangeOfCircumstanceNotifications.None,
             });
         }
 
