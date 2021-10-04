@@ -34,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No revisions found in apprenticeship {Id}");
 
-        public ChangeOfCircumstanceNotifications DisplayChangeNotifications
+        public ChangeOfCircumstanceNotifications ChangeOfCircumstanceNotifications
         {
             get
             {
