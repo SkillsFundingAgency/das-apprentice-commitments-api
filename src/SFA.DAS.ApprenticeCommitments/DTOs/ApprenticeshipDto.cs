@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime ConfirmBefore { get; set; }
         public DateTime? ConfirmedOn { get; set; }
         public long RevisionId { get; set; }
-        public ChangeOfCircumstanceNotification DisplayChangeNotification { get; set; }
+        public ChangeOfCircumstanceNotifications DisplayChangeNotifications { get; set; }
         public DateTime ApprovedOn { get; set; }
         public DateTime? LastViewed { get; set; }
     }

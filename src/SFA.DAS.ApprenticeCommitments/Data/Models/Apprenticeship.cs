@@ -34,34 +34,34 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No revisions found in apprenticeship {Id}");
 
-        public ChangeOfCircumstanceNotification DisplayChangeNotification
+        public ChangeOfCircumstanceNotifications DisplayChangeNotifications
         {
             get
             {
-                if (Revisions.Count == 1) return ChangeOfCircumstanceNotification.None;
+                if (Revisions.Count == 1) return ChangeOfCircumstanceNotifications.None;
 
                 var revisions = Revisions.OrderBy(x => x.CommitmentsApprovedOn).ToList();
                 var latest = revisions[Revisions.Count - 1];
                 var previous = revisions[Revisions.Count - 2];
 
-                var notification = ChangeOfCircumstanceNotification.None;
+                var notification = ChangeOfCircumstanceNotifications.None;
 
                 if (latest.EmployerCorrect == null &&
                     !latest.Details.EmployerIsEquivalent(previous.Details))
                 {
-                    notification |= ChangeOfCircumstanceNotification.EmployerDetailsChanged;
+                    notification |= ChangeOfCircumstanceNotifications.EmployerDetailsChanged;
                 }
 
                 if (latest.TrainingProviderCorrect == null &&
                     !latest.Details.ProviderIsEquivalent(previous.Details))
                 {
-                    notification |= ChangeOfCircumstanceNotification.ProviderDetailsChanged;
+                    notification |= ChangeOfCircumstanceNotifications.ProviderDetailsChanged;
                 }
 
                 if (latest.ApprenticeshipDetailsCorrect == null &&
                     !latest.Details.ApprenticeshipIsEquivalent(previous.Details))
                 {
-                    notification |= ChangeOfCircumstanceNotification.ApprenticeshipDetailsChanged;
+                    notification |= ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged;
                 }
 
                 return notification;
