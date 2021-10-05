@@ -60,6 +60,7 @@
     <Folder Include="PostDeployment" />
     <Folder Include="Views" />
     <Folder Include="Schemas" />
+    <Folder Include="PreDeployment" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Registration.sql" />
@@ -81,5 +82,8 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment\PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PreDeploy Include="PreDeployment\ReconcileApprenticeId.sql" />
   </ItemGroup>
 </Project>

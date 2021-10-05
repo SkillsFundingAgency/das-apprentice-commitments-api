@@ -62,7 +62,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var registration = _fixture.Create<Registration>();
             registration.SetProperty(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
-            registration.SetProperty(x => x.UserIdentityId, Guid.NewGuid());
+            registration.SetProperty(x => x.ApprenticeId, Guid.NewGuid());
 
             _context.DbContext.Registrations.Add(registration);
             await _context.DbContext.SaveChangesAsync();

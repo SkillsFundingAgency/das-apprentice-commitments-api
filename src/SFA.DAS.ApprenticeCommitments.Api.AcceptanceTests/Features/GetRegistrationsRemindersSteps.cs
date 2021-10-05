@@ -43,7 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 registration.SetProperty(x => x.LastName, reg.LastName);
                 registration.SetProperty(x => x.Email, new MailAddress(reg.Email));
                 registration.SetProperty(x => x.FirstViewedOn, reg.FirstViewedOn);
-                registration.SetProperty(x => x.UserIdentityId, reg.UserIdentityId);
+                registration.SetProperty(x => x.ApprenticeId, reg.UserIdentityId);
                 registration.SetProperty(x => x.SignUpReminderSentOn, reg.SignUpReminderSentOn);
 
                 _registrations.Add(registration);
