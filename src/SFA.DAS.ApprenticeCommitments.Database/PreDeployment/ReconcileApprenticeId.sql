@@ -37,3 +37,23 @@ begin
 
 end
 
+if exists(
+    select RegistrationId from Registration
+    where RegistrationId = ApprenticeId and 
+        UserIdentityId is null and 
+        ApprenticeId not in (select id from Apprentice)
+)
+begin
+
+    print 'Removing unmatched Apprentice IDs'
+
+    update Registration
+    set ApprenticeId = null
+    where
+        RegistrationId = ApprenticeId and 
+        UserIdentityId is null and 
+        ApprenticeId not in (select id from Apprentice)
+
+    print concat('Removed ', @@ROWCOUNT, ' Apprentice IDs')
+end
+
