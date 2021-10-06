@@ -46,6 +46,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
+            if(ConfirmedOn.HasValue)
+                throw new DomainException($"Cannot alter confirmed apprenticeship `{ApprenticeshipId}` r({Id})");
+
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
