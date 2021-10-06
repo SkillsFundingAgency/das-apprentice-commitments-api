@@ -30,9 +30,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
             var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged).Should().BeTrue();
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
@@ -57,9 +57,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
             var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged).Should().BeTrue();
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
@@ -85,9 +85,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
             var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged).Should().BeTrue();
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
@@ -99,9 +99,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer());
 
             var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged).Should().BeFalse();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged).Should().BeFalse();
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
@@ -129,9 +129,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider());
 
             var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged).Should().BeFalse();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged).Should().BeTrue();
-            retrieved.ChangeOfCircumstanceNotifications.HasFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged).Should().BeFalse();
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
