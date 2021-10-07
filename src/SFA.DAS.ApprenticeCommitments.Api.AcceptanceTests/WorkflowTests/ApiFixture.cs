@@ -77,9 +77,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return registration;
         }
 
-        protected async Task<CreateApprenticeAccountCommand> CreateAccount(CreateRegistrationCommand approval,
+        protected async Task<CreateApprenticeAccountCommand> CreateAccount(CreateRegistrationCommand? approval = null,
             Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
+            approval ??= fixture.Create<CreateRegistrationCommand>();
             email ??= new MailAddress(approval.Email);
             dateOfBirth ??= approval.DateOfBirth;
 

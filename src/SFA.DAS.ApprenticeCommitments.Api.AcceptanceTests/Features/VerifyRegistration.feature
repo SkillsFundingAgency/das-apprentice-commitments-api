@@ -37,7 +37,7 @@ Scenario: A registration is submitted with the wrong Date of birth
 
 Scenario: A registration is re-submitted
 	Given we have an existing already verified registration
-	And the request is for the account
+	And the request is for a different account
 	When we verify that registration
 	Then a bad request is returned
 	And an 'already verified' domain error is returned
