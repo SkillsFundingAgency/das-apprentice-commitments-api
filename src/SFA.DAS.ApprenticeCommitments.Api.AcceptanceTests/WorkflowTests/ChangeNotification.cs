@@ -4,7 +4,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Linq;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Types;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {

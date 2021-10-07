@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SFA.DAS.ApprenticeCommitments.Types
+namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Flags]
     public enum ChangeOfCircumstanceNotifications

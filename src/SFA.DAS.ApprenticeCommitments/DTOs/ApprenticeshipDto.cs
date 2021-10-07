@@ -1,5 +1,5 @@
 ﻿using System;
-using SFA.DAS.ApprenticeCommitments.Types;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 #nullable disable
 

@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SFA.DAS.ApprenticeCommitments.Messages\SFA.DAS.ApprenticeCommitments.Messages.csproj" />
-    <ProjectReference Include="..\SFA.DAS.ApprenticeCommitments.Types\SFA.DAS.ApprenticeCommitments.Types.csproj" />
   </ItemGroup>
 
   <ItemGroup>
