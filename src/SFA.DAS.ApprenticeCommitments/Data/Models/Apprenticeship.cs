@@ -3,6 +3,7 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 #nullable enable
 
@@ -37,26 +38,28 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 if (Revisions.Count == 1) return ChangeOfCircumstanceNotifications.None;
 
-                var revisions = Revisions.OrderBy(x => x.CommitmentsApprovedOn).ToList();
-                var latest = revisions[Revisions.Count - 1];
-                var previous = revisions[Revisions.Count - 2];
+                var revisions = Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).ToList();
+                var latest = revisions.First();
+                var lastSeen = revisions.FirstOrDefault(x => x.Id != latest.Id && x.LastViewed != null);
 
                 var notification = ChangeOfCircumstanceNotifications.None;
 
+                if (lastSeen == null) return notification;
+
                 if (latest.EmployerCorrect == null &&
-                    !latest.Details.EmployerIsEquivalent(previous.Details))
+                    !latest.Details.EmployerIsEquivalent(lastSeen.Details))
                 {
                     notification |= ChangeOfCircumstanceNotifications.EmployerDetailsChanged;
                 }
 
                 if (latest.TrainingProviderCorrect == null &&
-                    !latest.Details.ProviderIsEquivalent(previous.Details))
+                    !latest.Details.ProviderIsEquivalent(lastSeen.Details))
                 {
                     notification |= ChangeOfCircumstanceNotifications.ProviderDetailsChanged;
                 }
 
                 if (latest.ApprenticeshipDetailsCorrect == null &&
-                    !latest.Details.ApprenticeshipIsEquivalent(previous.Details))
+                    !latest.Details.ApprenticeshipIsEquivalent(lastSeen.Details))
                 {
                     notification |= ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged;
                 }

@@ -1,9 +1,11 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
@@ -26,6 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Incomplete_and_then_changed_shows_notification()
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
+            await ViewApprenticeship(apprenticeship);
 
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
@@ -53,6 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Confirmed_and_then_changed_shows_notification()
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
+            await ViewApprenticeship(apprenticeship);
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -80,6 +84,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Negatively_confirmed_and_then_changed_shows_notification()
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
+            await ViewApprenticeship(apprenticeship);
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
@@ -94,12 +99,39 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task One_section_confirmed_and_then_all_changed_shows_notification()
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
+            await ViewApprenticeship(apprenticeship);
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer());
 
             var retrieved = await GetApprenticeship(apprenticeship);
             retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
+        }
+
+        [Test]
+        public async Task Multiple_changes_occur_sequentially_then_apprentice_is_notifiied_only_of_differences_between_last_viewed_and_latest()
+        {
+            var apprenticeship = await CreateVerifiedApprenticeship();
+            await ViewApprenticeship(apprenticeship);
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(1)));
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer().ChangedOn(DateTimeOffset.Now.AddHours(2)));
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
+        }
+
+        [Test]
+        public async Task Multiple_changes_occur_sequentially_then_apprentice_is_not_told_as_they_havent_viewed()
+        {
+            var apprenticeship = await CreateVerifiedApprenticeship();
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(1)));
+
+            var retrieved = await GetApprenticeship(apprenticeship);
+            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
             retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
             retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
@@ -124,6 +156,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Provider_section_changed_and_then_confirmed_hides_notification()
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
+            await ViewApprenticeship(apprenticeship);
 
             await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmOnlyProvider());
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider());
@@ -229,6 +262,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             apprenticeships.Apprenticeships.Should().NotBeEmpty();
             return apprenticeships.Apprenticeships.Last();
+        }
+
+        protected async Task ViewApprenticeship(ApprenticeshipDto apprenticeship)
+        {
+            var patch = new JsonPatchDocument<ApprenticeshipDto>()
+                .Replace(a => a.LastViewed, context.Time.Now);
+
+            var r3 = await client.PatchAsync(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}",
+                patch.GetStringContent());
+
+            r3.EnsureSuccessStatusCode();
         }
     }
 }
