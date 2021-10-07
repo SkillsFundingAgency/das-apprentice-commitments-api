@@ -23,8 +23,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid ApprenticeId { get; private set; }
 
-        public DateTime? LastViewed { get; set; }
-
         private readonly List<Revision> _revisions = new List<Revision>();
 
         public IReadOnlyCollection<Revision> Revisions => _revisions;

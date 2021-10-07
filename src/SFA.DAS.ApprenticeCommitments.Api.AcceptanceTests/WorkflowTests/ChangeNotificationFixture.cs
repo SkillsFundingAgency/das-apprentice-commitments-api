@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .Replace(a => a.LastViewed, context.Time.Now);
 
             var r3 = await client.PatchAsync(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}",
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}",
                 patch.GetStringContent());
 
             r3.EnsureSuccessStatusCode();
