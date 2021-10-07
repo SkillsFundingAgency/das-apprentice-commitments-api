@@ -50,6 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         private bool? employerCorrect = true;
         private bool? providerCorrect = true;
         private bool? detailsCorrect = true;
+        private bool confirmCompletely = false;
 
         internal ConfirmationBuilder AsIncomplete()
         {
@@ -59,10 +60,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         internal List<Confirmations> BuildAll()
         {
-            var confirmations = new Confirmations();
+            var confirmations = new Confirmations
+            {
+                HowApprenticeshipDeliveredCorrect = true,
+                RolesAndResponsibilitiesCorrect = true,
+            };
+
             if (employerCorrect != null) confirmations.EmployerCorrect = employerCorrect.Value;
             if (providerCorrect != null) confirmations.TrainingProviderCorrect = providerCorrect.Value;
             if (detailsCorrect != null) confirmations.ApprenticeshipDetailsCorrect = detailsCorrect.Value;
+            if (confirmCompletely) confirmations.ApprenticeshipCorrect = true;
+
             return new List<Confirmations> { confirmations };
         }
 
@@ -77,6 +85,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             employerCorrect = detailsCorrect = null;
             providerCorrect = true;
+            return this;
+        }
+
+        internal ConfirmationBuilder ConfirmCompletely()
+        {
+            confirmCompletely = true;
             return this;
         }
     }

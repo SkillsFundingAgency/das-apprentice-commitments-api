@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Azure.Amqp.Framing;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -43,6 +44,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             apprenticeship = (await GetApprenticeships(apprenticeship.ApprenticeId))[0];
             apprenticeship.Should().BeEquivalentTo(data);
+        }
+
+        [Test]
+        public async Task Cannot_change_confirmation_of_fully_confirmed_revision()
+        {
+            var apprenticeship = await CreateVerifiedApprenticeship();
+            await ConfirmApprenticeship(apprenticeship, new ConfirmationBuilder().ConfirmCompletely());
+
+            var r4 = await client.PatchValueAsync(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/confirmations",
+                new { EmployerCorrect = false });
+
+            r4.Should().Be4XXClientError();
         }
     }
 }
