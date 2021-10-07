@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ConfirmCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
@@ -13,6 +14,7 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -173,5 +175,30 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeApprenticeshipCommand command)
             => client.PutValueAsync("registrations", command);
+
+        internal async Task ConfirmApprenticeship(ApprenticeshipDto apprenticeship, ConfirmationBuilder confirm)
+        {
+            context.Time.Now = context.Time.Now.AddDays(1);
+
+            apprenticeship = await GetApprenticeship(apprenticeship);
+
+            foreach (var payload in confirm.BuildAll())
+            {
+                var r4 = await client.PatchValueAsync(
+                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/confirmations",
+                    payload);
+                r4.Should().Be2XXSuccessful();
+            }
+        }
+
+        protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+        {
+            var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
+            r2.Should().Be2XXSuccessful();
+
+            apprenticeships.Apprenticeships.Should().NotBeEmpty();
+            return apprenticeships.Apprenticeships.Last();
+        }
     }
 }

@@ -4,6 +4,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
@@ -42,21 +43,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var r1 = await client.PutValueAsync("registrations", data);
             r1.EnsureSuccessStatusCode();
         }
-
-        private protected async Task ConfirmApprenticeship(ApprenticeshipDto apprenticeship, ConfirmationBuilder confirm)
-        {
-            context.Time.Now = context.Time.Now.Add(TimeBetweenActions);
-
-            apprenticeship = await GetApprenticeship(apprenticeship);
-
-            foreach (var payload in confirm.BuildAll())
-            {
-                var r4 = await client.PostValueAsync(
-                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/{payload.Item1}",
-                    payload.Item2);
-                r4.EnsureSuccessStatusCode();
-            }
-        }
     }
 
     internal class ConfirmationBuilder
@@ -71,13 +57,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return this;
         }
 
-        internal List<(string, object)> BuildAll()
+        internal List<Confirmations> BuildAll()
         {
-            var all = new List<(string, object)>();
-            if (employerCorrect != null) all.Add(("EmployerConfirmation", new ConfirmEmployerRequest { EmployerCorrect = employerCorrect.Value }));
-            if (providerCorrect != null) all.Add(("TrainingProviderConfirmation", new ConfirmTrainingProviderRequest { TrainingProviderCorrect = providerCorrect.Value }));
-            if (detailsCorrect != null) all.Add(("ApprenticeshipDetailsConfirmation", new ConfirmApprenticeshipRequest { ApprenticeshipCorrect = detailsCorrect.Value }));
-            return all;
+            var confirmations = new Confirmations();
+            if (employerCorrect != null) confirmations.EmployerCorrect = employerCorrect.Value;
+            if (providerCorrect != null) confirmations.TrainingProviderCorrect = providerCorrect.Value;
+            if (detailsCorrect != null) confirmations.ApprenticeshipDetailsCorrect = detailsCorrect.Value;
+            return new List<Confirmations> { confirmations };
         }
 
         internal ConfirmationBuilder ConfirmOnlyEmployer()

@@ -205,37 +205,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             });
         }
 
-        private async Task ConfirmApprenticeship(ApprenticeshipDto apprenticeship, ConfirmationBuilder confirm)
-        {
-            context.Time.Now = context.Time.Now.AddDays(1);
-
-            apprenticeship = await GetApprenticeship(apprenticeship);
-
-            foreach (var payload in confirm.BuildAll())
-            {
-                var r4 = await client.PostValueAsync(
-                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/{payload.Item1}",
-                    payload.Item2);
-                r4.Should().Be2XXSuccessful();
-            }
-        }
-
         private async Task ChangeApprenticeship(ChangeBuilder change)
         {
             context.Time.Now = context.Time.Now.AddDays(1);
             var data = change.ChangedOn(context.Time.Now).Build();
             var r1 = await client.PutValueAsync("registrations", data);
             r1.Should().Be2XXSuccessful();
-        }
-
-        private async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
-        {
-            var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
-            r2.Should().Be2XXSuccessful();
-
-            apprenticeships.Apprenticeships.Should().NotBeEmpty();
-            return apprenticeships.Apprenticeships.Last();
         }
     }
 }
