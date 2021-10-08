@@ -28,7 +28,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
 
             var dtos = apprenticeships
                 .ConvertAll(x => x.MapToApprenticeshipDto())
-                .OrderBy(x => x.ApprovedOn)
+                .OrderByDescending(x => x.ApprovedOn)
                 .ToList();
 
             return new ApprenticeshipsResponse(dtos);

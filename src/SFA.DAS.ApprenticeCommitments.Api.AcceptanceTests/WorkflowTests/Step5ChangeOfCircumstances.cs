@@ -13,7 +13,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     internal class ChangeOfPersonalDetailsFixture : ApiFixture
     {
-
         public async Task<(CreateRegistrationCommand approval, ChangeApprenticeshipCommand create)> CreateRegistrationAndCoc()
         {
             var approval = await CreateRegistration();
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             coc.CommitmentsApprovedOn = approval.CommitmentsApprovedOn;
             coc.CourseDuration = approval.CourseDuration;
             coc.CourseLevel = approval.CourseLevel;
-            coc.CourseName   = approval.CourseName;
+            coc.CourseName = approval.CourseName;
             coc.CourseOption = approval.CourseOption;
             coc.EmployerAccountLegalEntityId = approval.EmployerAccountLegalEntityId;
             coc.EmployerName = approval.EmployerName;
@@ -133,7 +132,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Does_not_update_apprentice()
         {
             var (originalApprentice, command) = await CreateVerifiedApprenticeshipAndCoc();
-            
+
             await ChangeOfCircumstances(command);
 
             var updatedApprentice = await GetApprentice(originalApprentice.Id);
