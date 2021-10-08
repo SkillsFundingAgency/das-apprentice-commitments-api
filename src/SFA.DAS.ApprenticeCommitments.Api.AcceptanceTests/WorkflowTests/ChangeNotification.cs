@@ -116,24 +116,38 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var apprenticeship = await CreateVerifiedApprenticeship();
             await ViewApprenticeship(apprenticeship);
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(1)));
-            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer().ChangedOn(DateTimeOffset.Now.AddHours(2)));
 
-            var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
-            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
-            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
+            var firstChange = await GetApprenticeship(apprenticeship);
+            firstChange.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            firstChange.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            firstChange.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
+
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeEmployer().ChangedOn(DateTimeOffset.Now.AddHours(2)));
+            var app3 = await GetApprenticeship(apprenticeship);
+
+            var secondChange = await GetApprenticeship(apprenticeship);
+            secondChange.ChangeOfCircumstanceNotifications.Should().HaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            secondChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            secondChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
         public async Task Multiple_changes_occur_sequentially_then_apprentice_is_not_told_as_they_havent_viewed()
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
-            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(1)));
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).OnlyChangeProvider().ChangedOn(DateTimeOffset.Now.AddHours(1)));
 
-            var retrieved = await GetApprenticeship(apprenticeship);
-            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
-            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
-            retrieved.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
+            var firstChange = await GetApprenticeship(apprenticeship);
+            firstChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            firstChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            firstChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
+
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(12));
+
+            var secondChange = await GetApprenticeship(apprenticeship);
+            secondChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
+            secondChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
+            secondChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
         }
 
         [Test]
