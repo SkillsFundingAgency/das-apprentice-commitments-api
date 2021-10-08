@@ -91,6 +91,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .Create();
         }
 
+        [Given("we have an update apprenticeship request without an email")]
+        public void GivenWeHaveAnUpdateApprenticeshipRequestWithoutAnEmail()
+        {
+            var start = _fixture.Create<DateTime>();
+            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+                .Without(x => x.CommitmentsContinuedApprenticeshipId)
+                .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
+                .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
+                .With(x => x.PlannedStartDate, start)
+                .With(x => x.PlannedEndDate, (long days) => start.AddDays(days + 1))
+                .Without(x => x.Email)
+                .Create();
+        }
+
         [Given("we have an update apprenticeship request with no material change")]
         public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest()
         {
@@ -227,6 +241,35 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
+        [Then(@"a new registration record should exist with the correct information")]
+        public void ThenANewRegistrationRecordShouldExistWithTheCorrectInformation()
+        {
+            _context.DbContext.Registrations.Should().ContainEquivalentOf(new
+            {
+                _request.CommitmentsApprovedOn,
+                _request.CommitmentsApprenticeshipId,
+                _request.FirstName,
+                _request.LastName,
+                _request.DateOfBirth,
+                Apprenticeship = new
+                {
+                    _request.EmployerAccountLegalEntityId,
+                    _request.EmployerName,
+                    _request.TrainingProviderId,
+                    _request.TrainingProviderName,
+                    Course = new
+                    {
+                        Name = _request.CourseName,
+                        Level = _request.CourseLevel,
+                        Option = _request.CourseOption,
+                        _request.PlannedStartDate,
+                        _request.PlannedEndDate,
+                    },
+                }
+            });
+        }
+
+
         [Then("there should only be the original revision in the database")]
         public void ThenThereShouldOnlyBeTheOriginalCommitmentRevisionInTheDatabase()
         {
@@ -246,6 +289,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             var problem = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
             problem.Detail.Should().StartWith(detail);
         }
+
+        [Then(@"a validation exception is thrown for the field: ""(.*)""")]
+        public async Task ThenAValidationExceptionIsThrownForTheField(string field)
+        {
+            var content = await _context.Api.Response.Content.ReadAsStringAsync();
+            var problem = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
+            problem.Errors.Should().ContainKey(field);
+        }
+
 
         [Then("the response is bad request")]
         public void ThenTheResponseIsOK()
@@ -296,5 +348,22 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     }
                 });
         }
+
+        [Then(@"send a Apprenticeship Registered Event")]
+        public void ThenSendAApprenticeshipRegisteredEvent()
+        {
+            var registration = _context.DbContext.Registrations.FirstOrDefault(x => x.CommitmentsApprenticeshipId == _commitmentsApprenticeshipId);
+
+            _context.Messages.PublishedMessages
+                .Where(x => x.Message is ApprenticeshipRegisteredEvent)
+                .Should().ContainEquivalentOf(new
+                {
+                    Message = new
+                    {
+                        RegistrationId = registration.RegistrationId,
+                    }
+                });
+        }
+
     }
 }
