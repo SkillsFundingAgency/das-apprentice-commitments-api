@@ -72,4 +72,3 @@ Scenario: Trying to update apprenticeship which doesn't have an email
 	When the update is posted
 	Then the response is bad request
 	And a validation exception is thrown for the field: "Email" 
-	

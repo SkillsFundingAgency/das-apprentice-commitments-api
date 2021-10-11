@@ -269,7 +269,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
-
         [Then("there should only be the original revision in the database")]
         public void ThenThereShouldOnlyBeTheOriginalCommitmentRevisionInTheDatabase()
         {
@@ -297,7 +296,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             var problem = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
             problem.Errors.Should().ContainKey(field);
         }
-
 
         [Then("the response is bad request")]
         public void ThenTheResponseIsOK()
@@ -364,6 +362,5 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     }
                 });
         }
-
     }
 }
