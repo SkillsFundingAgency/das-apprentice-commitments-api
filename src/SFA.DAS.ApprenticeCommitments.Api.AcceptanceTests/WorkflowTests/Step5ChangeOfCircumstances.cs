@@ -103,15 +103,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test, AutoData]
-        public async Task Does_not_trigger_ApprenticeshipRegisteredEvent(MailAddress existingEmail)
+        public async Task Triggers_ApprenticeshipRegisteredEvent(MailAddress existingEmail)
         {
             await CreateVerifiedApprenticeship(email: existingEmail);
-            var (_, coc) = await CreateRegistrationAndCoc();
+            var (approval, coc) = await CreateRegistrationAndCoc();
             coc.Email = existingEmail.ToString();
 
             await ChangeOfCircumstances(coc);
 
-            Messages.PublishedMessages.Should().BeEmpty();
+            Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipRegisteredEvent
+                {
+                    RegistrationId = approval.RegistrationId,
+                }
+            });
         }
     }
 

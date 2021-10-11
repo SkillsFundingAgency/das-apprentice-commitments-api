@@ -4,7 +4,6 @@ using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,9 +29,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 
         public async Task Handle(RegistrationUpdated notification, CancellationToken cancellationToken)
         {
-            var a = await apprentices.GetByEmail(notification.Registration.Email);
-            if (a.Any()) return;
-
             await Publish(notification.Registration, nameof(RegistrationUpdated));
         }
 
