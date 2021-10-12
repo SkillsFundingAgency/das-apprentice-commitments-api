@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using NServiceBus;
-using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System.Threading;
@@ -13,13 +12,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
         : INotificationHandler<RegistrationAdded>
         , INotificationHandler<RegistrationUpdated>
     {
-        private readonly IApprenticeContext apprentices;
         private readonly IMessageSession messageSession;
         private readonly ILogger<PublishApprenticeshipRegisteredEvent> logger;
 
-        public PublishApprenticeshipRegisteredEvent(IApprenticeContext apprentices, IMessageSession messageSession, ILogger<PublishApprenticeshipRegisteredEvent> logger)
+        public PublishApprenticeshipRegisteredEvent(IMessageSession messageSession, ILogger<PublishApprenticeshipRegisteredEvent> logger)
         {
-            this.apprentices = apprentices;
             this.messageSession = messageSession;
             this.logger = logger;
         }
