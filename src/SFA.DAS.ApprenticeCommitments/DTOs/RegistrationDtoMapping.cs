@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 Email = registration.Email.ToString(),
                 EmployerName = registration.Apprenticeship.EmployerName,
                 EmployerAccountLegalEntityId = registration.Apprenticeship.EmployerAccountLegalEntityId,
-                UserIdentityId = registration.UserIdentityId,
+                UserIdentityId = registration.ApprenticeId,
                 TrainingProviderId = registration.Apprenticeship.TrainingProviderId,
                 TrainingProviderName = registration.Apprenticeship.TrainingProviderName,
                 CourseName = registration.Apprenticeship.Course.Name,

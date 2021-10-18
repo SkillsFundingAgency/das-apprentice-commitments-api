@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,8 +55,15 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             }
 
             _logger.LogInformation("Updating registration for apprenticeship {apprenticeshipId}", apprenticeshipId);
-            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command), new PersonalInformation(command.FirstName, command.LastName, command.DateOfBirth));
+            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command), BuildPersonalDetails(command));
         }
+
+        private static PersonalInformation BuildPersonalDetails(ChangeApprenticeshipCommand command)
+            => new PersonalInformation(
+                command.FirstName,
+                command.LastName,
+                command.DateOfBirth,
+                new MailAddress(command.Email));
 
         private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeApprenticeshipCommand command)
         {

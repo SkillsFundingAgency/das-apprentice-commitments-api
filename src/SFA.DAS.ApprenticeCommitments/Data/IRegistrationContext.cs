@@ -25,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         internal Task<List<Registration>> RegistrationsNeedingSignUpReminders(DateTime cutOffDateTime)
             => Entities.Where(r =>
-                    r.FirstViewedOn == null && r.SignUpReminderSentOn == null && r.UserIdentityId == null &&
+                    r.FirstViewedOn == null && r.SignUpReminderSentOn == null && r.ApprenticeId == null &&
                     r.CreatedOn < cutOffDateTime)
                 .ToListAsync(CancellationToken.None);
 

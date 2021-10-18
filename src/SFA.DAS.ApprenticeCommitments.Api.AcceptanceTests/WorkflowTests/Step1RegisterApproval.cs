@@ -4,6 +4,7 @@ using FluentAssertions;
 using FluentValidation.TestHelper;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Threading.Tasks;
 
@@ -50,6 +51,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 create.Email,
                 HasViewedVerification = false,
                 HasCompletedVerification = false,
+            });
+        }
+
+        [Test]
+        public async Task Triggers_ApprenticeshipRegisteredEvent()
+        {
+            var approval = await CreateRegistration();
+
+            Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipRegisteredEvent
+                {
+                    RegistrationId = approval.RegistrationId,
+                }
             });
         }
     }

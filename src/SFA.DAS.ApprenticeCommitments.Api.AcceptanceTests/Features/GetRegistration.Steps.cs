@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public Task GivenThereIsARegistrationWithAFirstViewedOnAndHasTheAssignedToIt(DateTime? viewedOn, Guid? userIdentityId)
         {
             _registration.SetProperty(x => x.FirstViewedOn, viewedOn);
-            _registration.SetProperty(x => x.UserIdentityId, userIdentityId);
+            _registration.SetProperty(x => x.ApprenticeId, userIdentityId);
             _context.DbContext.Registrations.Add(_registration);
             return _context.DbContext.SaveChangesAsync();
         }
@@ -73,6 +73,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var response = JsonConvert.DeserializeObject<RegistrationResponse>(content);
             response.DateOfBirth.Should().Be(_registration.DateOfBirth);
             response.Email.Should().Be(_registration.Email.ToString());
+            response.FirstName.Should().Be(_registration.FirstName);
             response.RegistrationId.Should().Be(_registration.RegistrationId);
             response.HasViewedVerification.Should().Be(hasViewed);
             response.HasCompletedVerification.Should().Be(hasCompleted);

@@ -78,13 +78,26 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
-        public async Task Cannot_match_twice()
+        public async Task Second_match_for_same_apprentice_is_accepted()
         {
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
 
             var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
+
+            response.Should().Be2XXSuccessful();
+        }
+
+        [Test]
+        public async Task Cannot_match_a_different_apprentice_against_already_matched_registration()
+        {
+            var approval = await CreateRegistration();
+            var firstAccount = await CreateAccount(approval);
+            await VerifyRegistration(approval.RegistrationId, firstAccount.ApprenticeId);
+            var secondAccount = await CreateAccount();
+
+            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, secondAccount.ApprenticeId);
 
             response
                 .Should().Be400BadRequest()

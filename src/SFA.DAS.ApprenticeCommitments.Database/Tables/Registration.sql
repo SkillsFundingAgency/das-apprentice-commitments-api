@@ -23,7 +23,8 @@ CREATE TABLE [dbo].[Registration]
     [CourseDuration] INT NULL,
     [ApprenticeId] UNIQUEIDENTIFIER NULL , 
     [ApprenticeshipId] UNIQUEIDENTIFIER NULL, 
-    CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([RegistrationId])
+    CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([RegistrationId]),
+    CONSTRAINT [FK_Registration_Apprentice_ApprenticeId] FOREIGN KEY ([ApprenticeId]) REFERENCES [dbo].[Apprentice] ([Id]) ON DELETE CASCADE
 )
 GO
 

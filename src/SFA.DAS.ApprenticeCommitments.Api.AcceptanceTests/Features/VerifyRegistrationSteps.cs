@@ -92,6 +92,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 .Create();
         }
 
+        [Given("the request is for a different account")]
+        public void GivenTheRequestIsForADifferentAccount()
+        {
+            var apprentice = _f.Create<Apprentice>();
+            _context.DbContext.Apprentices.Add(apprentice);
+            _context.DbContext.SaveChanges();
+
+            _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
+                .With(p => p.ApprenticeId, apprentice.Id)
+                .With(p => p.RegistrationId, _registration.RegistrationId)
+                .Create();
+        }
+
         [Given(@"we have an existing already verified registration")]
         public void GivenWeHaveAnExistingAlreadyVerifiedRegistration()
         {
@@ -201,7 +214,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void ThenTheRegistrationHasBeenMarkedAsCompleted()
         {
             var registration = _context.DbContext.Registrations.FirstOrDefault(x => x.RegistrationId == _registration.RegistrationId);
-            registration.UserIdentityId.Should().Be(_command.ApprenticeId);
+            registration.ApprenticeId.Should().Be(_command.ApprenticeId);
         }
 
         [Then(@"the registration CreatedOn field is unchanged")]
@@ -255,11 +268,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenAnAlreadyVerifiedDomainErrorIsReturned()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var errors = JsonConvert.DeserializeObject<ProblemDetails>(content);
-            errors.Should().BeEquivalentTo(new
-            {
-                Detail = $"Registration {_registration.RegistrationId} is already verified",
-            });
+            content.Should().Contain($"Registration {_registration.RegistrationId} is already verified");
         }
 
         [Then("response contains the expected error messages")]
