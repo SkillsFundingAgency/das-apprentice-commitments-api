@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -33,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             if (apprenticeship == null)
             {
                 _logger.LogWarning("No confirmed apprenticeship {apprenticeshipId} found", apprenticeshipId);
-                await UpdateRegistration(command, apprenticeshipId);
+                await UpdateOrCreateRegistration(command, apprenticeshipId);
             }
             else
             {
@@ -44,18 +45,25 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             return Unit.Value;
         }
 
-        private async Task UpdateRegistration(ChangeApprenticeshipCommand command, long apprenticeshipId)
+        private async Task UpdateOrCreateRegistration(ChangeApprenticeshipCommand command, long apprenticeshipId)
         {
             var registration = await _registrations.FindByCommitmentsApprenticeshipId(apprenticeshipId);
 
             if (registration == null)
             {
-                _logger.LogError("A matching Registration record is expected but not found for commitments apprenticeship {apprenticeshipId}", apprenticeshipId);
-                throw new DomainException($"No registration record found for commitments apprenticeship id {apprenticeshipId}");
+                _logger.LogInformation("Adding registration for apprenticeship {apprenticeshipId} because it didn't exist", apprenticeshipId);
+                await _registrations.AddAsync(
+                    new Registration(Guid.NewGuid(), command.CommitmentsApprenticeshipId,
+                        command.CommitmentsApprovedOn,
+                        BuildPersonalDetails(command),
+                        BuildApprenticeshipDetails(command)));
             }
-
-            _logger.LogInformation("Updating registration for apprenticeship {apprenticeshipId}", apprenticeshipId);
-            registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn, BuildApprenticeshipDetails(command), BuildPersonalDetails(command));
+            else
+            {
+                _logger.LogInformation("Updating registration for apprenticeship {apprenticeshipId}", apprenticeshipId);
+                registration.RenewApprenticeship(command.CommitmentsApprenticeshipId, command.CommitmentsApprovedOn,
+                    BuildApprenticeshipDetails(command), BuildPersonalDetails(command));
+            }
         }
 
         private static PersonalInformation BuildPersonalDetails(ChangeApprenticeshipCommand command)
