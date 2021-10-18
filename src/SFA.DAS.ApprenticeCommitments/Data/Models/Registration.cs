@@ -66,6 +66,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             apprentice.AddApprenticeship(apprenticeship);
             ApprenticeId = apprentice.Id;
+            AddDomainEvent(new RegistrationMatched(this, apprentice));
         }
 
         private bool AlreadyCompletedByApprentice(Guid apprenticeId)
