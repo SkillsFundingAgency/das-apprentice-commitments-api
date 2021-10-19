@@ -1,7 +1,9 @@
 ﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
+using NServiceBus.Testing;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
@@ -25,6 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         private protected TestContext context = null!;
         private protected HttpClient client = null!;
         protected ApprenticeCommitmentsDbContext Database { get; private set; } = null!;
+        protected TestableMessageSession Messages => context.Messages;
 
         private protected TimeSpan TimeBetweenActions = TimeSpan.FromDays(2);
 
@@ -33,17 +36,32 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             fixture = new Fixture();
             fixture.Customizations.Add(new EmailPropertyCustomisation());
+            fixture.Customize<ChangeApprenticeshipCommand>(c => c
+                .Without(p => p.CommitmentsContinuedApprenticeshipId));
 
+            Database = Bindings.Database.CreateDbContext();
+            Reset();
+        }
+
+        public void Reset()
+        {
             var factory = Bindings.Api.CreateApiFactory();
             context = new TestContext();
             _ = new Bindings.Api(context);
             client = factory.CreateClient();
-            Database = Bindings.Database.CreateDbContext();
         }
 
-        public async Task<CreateRegistrationCommand> CreateRegistration()
+        public async Task<CreateRegistrationCommand> CreateRegistration(
+            MailAddress? email = null, string? lastName = null, DateTime? dateOfBirth = null)
         {
+            email ??= fixture.Create<MailAddress>();
+            lastName ??= fixture.Create<string>();
+            dateOfBirth ??= fixture.Create<DateTime>();
+
             var create = fixture.Build<CreateRegistrationCommand>()
+                .With(x => x.Email, email.ToString())
+                .With(x => x.LastName, lastName)
+                .With(x => x.DateOfBirth, dateOfBirth)
                 .Create();
 
             var response = await PostCreateRegistrationCommand(create);
@@ -111,7 +129,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship()
         {
-            var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
             var apprenticeship = await GetApprenticeships(account.ApprenticeId);
@@ -154,5 +171,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             response.Should().Be200Ok();
             return apprenticeships.Apprenticeships;
         }
+
+        protected async Task ChangeOfCircumstances(ChangeApprenticeshipCommand command)
+        {
+            var response = await PutChangeOfCircumstances(command);
+            response.Should().Be2XXSuccessful();
+        }
+
+        protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeApprenticeshipCommand command)
+            => client.PutValueAsync("registrations", command);
     }
 }

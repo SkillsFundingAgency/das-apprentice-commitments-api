@@ -3,6 +3,7 @@ using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +26,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
             List<Apprenticeship> apprenticeships = await _apprenticeshipRepository
                 .FindAllForApprentice(request.ApprenticeId);
 
-            var dtos = apprenticeships.ConvertAll(x => x.MapToApprenticeshipDto());
+            var dtos = apprenticeships
+                .ConvertAll(x => x.MapToApprenticeshipDto())
+                .OrderByDescending(x => x.ApprovedOn)
+                .ToList();
 
             return new ApprenticeshipsResponse(dtos);
         }

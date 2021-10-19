@@ -14,6 +14,7 @@ Scenario: A registration account is created
 	And an apprenticeship record is created
 	And the registration has been marked as completed
 	And the registration CreatedOn field is unchanged
+	And the apprenticeship email address confirmed event is published
 	And do not send a Change of Circumstance email to the user
 
 Scenario: A registration is submitted with a different email
@@ -37,7 +38,7 @@ Scenario: A registration is submitted with the wrong Date of birth
 
 Scenario: A registration is re-submitted
 	Given we have an existing already verified registration
-	And the request is for the account
+	And the request is for a different account
 	When we verify that registration
 	Then a bad request is returned
 	And an 'already verified' domain error is returned
