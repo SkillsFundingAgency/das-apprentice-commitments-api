@@ -227,6 +227,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             });
         }
 
+        [Then(@"the apprenticeship email address confirmed event is published")]
+        public void ThenTheApprenticeshipEmailAddressConfirmedEventIsPublished()
+        {
+            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipEmailAddressConfirmedEvent
+                {
+                    ApprenticeId = _context.DbContext.Apprentices.Single().Id,
+                    CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
+                }
+            });
+        }
+
         [Then(@"a bad request is returned")]
         public void ThenABadRequestIsReturned()
         {

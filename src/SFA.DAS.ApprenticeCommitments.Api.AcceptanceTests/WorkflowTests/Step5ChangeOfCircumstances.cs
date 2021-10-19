@@ -13,7 +13,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     internal class ChangeOfPersonalDetailsFixture : ApiFixture
     {
-
         public async Task<(CreateRegistrationCommand approval, ChangeApprenticeshipCommand create)> CreateRegistrationAndCoc()
         {
             var approval = await CreateRegistration();
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             coc.CommitmentsApprovedOn = approval.CommitmentsApprovedOn;
             coc.CourseDuration = approval.CourseDuration;
             coc.CourseLevel = approval.CourseLevel;
-            coc.CourseName   = approval.CourseName;
+            coc.CourseName = approval.CourseName;
             coc.CourseOption = approval.CourseOption;
             coc.EmployerAccountLegalEntityId = approval.EmployerAccountLegalEntityId;
             coc.EmployerName = approval.EmployerName;
@@ -104,15 +103,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test, AutoData]
-        public async Task Does_not_trigger_ApprenticeshipRegisteredEvent(MailAddress existingEmail)
+        public async Task Triggers_ApprenticeshipRegisteredEvent(MailAddress existingEmail)
         {
             await CreateVerifiedApprenticeship(email: existingEmail);
-            var (_, coc) = await CreateRegistrationAndCoc();
+            var (approval, coc) = await CreateRegistrationAndCoc();
             coc.Email = existingEmail.ToString();
 
             await ChangeOfCircumstances(coc);
 
-            Messages.PublishedMessages.Should().BeEmpty();
+            Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            {
+                Message = new ApprenticeshipRegisteredEvent
+                {
+                    RegistrationId = approval.RegistrationId,
+                }
+            });
         }
     }
 
@@ -133,7 +138,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Does_not_update_apprentice()
         {
             var (originalApprentice, command) = await CreateVerifiedApprenticeshipAndCoc();
-            
+
             await ChangeOfCircumstances(command);
 
             var updatedApprentice = await GetApprentice(originalApprentice.Id);

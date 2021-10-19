@@ -12,10 +12,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 {
     public interface IApprenticeshipContext : IEntityContext<Apprenticeship>
     {
-        internal Task<Apprenticeship> FindByCommitmentsApprenticeshipId(long apprenticeshipId)
+        internal Task<Apprenticeship?> FindByCommitmentsApprenticeshipId(long apprenticeshipId)
             => Entities.Include(x => x.Revisions)
                 .FirstOrDefaultAsync(x => x.Revisions.Any(y =>
-                    y.CommitmentsApprenticeshipId == apprenticeshipId));
+                    y.CommitmentsApprenticeshipId == apprenticeshipId))!;
 
         internal async Task<List<Apprenticeship>> FindAllForApprentice(Guid apprenticeId)
             => await Entities.Include(x => x.Revisions).Where(a => a.ApprenticeId == apprenticeId).ToListAsync();

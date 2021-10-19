@@ -40,8 +40,9 @@ Scenario: No apprenticeship or registation details found
 	Given we do not have an existing apprenticeship, confirmed or unconfirmed
 	And we have an update apprenticeship request
 	When the update is posted
-	Then the response is bad request
-	And a domain exception is thrown: "No registration record found for commitments apprenticeship id"
+	Then the result should return OK
+	And a new registration record should exist with the correct information
+	And send a Apprenticeship Registered Event
 
 Scenario: No apprenticeship exist, but registation details are marked as completed
 	Given we do not have an existing apprenticeship
@@ -64,3 +65,10 @@ Scenario: Notify user of change
 	And we have an update apprenticeship request
 	When the update is posted
 	Then send a Change of Circumstance email to the user
+
+Scenario: Trying to update apprenticeship which doesn't have an email
+	Given we do not have an existing apprenticeship, confirmed or unconfirmed
+	And we have an update apprenticeship request without an email
+	When the update is posted
+	Then the response is bad request
+	And a validation exception is thrown for the field: "Email" 
