@@ -142,7 +142,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             firstChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ProviderDetailsChanged);
             firstChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged);
 
-            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(12));
+            await ChangeApprenticeship(new ChangeBuilder(apprenticeship).ChangedOn(DateTimeOffset.Now.AddHours(12)));
 
             var secondChange = await GetApprenticeship(apprenticeship);
             secondChange.ChangeOfCircumstanceNotifications.Should().NotHaveFlag(ChangeOfCircumstanceNotifications.EmployerDetailsChanged);
