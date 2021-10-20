@@ -127,7 +127,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
         }
 
-        protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship()
+        protected async Task<ApprenticeshipDto> CreateVerifiedApprenticeship(MailAddress? email = null)
+        {
+            var approval = await CreateRegistration(email);
+            return await VerifyRegistration(approval);
+        }
+
+        protected async Task<ApprenticeshipDto> VerifyRegistration(CreateRegistrationCommand approval)
         {
             var account = await CreateAccount(approval);
             await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
