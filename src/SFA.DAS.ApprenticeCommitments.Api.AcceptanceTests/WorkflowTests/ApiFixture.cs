@@ -53,12 +53,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             client = factory.CreateClient();
         }
 
-        public async Task<CreateRegistrationCommand> CreateRegistration(MailAddress? email = null)
+        public async Task<CreateRegistrationCommand> CreateRegistration(
+            MailAddress? email = null, string? lastName = null, DateTime? dateOfBirth = null)
         {
             email ??= fixture.Create<MailAddress>();
+            lastName ??= fixture.Create<string>();
+            dateOfBirth ??= fixture.Create<DateTime>();
 
             var create = fixture.Build<CreateRegistrationCommand>()
                 .With(x => x.Email, email.ToString())
+                .With(x => x.LastName, lastName)
+                .With(x => x.DateOfBirth, dateOfBirth)
                 .Create();
 
             var response = await PostCreateRegistrationCommand(create);
