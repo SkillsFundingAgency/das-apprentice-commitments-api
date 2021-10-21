@@ -2,7 +2,6 @@
 using AutoFixture.Dsl;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
-using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
