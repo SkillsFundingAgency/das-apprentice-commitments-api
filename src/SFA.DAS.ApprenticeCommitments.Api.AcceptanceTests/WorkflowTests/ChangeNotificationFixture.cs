@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class ChangeNotificationFixture : ApiFixture
     {
-        protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+        protected new async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
         {
             var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipDto>(
                 $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.RevisionId}");
