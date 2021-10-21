@@ -43,6 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
+        public DateTime? LastViewed { get; set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
