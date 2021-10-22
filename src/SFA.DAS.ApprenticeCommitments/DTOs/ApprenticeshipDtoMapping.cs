@@ -19,7 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 Id = apprenticeship.Id,
                 ApprenticeId = apprenticeship.ApprenticeId,
                 RevisionId = latest.Id,
-                LastViewed = apprenticeship.LastViewed,
+                LastViewed = latest.LastViewed,
                 CommitmentsApprenticeshipId = latest.CommitmentsApprenticeshipId,
                 EmployerName = latest.Details.EmployerName,
                 EmployerAccountLegalEntityId = latest.Details.EmployerAccountLegalEntityId,
@@ -39,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ConfirmedOn = latest.ConfirmedOn,
                 ConfirmBefore = latest.ConfirmBefore,
                 ApprovedOn = latest.CommitmentsApprovedOn,
-                DisplayChangeNotification = apprenticeship.DisplayChangeNotification,
+                ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
             };
         }
     }

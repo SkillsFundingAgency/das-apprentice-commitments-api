@@ -17,7 +17,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
             {
                 ApprenticeId = apprenticeship.ApprenticeId,
                 ApprenticeshipId = apprenticeship.Id,
-                LastViewed = apprenticeship.LastViewed,
                 Revisions = apprenticeship.Revisions.Select(MapToApprenticeshipRevisionDto).ToList(),
             };
         }
@@ -46,6 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 RolesAndResponsibilitiesCorrect = revision.RolesAndResponsibilitiesCorrect,
                 ConfirmBefore = revision.ConfirmBefore,
                 ConfirmedOn = revision.ConfirmedOn,
+                LastViewed = revision.LastViewed
             };
         }
     }

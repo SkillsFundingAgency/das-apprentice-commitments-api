@@ -143,10 +143,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .Should().BeAs(new
                 {
                     _revision.ApprenticeshipId,
-                    apprenticeship.LastViewed,
                     Revisions = apprenticeship.Revisions.Select(x => new
                     {
                         RevisionId = x.Id,
+                        x.LastViewed,
                         x.Details.EmployerName,
                         x.Details.EmployerAccountLegalEntityId,
                         x.Details.TrainingProviderId,

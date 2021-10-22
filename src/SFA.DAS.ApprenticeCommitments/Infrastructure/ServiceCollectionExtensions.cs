@@ -43,6 +43,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             services.AddScoped<IRegistrationContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<IApprenticeshipContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
+            services.AddScoped<IRevisionContext>(s => s.GetRequiredService<ApprenticeCommitmentsDbContext>());
             services.AddScoped<EventDispatcher>();
 
             return services;

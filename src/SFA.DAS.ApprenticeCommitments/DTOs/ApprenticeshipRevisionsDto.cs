@@ -7,7 +7,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
     {
         public Guid ApprenticeId { get; set; }
         public long ApprenticeshipId { get; set; }
-        public DateTime LastViewed { get; set; }
 
         public List<ApprenticeshipRevisionDto> Revisions { get; set; }
             = new List<ApprenticeshipRevisionDto>();
