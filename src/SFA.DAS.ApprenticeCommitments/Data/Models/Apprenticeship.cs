@@ -15,9 +15,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
         }
 
-        public Apprenticeship(Revision apprenticeship)
+        public Apprenticeship(Revision revision)
         {
-            AddRevision(apprenticeship);
+            AddRevision(revision);
         }
 
         public long Id { get; private set; }
@@ -68,8 +68,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        private void AddRevision(Revision apprenticeship)
-            => _revisions.Add(apprenticeship);
+        private void AddRevision(Revision revision)
+        {
+            _revisions.Add(revision);
+            AddDomainEvent(new RevisionAdded(revision));
+        }
 
         private Revision GetRevision(long revisionId)
         {
