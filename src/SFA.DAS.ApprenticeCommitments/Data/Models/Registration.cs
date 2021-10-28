@@ -32,8 +32,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             DateOfBirth = pii.DateOfBirth;
             Email = pii.Email;
             Apprenticeship = apprenticeship;
-
-            AddDomainEvent(new RegistrationAdded(this));
         }
 
         public Guid RegistrationId { get; private set; }
