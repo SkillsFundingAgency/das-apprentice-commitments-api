@@ -7,7 +7,6 @@ CREATE TABLE [dbo].[Registration]
     [LastName] NVARCHAR(150) NOT NULL,
     [DateOfBirth] DATETIME2 NOT NULL,
     [Email] NVARCHAR(150) NOT NULL, 
-    [UserIdentityId] UNIQUEIDENTIFIER NULL,
     [CreatedOn] DATETIME2 NOT NULL DEFAULT current_timestamp,
     [EmployerAccountLegalEntityId] BIGINT NOT NULL, 
     [EmployerName] NVARCHAR(100) NOT NULL , 
