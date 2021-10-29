@@ -14,9 +14,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAcc
         public CreateApprenticeAccountCommandHandler(IApprenticeContext apprentices)
             => _apprentices = apprentices;
 
-        public Task<Unit> Handle(CreateApprenticeAccountCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateApprenticeAccountCommand request, CancellationToken cancellationToken)
         {
-            _apprentices.Add(new Apprentice(
+            await _apprentices.AddAsync(new Apprentice(
                 request.ApprenticeId,
                 request.FirstName,
                 request.LastName,
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAcc
                 request.DateOfBirth
                 ));
 
-            return Unit.Task;
+            return Unit.Value;
         }
     }
 }

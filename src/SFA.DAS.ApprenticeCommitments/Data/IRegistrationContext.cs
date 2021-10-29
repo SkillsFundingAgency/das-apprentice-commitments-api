@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
@@ -31,5 +33,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public Task<bool> RegistrationsExist()
             => Entities.AnyAsync();
+
+        ValueTask<EntityEntry<Registration>> IEntityContext<Registration>.AddAsync(Registration entity, CancellationToken cancellationToken)
+        {
+            entity.AddDomainEvent(new RegistrationAdded(entity));
+            return Entities.AddAsync(entity, cancellationToken);
+        }
     }
 }
