@@ -19,6 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 LastName = apprentice.LastName,
                 Email = apprentice.Email.ToString(),
                 DateOfBirth = apprentice.DateOfBirth,
+                TermsOfUseAccepted = apprentice.TermsOfUseAccepted
             };
         }
     }
