@@ -2,7 +2,8 @@
 SELECT Count(*) FROM Apprentice A 
 LEFT JOIN Apprenticeship AA ON AA.ApprenticeId = A.Id
 LEFT JOIN Revision R ON R.ApprenticeshipId = AA.Id
-WHERE R.LastViewed IS NULL AND A.Id in (
+WHERE R.LastViewed IS NULL 
+AND A.Id in (
 	SELECT
 		AA.ApprenticeId
 	FROM (SELECT IR.ApprenticeshipId, MIN(IR.CommitmentsApprenticeshipId) AS CommitmentsApprenticeshipId FROM Revision IR /* WHERE LastViewed IS NULL */ GROUP BY IR.ApprenticeshipId) R
@@ -12,7 +13,9 @@ WHERE R.LastViewed IS NULL AND A.Id in (
 		R.CommitmentsApprenticeshipId, 
 		AA.ApprenticeId
 	HAVING Count(*) > 1
-)
+) 
+-- This excludes CoC which have not been viewed yet, but are stilled linked to an apprenticeship which has been viewed
+AND R.ApprenticeshipId NOT IN (SELECT R2.ApprenticeshipID FROM Revision R2 GROUP BY ApprenticeshipId HAVING MAX(R2.LastViewed) IS NOT NULL)
 
 
 
@@ -36,6 +39,9 @@ DELETE FROM Revision WHERE Id IN
 			AA.ApprenticeId
 		HAVING Count(*) > 1
 	)
+	-- This excludes CoC which have not been viewed yet, but are stilled linked to an apprenticeship which has been viewed
+	AND R.ApprenticeshipId NOT IN (SELECT R2.ApprenticeshipID FROM Revision R2 GROUP BY ApprenticeshipId HAVING MAX(R2.LastViewed) IS NOT NULL)
+
 )
 
 -- delete the apprenticeships which no longer have a revisions
@@ -45,11 +51,13 @@ WHERE Id IN (SELECT AA.Id FROM Apprenticeship AA LEFT JOIN Revision R ON R.Appre
 
 -- These 2 delete actions above should match the previous count
 
--- This should now be 0 (same as first query
+
+-- This should now be 0 (same as first query )
 SELECT Count(*) FROM Apprentice A 
 LEFT JOIN Apprenticeship AA ON AA.ApprenticeId = A.Id
 LEFT JOIN Revision R ON R.ApprenticeshipId = AA.Id
-WHERE R.LastViewed IS NULL AND A.Id in (
+WHERE R.LastViewed IS NULL 
+AND A.Id in (
 	SELECT
 		AA.ApprenticeId
 	FROM (SELECT IR.ApprenticeshipId, MIN(IR.CommitmentsApprenticeshipId) AS CommitmentsApprenticeshipId FROM Revision IR /* WHERE LastViewed IS NULL */ GROUP BY IR.ApprenticeshipId) R
@@ -59,8 +67,9 @@ WHERE R.LastViewed IS NULL AND A.Id in (
 		R.CommitmentsApprenticeshipId, 
 		AA.ApprenticeId
 	HAVING Count(*) > 1
-)
-
+) 
+-- This excludes CoC which have not been viewed yet, but are stilled linked to an apprenticeship which has been viewed
+AND R.ApprenticeshipId NOT IN (SELECT R2.ApprenticeshipID FROM Revision R2 GROUP BY ApprenticeshipId HAVING MAX(R2.LastViewed) IS NOT NULL)
 
 
 ROLLBACK
