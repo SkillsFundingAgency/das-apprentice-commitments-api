@@ -12,5 +12,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public Guid UserIdentityId { get; set; }
         public string Email { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public bool TermsOfUseAccepted { get; set; }
     }
 }

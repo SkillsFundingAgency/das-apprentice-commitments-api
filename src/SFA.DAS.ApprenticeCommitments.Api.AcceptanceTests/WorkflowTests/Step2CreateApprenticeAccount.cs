@@ -110,5 +110,30 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 Email = new MailAddress(account.Email),
             });
         }
+
+        [Test]
+        public async Task Update_apprentice_accept_terms_of_use()
+        {
+            var account = await CreateAccount();
+
+            var response = await SendAcceptTermsOfUseRequest(account.ApprenticeId);
+            response.Should().Be2XXSuccessful();
+
+            Database.Apprentices.Should().ContainEquivalentOf(new
+            {
+                Id = account.ApprenticeId,
+                TermsOfUseAccepted = true,
+            });
+        }
+
+        [Test]
+        public async Task Update_apprentice_decline_terms_of_use()
+        {
+            var account = await CreateAccount();
+
+            var response = await SendAcceptTermsOfUseRequest(account.ApprenticeId, accept: false);
+            
+            response.Should().Be500InternalServerError();
+        }
     }
 }

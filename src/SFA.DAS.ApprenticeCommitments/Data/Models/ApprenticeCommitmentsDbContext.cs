@@ -61,6 +61,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     });
                 a.HasMany(e => e.Apprenticeships).WithOne();
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+                a.Ignore(e => e.TermsOfUseAccepted)
+                    .Property("_termsOfUseAcceptedOn")
+                    .HasColumnName("TermsOfUseAcceptedOn");
             });
 
             modelBuilder.Entity<Revision>(a =>

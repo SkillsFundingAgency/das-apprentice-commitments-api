@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Exceptions;
+﻿using FluentValidation;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
@@ -47,8 +48,20 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
+        private DateTime? _termsOfUseAcceptedOn;
+
+        public bool TermsOfUseAccepted
+        {
+            get => _termsOfUseAcceptedOn != null;
+            set
+            {
+                if (!value) throw new ValidationException("Cannot decline the Terms of Use");
+                _termsOfUseAcceptedOn = DateTime.Now;
+            }
+        }
+
         public ICollection<Apprenticeship> Apprenticeships { get; private set; }
-            = new List<Apprenticeship>();
+                    = new List<Apprenticeship>();
 
         public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
 

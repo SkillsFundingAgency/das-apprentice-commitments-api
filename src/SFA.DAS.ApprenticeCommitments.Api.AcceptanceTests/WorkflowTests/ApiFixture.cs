@@ -82,7 +82,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return registration;
         }
 
-        protected async Task<CreateApprenticeAccountCommand> CreateAccount(CreateRegistrationCommand? approval = null,
+        protected async Task<CreateApprenticeAccountCommand> CreateAccount(CreateRegistrationCommand? approval = default,
             Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
         {
             approval ??= fixture.Create<CreateRegistrationCommand>();
@@ -116,6 +116,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .Replace(x => x.LastName, lastName)
                 .Replace(x => x.DateOfBirth, dateOfBirth);
 
+            return await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
+        }
+
+        protected async Task<HttpResponseMessage> SendAcceptTermsOfUseRequest(Guid apprenticeId, bool accept = true)
+        {
+            var patch = new JsonPatchDocument<ApprenticeDto>()
+                .Replace(x => x.TermsOfUseAccepted, accept);
+            
             return await client.PatchValueAsync($"apprentices/{apprenticeId}", patch);
         }
 
