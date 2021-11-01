@@ -1,4 +1,4 @@
-﻿-- This identifies 100 accounts which are assigned to duplicate signins (should contain 100)
+﻿-- This identifies 100 accounts which are assigned to duplicate signins (should contain 200 records)
 SELECT A.Id, A.CreatedOn, R.CommitmentsApprenticeshipId, R.ConfirmedOn, CASE WHEN RE.ApprenticeId = RE.UserIdentityId THEN 1 ELSE 0 END AS Matches,  RE.*
 FROM Apprentice A
 LEFT JOIN Registration RE ON RE.UserIdentityId = A.Id
