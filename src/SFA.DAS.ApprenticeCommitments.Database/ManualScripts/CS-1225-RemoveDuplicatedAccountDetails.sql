@@ -1,4 +1,4 @@
-﻿-- This identifies 100 accounts which are assigned to duplicate signins
+﻿-- This identifies 100 accounts which are assigned to duplicate signins (should contain 100)
 SELECT A.Id, A.CreatedOn, R.CommitmentsApprenticeshipId, R.ConfirmedOn, CASE WHEN RE.ApprenticeId = RE.UserIdentityId THEN 1 ELSE 0 END AS Matches,  RE.*
 FROM Apprentice A
 LEFT JOIN Registration RE ON RE.UserIdentityId = A.Id
@@ -29,7 +29,7 @@ ORDER BY R.CommitmentsApprenticeshipId, A.CreatedOn
 
 -- This assigns the latest apprenticeId to registration table (inner query as above)
 SELECT 
-'UPDATE Registation SET ApprenticeID = ''' + CONCAT(CurrentApprenticeId, '''') + ' WHERE RegistrationId = ''' + CONCAT(RegistrationId, '''') + CHAR(13)+CHAR(10) 
+'UPDATE Regristation SET ApprenticeID = ''' + CONCAT(CurrentApprenticeId, '''') + ' WHERE RegistrationId = ''' + CONCAT(RegistrationId, '''') + CHAR(13)+CHAR(10) 
 FROM 
 (
 	SELECT A1.Id AS OldApprenticeId, RE1.RegistrationId, A2.Id AS CurrentApprenticeId, RE2.RegistrationId AS MissingRegistrationId
@@ -69,7 +69,7 @@ FROM
 
 -- This deletes the old apprenticeship details (inner query as above)
 SELECT 
-'DELETE Revision WHERE Id IN (SELECT R.RevisionId FROM Apprenticeship AA JOIN Revision R ON R.ApprenticeshipID = AA.Id WHERE AA.ApprenticeId = ''' + CONCAT(OldApprenticeId, '''') + ')' + CHAR(13)+CHAR(10) +
+'DELETE Revision WHERE Id IN (SELECT R.Id FROM Apprenticeship AA JOIN Revision R ON R.ApprenticeshipID = AA.Id WHERE AA.ApprenticeId = ''' + CONCAT(OldApprenticeId, '''') + ')' + CHAR(13)+CHAR(10) +
 'DELETE Apprenticeship WHERE ApprenticeId = ''' + CONCAT(OldApprenticeId, '''') + CHAR(13)+CHAR(10)
 FROM 
 (
