@@ -1,4 +1,31 @@
-﻿-- This is the only script which will be needed to run
+﻿-- This identifies 100 accounts which are assigned to duplicate signins (should contain 200 records)
+SELECT A.Id, A.CreatedOn, R.CommitmentsApprenticeshipId, R.ConfirmedOn, CASE WHEN RE.ApprenticeId = RE.UserIdentityId THEN 1 ELSE 0 END AS Matches,  RE.*
+FROM Apprentice A
+LEFT JOIN Registration RE ON RE.UserIdentityId = A.Id
+JOIN Apprenticeship AA ON AA.ApprenticeId = A.Id
+JOIN Revision R ON R.ApprenticeshipId = AA.ID
+WHERE R.CommitmentsApprenticeshipId IN 
+(
+	SELECT O.CommitmentsApprenticeshipId FROM 
+	(
+	SELECT
+		AA.ApprenticeId,
+		R.CommitmentsApprenticeshipId,
+		Count(*) AS ACount
+	FROM (SELECT IR.ApprenticeshipId, MIN(IR.CommitmentsApprenticeshipId) AS CommitmentsApprenticeshipId FROM Revision IR GROUP BY IR.ApprenticeshipId) R
+			JOIN Apprenticeship AA ON R.ApprenticeshipId = AA.Id
+			JOIN Apprentice A ON A.Id = AA.ApprenticeId
+		GROUP BY 
+		R.CommitmentsApprenticeshipId, 
+		AA.ApprenticeId
+	) O 
+	GROUP BY O.CommitmentsApprenticeshipId
+	HAVING COUNT(*) > 1
+)
+AND R.CommitmentsApprenticeshipId NOT IN (1386238, 1278843, 1349637, 1349637)
+ORDER BY R.CommitmentsApprenticeshipId, A.CreatedOn 
+
+-- This is the only script which will be needed to run
 
 BEGIN TRANSACTION
 
