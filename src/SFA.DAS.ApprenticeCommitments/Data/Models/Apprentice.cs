@@ -3,10 +3,11 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
+using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Apprentice
+    public class Apprentice : Entity
     {
         private Apprentice()
         {
@@ -70,6 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (newEmail.Address == Email.Address) return;
             Email = newEmail;
             PreviousEmailAddresses.Add(new ApprenticeEmailAddressHistory(Email));
+            AddDomainEvent(new ApprenticeEmailAddressChanged(this));
         }
     }
 

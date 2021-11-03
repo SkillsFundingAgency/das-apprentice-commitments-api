@@ -1,10 +1,10 @@
-﻿using MediatR;
-using SFA.DAS.ApprenticeCommitments.Data;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
+using SFA.DAS.ApprenticeCommitments.Data;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeEmailAddressCommand
 {
     public class ChangeEmailAddressCommandHandler : IRequestHandler<ChangeEmailAddressCommand>
     {

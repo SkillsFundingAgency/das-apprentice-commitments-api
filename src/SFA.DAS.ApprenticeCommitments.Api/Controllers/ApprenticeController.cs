@@ -10,6 +10,7 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeEmailAddressCommand;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {

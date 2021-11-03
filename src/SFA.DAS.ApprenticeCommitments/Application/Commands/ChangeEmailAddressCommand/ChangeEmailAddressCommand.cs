@@ -1,9 +1,9 @@
-﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
-using System;
+﻿using System;
+using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 
 #nullable disable
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeEmailAddressCommand
 {
     public class ChangeEmailAddressCommand : IUnitOfWorkCommand
     {
