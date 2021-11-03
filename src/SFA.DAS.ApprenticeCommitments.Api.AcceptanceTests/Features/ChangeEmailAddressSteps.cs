@@ -1,14 +1,15 @@
-﻿using AutoFixture;
+﻿using System.Linq;
+using System.Net.Mail;
+using System.Threading.Tasks;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using System.Linq;
-using System.Net.Mail;
-using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using TechTalk.SpecFlow;
 
-namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
+namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 {
     [Binding]
     [Scope(Feature = "ChangeEmailAddress")]
@@ -17,6 +18,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
+        private Revision _revisionForFirstApprenticeship;
+        private Revision _revisionForSecondApprenticeship;
         private ChangeEmailAddressRequest _command;
 
         public ChangeEmailAddressSteps(TestContext context)
@@ -30,6 +33,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _apprentice = _fixture.Build<Apprentice>()
                 .Without(a => a.TermsOfUseAccepted)
                 .Create();
+
+            _context.DbContext.Apprentices.Add(_apprentice);
+            _context.DbContext.SaveChanges();
+        }
+
+        [Given(@"we have an existing apprentice with multiple apprenticeships")]
+        public void GivenWeHaveAnExistingApprenticeWithMultipleApprenticeships()
+        {
+            _apprentice = _fixture.Create<Apprentice>();
+
+            _revisionForFirstApprenticeship = _fixture.Create<Revision>();
+            _apprentice.AddApprenticeship(_revisionForFirstApprenticeship);
+
+            _revisionForSecondApprenticeship = _fixture.Create<Revision>();
+            _apprentice.AddApprenticeship(_revisionForSecondApprenticeship);
 
             _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
@@ -91,6 +109,32 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             {
                 EmailAddress = new MailAddress(_command.Email),
             });
+        }
+
+        [Then(@"an ApprenticeEmailAddressedChangedEvent is published for each apprenticeship")]
+        public void ThenAnApprenticeEmailAddressedChangedEventIsPublishedForEachApprenticeship()
+        {
+           var messages =  _context.Messages.PublishedMessages
+                .Where(x=>x.Message is ApprenticeshipEmailAddressChangedEvent);
+
+           messages.Should().ContainEquivalentOf(new
+           {
+               Message = new
+               {
+                   ApprenticeId = _apprentice.Id,
+                   _revisionForFirstApprenticeship.CommitmentsApprenticeshipId
+               }
+           });
+
+           messages.Should().ContainEquivalentOf(new
+           {
+               Message = new
+               {
+                   ApprenticeId = _apprentice.Id,
+                   _revisionForSecondApprenticeship.CommitmentsApprenticeshipId
+               }
+           });
+
         }
     }
 }
