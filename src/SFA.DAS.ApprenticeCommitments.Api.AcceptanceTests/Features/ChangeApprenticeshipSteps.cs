@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
-        private ChangeApprenticeshipCommand _request = null!;
+        private ChangeRegistrationCommand _request = null!;
         private Revision _revision;
         private long _newApprenticeshipId;
         private long _commitmentsApprenticeshipId;
@@ -82,7 +82,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void GivenWeHaveAnUpdateApprenticeshipRequest()
         {
             var start = _fixture.Create<DateTime>();
-            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+            _request = _fixture.Build<ChangeRegistrationCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
@@ -95,7 +95,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void GivenWeHaveAnUpdateApprenticeshipRequestWithoutAnEmail()
         {
             var start = _fixture.Create<DateTime>();
-            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+            _request = _fixture.Build<ChangeRegistrationCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
@@ -108,7 +108,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an update apprenticeship request with no material change")]
         public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest()
         {
-            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+            _request = _fixture.Build<ChangeRegistrationCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.EmployerAccountLegalEntityId, _revision.Details.EmployerAccountLegalEntityId)
@@ -127,7 +127,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void GivenWeHaveANewApprenticeshipRequest()
         {
             var start = _fixture.Create<DateTime>();
-            _request = _fixture.Build<ChangeApprenticeshipCommand>()
+            _request = _fixture.Build<ChangeRegistrationCommand>()
                 .With(x => x.CommitmentsContinuedApprenticeshipId, _commitmentsApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, _newApprenticeshipId)
                 .With(x => x.PlannedStartDate, start)

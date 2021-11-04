@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Api.Types;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
@@ -46,7 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             => await _mediator.Send(command);
 
         [HttpPut("registrations")]
-        public async Task ChangeOfCircumstances([FromBody] ChangeApprenticeshipCommand request)
+        public async Task ChangeOfCircumstances([FromBody] ChangeRegistrationCommand request)
             => await _mediator.Send(request);
 
 

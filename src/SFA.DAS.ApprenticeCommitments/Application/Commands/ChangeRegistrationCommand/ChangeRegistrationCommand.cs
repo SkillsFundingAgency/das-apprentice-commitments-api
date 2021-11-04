@@ -1,9 +1,9 @@
 ﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand
 {
-    public class ChangeApprenticeshipCommand : IUnitOfWorkCommand
+    public class ChangeRegistrationCommand : IUnitOfWorkCommand
     {
         public long? CommitmentsContinuedApprenticeshipId { get; set; }
         public long CommitmentsApprenticeshipId { get; set; }

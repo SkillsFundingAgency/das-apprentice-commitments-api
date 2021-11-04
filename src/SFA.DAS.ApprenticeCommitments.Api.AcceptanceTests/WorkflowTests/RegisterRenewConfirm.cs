@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 new ConfirmEmployerRequest { EmployerCorrect = true });
             r4.Should().Be2XXSuccessful();
 
-            var change = fixture.Build<ChangeApprenticeshipCommand>()
+            var change = fixture.Build<ChangeRegistrationCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, create.CommitmentsApprenticeshipId)
                 .With(p => p.CommitmentsApprovedOn, (int days) => create.CommitmentsApprovedOn.AddDays(days))
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var apprenticeshipId = apprenticeships[0].Id;
             var csId = apprenticeships[0].RevisionId;
 
-            var change = fixture.Build<ChangeApprenticeshipCommand>()
+            var change = fixture.Build<ChangeRegistrationCommand>()
                 .With(x => x.CommitmentsApprenticeshipId, create.CommitmentsApprenticeshipId)
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(p => p.CommitmentsApprovedOn, (int days) => create.CommitmentsApprovedOn.AddDays(days))
