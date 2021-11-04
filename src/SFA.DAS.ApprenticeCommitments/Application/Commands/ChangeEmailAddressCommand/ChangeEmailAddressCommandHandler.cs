@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeEmailAddressC
 
         public async Task<Unit> Handle(ChangeEmailAddressCommand request, CancellationToken cancellationToken)
         {
-            var apprentice = await _apprentices.GetById(request.ApprenticeId);
+            var apprentice = await _apprentices.GetByIdAndIncludeApprenticeships(request.ApprenticeId);
             apprentice.UpdateEmail(new MailAddress(request.Email));
             return Unit.Value;
         }
