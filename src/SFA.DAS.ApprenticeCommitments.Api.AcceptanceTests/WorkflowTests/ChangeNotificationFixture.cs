@@ -3,7 +3,7 @@ using AutoFixture.Dsl;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
@@ -98,14 +98,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
     internal class ChangeBuilder
     {
         private readonly Fixture fixture = new Fixture();
-        private IPostprocessComposer<ChangeApprenticeshipCommand> change;
+        private IPostprocessComposer<ChangeRegistrationCommand> change;
 
         internal ApprenticeshipDto Apprenticeship { get; }
 
         internal ChangeBuilder(ApprenticeshipDto apprenticeship)
         {
             this.Apprenticeship = apprenticeship;
-            change = fixture.Build<ChangeApprenticeshipCommand>()
+            change = fixture.Build<ChangeRegistrationCommand>()
                 .Without(x => x.CommitmentsContinuedApprenticeshipId)
                 .With(x => x.CommitmentsApprenticeshipId, apprenticeship.CommitmentsApprenticeshipId);
         }
@@ -116,7 +116,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return this;
         }
 
-        internal ChangeApprenticeshipCommand Build()
+        internal ChangeRegistrationCommand Build()
         {
             return change.Create();
         }

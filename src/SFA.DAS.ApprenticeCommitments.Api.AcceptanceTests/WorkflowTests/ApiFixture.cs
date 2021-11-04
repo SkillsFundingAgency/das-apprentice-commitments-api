@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using NServiceBus.Testing;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
@@ -36,7 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             fixture = new Fixture();
             fixture.Customizations.Add(new EmailPropertyCustomisation());
-            fixture.Customize<ChangeApprenticeshipCommand>(c => c
+            fixture.Customize<ChangeRegistrationCommand>(c => c
                 .Without(p => p.CommitmentsContinuedApprenticeshipId));
 
             Database = Bindings.Database.CreateDbContext();
@@ -178,13 +178,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return apprenticeships.Apprenticeships;
         }
 
-        protected async Task ChangeOfCircumstances(ChangeApprenticeshipCommand command)
+        protected async Task ChangeOfCircumstances(ChangeRegistrationCommand command)
         {
             var response = await PutChangeOfCircumstances(command);
             response.Should().Be2XXSuccessful();
         }
 
-        protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeApprenticeshipCommand command)
+        protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeRegistrationCommand command)
             => client.PutValueAsync("registrations", command);
     }
 }

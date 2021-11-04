@@ -2,7 +2,7 @@
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
@@ -13,19 +13,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     internal class ChangeOfPersonalDetailsFixture : ApiFixture
     {
-        public async Task<(CreateRegistrationCommand approval, ChangeApprenticeshipCommand create)> CreateRegistrationAndCoc()
+        public async Task<(CreateRegistrationCommand approval, ChangeRegistrationCommand create)> CreateRegistrationAndCoc()
         {
             var approval = await CreateRegistration();
-            ChangeApprenticeshipCommand coc = CreateChangeOfPersonalDetails(approval);
+            ChangeRegistrationCommand coc = CreateChangeOfPersonalDetails(approval);
 
             Reset();
 
             return (approval, coc);
         }
 
-        protected ChangeApprenticeshipCommand CreateChangeOfPersonalDetails(CreateRegistrationCommand approval)
+        protected ChangeRegistrationCommand CreateChangeOfPersonalDetails(CreateRegistrationCommand approval)
         {
-            var coc = fixture.Create<ChangeApprenticeshipCommand>();
+            var coc = fixture.Create<ChangeRegistrationCommand>();
             coc.CommitmentsApprenticeshipId = approval.CommitmentsApprenticeshipId;
             coc.CommitmentsContinuedApprenticeshipId = null;
             coc.CommitmentsApprovedOn = approval.CommitmentsApprovedOn;
@@ -123,7 +123,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
     class When_change_of_personal_details_after_registration_is_matched : ChangeOfPersonalDetailsFixture
     {
-        public async Task<(ApprenticeDto apprentice, ChangeApprenticeshipCommand command)> CreateVerifiedApprenticeshipAndCoc()
+        public async Task<(ApprenticeDto apprentice, ChangeRegistrationCommand command)> CreateVerifiedApprenticeshipAndCoc()
         {
             var approval = await CreateRegistration();
             var apprenticeship = await VerifyRegistration(approval);

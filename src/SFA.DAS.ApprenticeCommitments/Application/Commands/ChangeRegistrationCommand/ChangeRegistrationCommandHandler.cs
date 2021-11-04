@@ -1,31 +1,30 @@
-﻿using System;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System;
 using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 
 #nullable enable
 
-namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshipCommand
+namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand
 {
-    public class ChangeApprenticeshipCommandHandler : IRequestHandler<ChangeApprenticeshipCommand>
+    public class ChangeRegistrationCommandHandler : IRequestHandler<ChangeRegistrationCommand>
     {
         private readonly IApprenticeshipContext _apprenticeships;
         private readonly IRegistrationContext _registrations;
-        private readonly ILogger<ChangeApprenticeshipCommandHandler> _logger;
+        private readonly ILogger<ChangeRegistrationCommandHandler> _logger;
 
-        public ChangeApprenticeshipCommandHandler(IApprenticeshipContext apprenticeships, IRegistrationContext registrations, ILogger<ChangeApprenticeshipCommandHandler> logger)
+        public ChangeRegistrationCommandHandler(IApprenticeshipContext apprenticeships, IRegistrationContext registrations, ILogger<ChangeRegistrationCommandHandler> logger)
         {
             _apprenticeships = apprenticeships;
             _registrations = registrations;
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(ChangeApprenticeshipCommand command, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(ChangeRegistrationCommand command, CancellationToken cancellationToken)
         {
             var apprenticeshipId = command.CommitmentsContinuedApprenticeshipId ?? command.CommitmentsApprenticeshipId;
 
@@ -45,7 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             return Unit.Value;
         }
 
-        private async Task UpdateOrCreateRegistration(ChangeApprenticeshipCommand command, long apprenticeshipId)
+        private async Task UpdateOrCreateRegistration(ChangeRegistrationCommand command, long apprenticeshipId)
         {
             var registration = await _registrations.FindByCommitmentsApprenticeshipId(apprenticeshipId);
 
@@ -66,14 +65,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeApprenticeshi
             }
         }
 
-        private static PersonalInformation BuildPersonalDetails(ChangeApprenticeshipCommand command)
+        private static PersonalInformation BuildPersonalDetails(ChangeRegistrationCommand command)
             => new PersonalInformation(
                 command.FirstName,
                 command.LastName,
                 command.DateOfBirth,
                 new MailAddress(command.Email));
 
-        private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeApprenticeshipCommand command)
+        private static ApprenticeshipDetails BuildApprenticeshipDetails(ChangeRegistrationCommand command)
         {
             var details = new ApprenticeshipDetails(
                 command.EmployerAccountLegalEntityId,
