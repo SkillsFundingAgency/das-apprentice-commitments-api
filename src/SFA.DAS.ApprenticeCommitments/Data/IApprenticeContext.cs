@@ -3,10 +3,8 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Query;
 
 #nullable enable
 

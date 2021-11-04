@@ -20,6 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public string FirstName
         {
+            get => _apprentice.FirstName;
             set
             {
                 _logger.LogInformation("Patching FirstName for Apprentice {id}", _apprentice.Id);
@@ -29,6 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public string LastName
         {
+            get => _apprentice.LastName;
             set
             {
                 _logger.LogInformation("Patching LastName for Apprentice {id}", _apprentice.Id);
@@ -38,6 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public string Email
         {
+            get => _apprentice.Email.ToString();
             set
             {
                 _logger.LogInformation("Patching Email for Apprentice {id}", _apprentice.Id);
@@ -47,6 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public DateTime DateOfBirth
         {
+            get => _apprentice.DateOfBirth;
             set
             {
                 _logger.LogInformation("Patching DoB for Apprentice {id}", _apprentice.Id);
@@ -56,6 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public bool TermsOfUseAccepted
         {
+            get => _apprentice.TermsOfUseAccepted;
             set
             {
                 _logger.LogInformation("Patching TermsOfUse for Apprentice {id}", _apprentice.Id);
