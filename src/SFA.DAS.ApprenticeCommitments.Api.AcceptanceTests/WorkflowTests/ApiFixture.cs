@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using NServiceBus.Testing;
@@ -13,6 +13,7 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -186,5 +187,30 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeRegistrationCommand command)
             => client.PutValueAsync("registrations", command);
+
+        protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+        {
+            var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>(
+                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
+            r2.EnsureSuccessStatusCode();
+
+            apprenticeships.Should().NotBeNull();
+            return apprenticeships.Apprenticeships.Last();
+        }
+
+        private protected async Task ConfirmApprenticeship(ApprenticeshipDto apprenticeship, ConfirmationBuilder confirm)
+        {
+            context.Time.Now = context.Time.Now.Add(TimeBetweenActions);
+
+            apprenticeship = await GetApprenticeship(apprenticeship);
+
+            foreach (var payload in confirm.BuildAll())
+            {
+                var r4 = await client.PostValueAsync(
+                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/{payload.Item1}",
+                    payload.Item2);
+                r4.EnsureSuccessStatusCode();
+            }
+        }
     }
 }

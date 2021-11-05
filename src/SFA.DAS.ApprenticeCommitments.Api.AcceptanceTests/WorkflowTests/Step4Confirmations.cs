@@ -31,8 +31,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 "EmployerCorrect" => new { EmployerCorrect = value },
                 "TrainingProviderCorrect" => new { TrainingProviderCorrect = value },
                 "ApprenticeshipDetailsCorrect" => new { ApprenticeshipDetailsCorrect = value },
-                "HowApprenticeshipDeliveredCorrect" => new { TrainingProviderCorrect = value },
-                "RolesAndResponsibilitiesCorrect" => new { TrainingProviderCorrect = value },
+                "HowApprenticeshipDeliveredCorrect" => new { HowApprenticeshipDeliveredCorrect = value },
+                "RolesAndResponsibilitiesCorrect" => new { RolesAndResponsibilitiesCorrect = value },
                 _ => throw new ArgumentOutOfRangeException(nameof(confirmation)),
             };
 
