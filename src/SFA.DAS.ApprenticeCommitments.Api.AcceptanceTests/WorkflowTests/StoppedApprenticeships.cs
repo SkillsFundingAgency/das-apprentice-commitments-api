@@ -1,40 +1,45 @@
-﻿using FluentAssertions;
+﻿using AutoFixture.NUnit3;
+using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     internal class StoppedApprenticeships : ApiFixture
     {
-        [Test]
-        public async Task Stopped_before_confirmed()
+        [Test, AutoData]
+        public async Task Stopped_before_confirmed(TimeSpan timeUntilStopped)
         {
-            var stoppedOn = DateTime.Now;
+            var original = await CreateVerifiedApprenticeship();
 
-            var apprenticeship = await CreateVerifiedApprenticeship();
+            var stoppedOn = original.ApprovedOn.Add(timeUntilStopped);
+            await StopApprenticeship(original.CommitmentsApprenticeshipId, stoppedOn);
 
-            var response = await PostStopped(new StoppedApprenticeshipCommand
+            var modified = await GetApprenticeships(original.ApprenticeId);
+            modified.Should().ContainEquivalentOf(new
             {
-                CommitmentsApprenticeshipId = apprenticeship.CommitmentsApprenticeshipId,
-                CommitmentsStoppedOn = stoppedOn,
-            });
-
-            response.Should().Be2XXSuccessful();
-
-            var ap2 = await GetApprenticeships(apprenticeship.ApprenticeId);
-
-            ap2.Should().ContainEquivalentOf(new
-            {
-                apprenticeship.ApprenticeId,
+                original.ApprenticeId,
+                ConfirmedOn = (DateTime?)null,
                 StoppedOn = stoppedOn,
             });
         }
 
-        private Task<HttpResponseMessage> PostStopped(StoppedApprenticeshipCommand command)
-            => client.PostValueAsync(
-                $"registrations/stopped/{command.CommitmentsApprenticeshipId}", command);
+        [Test, AutoData]
+        public async Task Stopped_after_confirmed(TimeSpan timeUntilStopped)
+        {
+            var original = await CreateVerifiedApprenticeship();
+            await ConfirmApprenticeship(original, new ConfirmationBuilder());
+
+            var stoppedOn = original.ApprovedOn.Add(timeUntilStopped);
+            await StopApprenticeship(original.CommitmentsApprenticeshipId, stoppedOn);
+
+            var modified = await GetApprenticeships(original.ApprenticeId);
+            modified.Should().ContainEquivalentOf(new
+            {
+                original.ApprenticeId,
+                StoppedOn = stoppedOn,
+            });
+        }
     }
 }
