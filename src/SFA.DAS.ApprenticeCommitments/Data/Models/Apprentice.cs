@@ -21,7 +21,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             LastName = lastName;
             Email = email;
             DateOfBirth = dateOfBirth;
-            PreviousEmailAddresses = new[] { new ApprenticeEmailAddressHistory(email) };
         }
 
         public Guid Id { get; private set; }
@@ -33,8 +32,27 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public MailAddress Email { get; private set; } = null!;
-        public ICollection<ApprenticeEmailAddressHistory> PreviousEmailAddresses { get; private set; } = null!;
+
+        private MailAddress _email = null!;
+        public MailAddress Email
+        {
+            get => _email;
+            set
+            {
+                if (_email != null)
+                {
+                    if (value.Address == _email.Address)
+                        return;
+                    else
+                        AddDomainEvent(new ApprenticeEmailAddressChanged(this));
+                }
+
+                _email = value;
+                PreviousEmailAddresses.Add(new ApprenticeEmailAddressHistory(_email));
+            }
+        }
+
+        public ICollection<ApprenticeEmailAddressHistory> PreviousEmailAddresses { get; private set; } = new List<ApprenticeEmailAddressHistory>();
 
         private DateTime _dateOfBirth;
 
@@ -65,14 +83,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     = new List<Apprenticeship>();
 
         public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
-
-        internal void UpdateEmail(MailAddress newEmail)
-        {
-            if (newEmail.Address == Email.Address) return;
-            Email = newEmail;
-            PreviousEmailAddresses.Add(new ApprenticeEmailAddressHistory(Email));
-            AddDomainEvent(new ApprenticeEmailAddressChanged(this));
-        }
     }
 
     public class ApprenticeEmailAddressHistory

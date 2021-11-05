@@ -1,5 +1,9 @@
-﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
+using Newtonsoft.Json.Serialization;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Mail;
 
 #nullable enable
 
@@ -21,6 +25,13 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 DateOfBirth = apprentice.DateOfBirth,
                 TermsOfUseAccepted = apprentice.TermsOfUseAccepted
             };
+        }
+        internal static JsonPatchDocument<Apprentice> MapToApprentice(JsonPatchDocument<ApprenticeDto> updates)
+        {
+            var operations = updates.Operations.ConvertAll(o =>
+                 new Operation<Apprentice>(o.op, o.path, o.from,
+                     o.path switch { "/Email" => new MailAddress(o.value.ToString()), _ => o.value }));
+            return new JsonPatchDocument<Apprentice>(operations, new DefaultContractResolver());
         }
     }
 }

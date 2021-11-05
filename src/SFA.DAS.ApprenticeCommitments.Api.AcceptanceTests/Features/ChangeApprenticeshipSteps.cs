@@ -40,7 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an existing apprenticeship")]
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
-            var apprentice = _fixture.Create<Apprentice>();
+            var apprentice = _fixture.Build<Apprentice>().OmitAutoProperties().Create();
             apprentice.AddApprenticeship(_revision);
 
             _context.DbContext.Apprentices.Add(apprentice);

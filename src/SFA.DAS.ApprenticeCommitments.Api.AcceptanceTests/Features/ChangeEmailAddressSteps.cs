@@ -95,7 +95,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"the apprentice record is not updated")]
         public void ThenTheApprenticeRecordIsNotUpdated()
         {
-            _context.DbContext.Apprentices.Should().ContainEquivalentOf(_apprentice);
+            _context.DbContext.Apprentices.Should().ContainEquivalentOf(_apprentice, options => options.Excluding(p => p.DomainEvents));
         }
 
         [Then(@"the change history is recorded")]
