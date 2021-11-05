@@ -41,5 +41,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 StoppedOn = stoppedOn,
             });
         }
+
+        [Test, AutoData]
+        public async Task Stopped_a_second_time(TimeSpan timeUntilStopped)
+        {
+            var original = await CreateVerifiedApprenticeship();
+            var stoppedOn = original.ApprovedOn.Add(timeUntilStopped);
+            await StopApprenticeship(original.CommitmentsApprenticeshipId, stoppedOn);
+
+            stoppedOn = original.ApprovedOn.Add(timeUntilStopped * 2);
+            await StopApprenticeship(original.CommitmentsApprenticeshipId, stoppedOn);
+
+            var modified = await GetApprenticeships(original.ApprenticeId);
+            modified.Should().ContainEquivalentOf(new
+            {
+                original.ApprenticeId,
+                StoppedOn = stoppedOn,
+            });
+        }
     }
 }
