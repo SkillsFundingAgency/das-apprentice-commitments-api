@@ -13,16 +13,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
     public class ChangeNotificationFixture : ApiFixture
     {
-        protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
-        {
-            var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipDto>(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.RevisionId}");
-            r2.EnsureSuccessStatusCode();
-
-            apprenticeships.Should().NotBeNull();
-            return apprenticeships;
-        }
-
         protected async Task ViewApprenticeship(ApprenticeshipDto apprenticeship)
         {
             var patch = new JsonPatchDocument<ApprenticeshipDto>()
@@ -41,21 +31,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var data = change.ChangedOn(context.Time.Now).Build();
             var r1 = await client.PutValueAsync("registrations", data);
             r1.EnsureSuccessStatusCode();
-        }
-
-        private protected async Task ConfirmApprenticeship(ApprenticeshipDto apprenticeship, ConfirmationBuilder confirm)
-        {
-            context.Time.Now = context.Time.Now.Add(TimeBetweenActions);
-
-            apprenticeship = await GetApprenticeship(apprenticeship);
-
-            foreach (var payload in confirm.BuildAll())
-            {
-                var r4 = await client.PostValueAsync(
-                    $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships/{apprenticeship.Id}/revisions/{apprenticeship.RevisionId}/{payload.Item1}",
-                    payload.Item2);
-                r4.EnsureSuccessStatusCode();
-            }
         }
     }
 
