@@ -1,6 +1,7 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using System;
 using System.Threading.Tasks;
 
@@ -58,6 +59,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 original.ApprenticeId,
                 StoppedOn = stoppedOn,
             });
+        }
+
+        [Test, AutoData]
+        public async Task Stopped_without_apprenticeship(long id, DateTime stoppedOn)
+        {
+            var response = await PostStopped(new StoppedApprenticeshipCommand
+            {
+                CommitmentsApprenticeshipId = id,
+                CommitmentsStoppedOn = stoppedOn,
+            });
+
+            response.Should().Be404NotFound();
         }
     }
 }

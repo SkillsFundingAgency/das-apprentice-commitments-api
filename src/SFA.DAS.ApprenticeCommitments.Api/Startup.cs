@@ -115,6 +115,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
             o.ValidationProblemStatusCode = StatusCodes.Status400BadRequest;
             o.Map<ValidationException>(ex => ex.ToProblemDetails());
             o.Map<DomainException>(ex => ex.ToProblemDetails());
+            o.Map<EntityNotFoundException>(ex => ex.ToProblemDetails());
             o.MapToStatusCode<DBConcurrencyException>(StatusCodes.Status409Conflict);
             o.MapToStatusCode<NotImplementedException>(StatusCodes.Status501NotImplemented);
         }

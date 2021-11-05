@@ -21,5 +21,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api
 
         public static ProblemDetails ToProblemDetails(this DomainException ex)
             => new ProblemDetails { Detail = ex.Message, Status = StatusCodes.Status400BadRequest };
+
+        public static ProblemDetails ToProblemDetails(this EntityNotFoundException ex)
+            => new ProblemDetails { Detail = ex.Message, Status = StatusCodes.Status404NotFound };
     }
 }
