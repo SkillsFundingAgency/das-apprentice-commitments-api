@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         internal async Task<Revision> GetById(Guid apprenticeId, long apprenticeshipId, long revisionId)
         {
-            var revision = await Entities.Include(e=>e.Apprenticeship).Where(e=>e.Id == revisionId).SingleOrDefaultAsync();
+            var revision = await Entities.Include(e => e.Apprenticeship).Where(e => e.Id == revisionId).SingleOrDefaultAsync();
 
             if (revision == null)
             {
@@ -28,5 +28,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
             return revision;
         }
+
+        internal async Task<Revision?> FindLatestByCommitmentsApprenticeshipId(long apprenticeshipId)
+            => await Entities
+                .Where(x => x.CommitmentsApprenticeshipId == apprenticeshipId)
+                .OrderByDescending(x => x.CommitmentsApprovedOn)
+                .FirstOrDefaultAsync();
     }
 }

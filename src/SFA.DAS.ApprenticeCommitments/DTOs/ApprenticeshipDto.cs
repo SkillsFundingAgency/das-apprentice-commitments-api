@@ -1,5 +1,5 @@
-﻿using System;
-using SFA.DAS.ApprenticeCommitments.Data.Models;
+﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 
 #nullable disable
 
@@ -31,5 +31,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public ChangeOfCircumstanceNotifications ChangeOfCircumstanceNotifications { get; set; }
         public DateTime ApprovedOn { get; set; }
         public DateTime? LastViewed { get; set; }
+        public DateTime? StoppedOn { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationComma
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
 using System;
@@ -57,5 +58,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPost("registrations/{apprenticeId}/firstseen")]
         public async Task RegistrationFirstSeen(Guid apprenticeId, [FromBody] RegistrationFirstSeenRequest request)
             => await _mediator.Send(new RegistrationFirstSeenCommand(apprenticeId, request.SeenOn));
+
+        [HttpPost("registrations/stopped/{commitmentsApprenticeshipId}")]
+        public async Task StoppedApprenticeship(long commitmentsApprenticeshipId, [FromBody] StoppedApprenticeshipCommand request)
+            => await _mediator.Send(request);
     }
 }

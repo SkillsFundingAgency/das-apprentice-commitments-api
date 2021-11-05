@@ -23,6 +23,7 @@ CREATE TABLE [dbo].Revision
     [CourseDuration] INT NULL,
     [LastViewed] DATETIME2 NULL,
     [CreatedOn] DATETIME2 NULL DEFAULT current_timestamp, 
+    [StoppedOn] DATETIME2 NULL, 
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
     CONSTRAINT FK_CommitmentStatement_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )
