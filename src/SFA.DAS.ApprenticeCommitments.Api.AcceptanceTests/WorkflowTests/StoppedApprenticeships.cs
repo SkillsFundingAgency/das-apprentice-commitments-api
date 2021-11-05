@@ -72,5 +72,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             response.Should().Be404NotFound();
         }
+
+        [Test, AutoData]
+        [Ignore("scenario not defined yet")]
+        public async Task Stopped_unmatched_apprenticeship()
+        {
+            var registration = await CreateRegistration();
+
+            await StopApprenticeship(
+                registration.CommitmentsApprenticeshipId,
+                registration.CommitmentsApprovedOn.AddDays(1));
+
+            // create apprenticeship and revision and immediately stop it???
+        }
     }
 }
