@@ -7,7 +7,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticesQuery;
 using System;
 using System.Threading.Tasks;
-using SFA.DAS.ApprenticeCommitments.Data;
+using SFA.DAS.ApprenticeCommitments.DTOs;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
@@ -34,7 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             => await _mediator.Send(command);
 
         [HttpPatch("apprentices/{id}")]
-        public async Task UpdateApprentice(Guid id, JsonPatchDocument<ApprenticePatcher> changes)
+        public async Task UpdateApprentice(Guid id, JsonPatchDocument<ApprenticePatchDto> changes)
             => await _mediator.Send(new UpdateApprenticeCommand(id, changes));
 
         [HttpGet("apprentices/{id}/apprenticeships")]
