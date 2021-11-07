@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             => await _mediator.Send(command);
 
         [HttpPatch("apprentices/{id}")]
-        public async Task UpdateApprentice(Guid id, JsonPatchDocument<ApprenticeDto> changes)
+        public async Task UpdateApprentice(Guid id, JsonPatchDocument<ApprenticeUpdateDto> changes)
             => await _mediator.Send(new UpdateApprenticeCommand(id, changes));
 
         [HttpGet("apprentices/{id}/apprenticeships")]

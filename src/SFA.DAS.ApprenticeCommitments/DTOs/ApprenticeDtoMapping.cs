@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 TermsOfUseAccepted = apprentice.TermsOfUseAccepted
             };
         }
-        internal static JsonPatchDocument<Apprentice> MapToApprentice(JsonPatchDocument<ApprenticeDto> updates)
+        internal static JsonPatchDocument<Apprentice> MapToApprentice(JsonPatchDocument<ApprenticeUpdateDto> updates)
         {
             var operations = updates.Operations.ConvertAll(o =>
                  new Operation<Apprentice>(o.op, o.path, o.from,

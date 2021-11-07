@@ -1,18 +1,12 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
-using Microsoft.Azure.Amqp.Framing;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Data;
-using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 using System.Collections.Generic;
-using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,14 +14,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCom
 {
     public class UpdateApprenticeCommand : IUnitOfWorkCommand
     {
-        public UpdateApprenticeCommand(Guid apprenticeId, JsonPatchDocument<ApprenticeDto> updates)
+        public UpdateApprenticeCommand(Guid apprenticeId, JsonPatchDocument<ApprenticeUpdateDto> updates)
         {
             ApprenticeId = apprenticeId;
             Updates = updates;
         }
 
         public Guid ApprenticeId { get; }
-        public JsonPatchDocument<ApprenticeDto> Updates { get; }
+        public JsonPatchDocument<ApprenticeUpdateDto> Updates { get; }
     }
 
     public class UpdateApprenticeCommandHandler : IRequestHandler<UpdateApprenticeCommand>
