@@ -1,9 +1,10 @@
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Extensions.Logging;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.DTOs;
+using SFA.DAS.ApprenticeCommitments.Extensions;
 using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 using System.Collections.Generic;
@@ -37,14 +38,20 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCom
 
         public async Task<Unit> Handle(UpdateApprenticeCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Updating {request.ApprenticeId} - {JsonConvert.SerializeObject(request.Updates)}");
-            var app = await _apprentices.GetByIdAndIncludeApprenticeships(request.ApprenticeId);
+            using (_logger.BeginPropertyScope(("ApprenticeId", request.ApprenticeId)))
+            {
+                _logger.LogInformation($"Updating Apprentice {request.ApprenticeId}");
 
-            ApprenticeDtoMapping.MapToApprentice(request.Updates).ApplyTo(app);
+                var app = await _apprentices.GetByIdAndIncludeApprenticeships(request.ApprenticeId);
 
-            var validation = new ApprenticeValidator().Validate(app);
-            if (!validation.IsValid) throw new FluentValidation.ValidationException(validation.Errors);
-            return Unit.Value;
+                ApprenticeDtoMapping
+                    .MapToApprentice(request.Updates)
+                    .ApplyTo(app, new LoggingPatchAdapter(_logger));
+
+                var validation = new ApprenticeValidator().Validate(app);
+                if (!validation.IsValid) throw new FluentValidation.ValidationException(validation.Errors);
+                return Unit.Value;
+            }
         }
     }
 }
