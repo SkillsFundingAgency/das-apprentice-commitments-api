@@ -59,8 +59,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public async Task RegistrationFirstSeen(Guid apprenticeId, [FromBody] RegistrationFirstSeenRequest request)
             => await _mediator.Send(new RegistrationFirstSeenCommand(apprenticeId, request.SeenOn));
 
-        [HttpPost("registrations/stopped/{commitmentsApprenticeshipId}")]
-        public async Task StoppedApprenticeship(long commitmentsApprenticeshipId, [FromBody] StoppedApprenticeshipCommand request)
+        [HttpPost("registrations/stopped")]
+        public async Task StoppedApprenticeship([FromBody] StoppedApprenticeshipCommand request)
             => await _mediator.Send(request);
     }
 }

@@ -231,7 +231,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         protected Task<HttpResponseMessage> PostStopped(StoppedApprenticeshipCommand command)
-            => client.PostValueAsync(
-                $"registrations/stopped/{command.CommitmentsApprenticeshipId}", command);
+            => client.PostValueAsync("registrations/stopped", command);
     }
 }
