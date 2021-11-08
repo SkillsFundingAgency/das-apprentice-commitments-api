@@ -5,7 +5,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
 {
     public class StoppedApprenticeshipCommand : IUnitOfWorkCommand
     {
-        public long? CommitmentsContinuedApprenticeshipId { get; set; }
         public long CommitmentsApprenticeshipId { get; set; }
         public DateTime CommitmentsStoppedOn { get; set; }
     }
