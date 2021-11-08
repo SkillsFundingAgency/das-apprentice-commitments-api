@@ -203,4 +203,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="RolesAndResponsibilitiesConfirmations" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a2cdf984-77cc-444b-bd15-33165f98db73" ChangeDateTime="11/08/2021 14:44:07">
+    <Property Name="ElementName" Value="[dbo].[Revision].[StoppedOn]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Revision]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[StoppedReceivedOn]" />
+  </Operation>
 </Operations>

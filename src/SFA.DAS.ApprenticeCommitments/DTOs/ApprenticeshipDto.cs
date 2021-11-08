@@ -31,6 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public ChangeOfCircumstanceNotifications ChangeOfCircumstanceNotifications { get; set; }
         public DateTime ApprovedOn { get; set; }
         public DateTime? LastViewed { get; set; }
-        public DateTime? StoppedOn { get; set; }
+        public DateTime? StoppedReceivedOn { get; set; }
+        public bool IsStopped => StoppedReceivedOn != null;
     }
 }

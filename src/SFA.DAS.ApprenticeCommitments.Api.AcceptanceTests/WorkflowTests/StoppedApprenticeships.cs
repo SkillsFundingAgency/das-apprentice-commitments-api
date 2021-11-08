@@ -22,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             {
                 original.ApprenticeId,
                 ConfirmedOn = (DateTime?)null,
-                StoppedOn = stoppedOn,
+                StoppedReceivedOn = context.Time.Now,
             });
         }
 
@@ -39,7 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             modified.Should().ContainEquivalentOf(new
             {
                 original.ApprenticeId,
-                StoppedOn = stoppedOn,
+                StoppedReceivedOn = context.Time.Now,
             });
         }
 
@@ -57,7 +57,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             modified.Should().ContainEquivalentOf(new
             {
                 original.ApprenticeId,
-                StoppedOn = stoppedOn,
+                StoppedReceivedOn = context.Time.Now,
             });
         }
 

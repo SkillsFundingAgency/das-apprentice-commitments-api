@@ -2,6 +2,7 @@
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
+using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +11,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
     public class ChangeRegistrationCommandHandler : IRequestHandler<StoppedApprenticeshipCommand>
     {
         private readonly IRevisionContext _revisions;
+        private readonly ITimeProvider _timeProvider;
 
-        public ChangeRegistrationCommandHandler(IRevisionContext _revisions) =>
-            this._revisions = _revisions;
+        public ChangeRegistrationCommandHandler(IRevisionContext revisions, ITimeProvider timeProvider) =>
+            (_revisions, _timeProvider) = (revisions, timeProvider);
 
         public async Task<Unit> Handle(StoppedApprenticeshipCommand request, CancellationToken cancellationToken)
         {
@@ -20,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
                 await _revisions.FindLatestByCommitmentsApprenticeshipId(request.CommitmentsApprenticeshipId)
                 ?? throw new EntityNotFoundException(nameof(Revision), request.CommitmentsApprenticeshipId.ToString());
 
-            apprenticeship.StoppedOn = request.CommitmentsStoppedOn;
+            apprenticeship.StoppedReceivedOn = _timeProvider.Now;
 
             return Unit.Value;
         }

@@ -40,7 +40,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ConfirmBefore = latest.ConfirmBefore,
                 ApprovedOn = latest.CommitmentsApprovedOn,
                 ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
-                StoppedOn = latest.StoppedOn,
+                StoppedReceivedOn = latest.StoppedReceivedOn,
             };
         }
     }
