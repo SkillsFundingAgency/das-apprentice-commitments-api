@@ -138,7 +138,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [When("the update is posted")]
         public async Task WhenTheUpdateIsPosted()
         {
-            await _context.Api.Put("registrations", _request);
+            await _context.Api.Put("approvals", _request);
         }
 
         [Then("the result should return OK")]
