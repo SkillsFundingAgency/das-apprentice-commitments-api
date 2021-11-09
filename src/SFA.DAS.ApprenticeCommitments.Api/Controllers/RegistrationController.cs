@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Api.Types;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
@@ -41,15 +39,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             var response = await _mediator.Send(new RegistrationRemindersQuery { CutOffDateTime = invitationCutOffTime });
             return Ok(response);
         }
-
-        [HttpPost("registrations")]
-        public async Task VerifiedRegistration(CreateRegistrationCommand command)
-            => await _mediator.Send(command);
-
-        [HttpPut("registrations")]
-        public async Task ChangeOfCircumstances([FromBody] ChangeRegistrationCommand request)
-            => await _mediator.Send(request);
-
 
         [HttpPost("registrations/{apprenticeId}/reminder")]
         public async Task RegistrationReminderSent(Guid apprenticeId, [FromBody] RegistrationReminderSentRequest request)

@@ -78,7 +78,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<HttpResponseMessage> PostCreateRegistrationCommand(CreateRegistrationCommand create)
         {
-            return await client.PostValueAsync("registrations", create);
+            return await client.PostValueAsync("approvals", create);
         }
 
         protected async Task<RegistrationResponse> GetRegistration(Guid apprenticeId)
@@ -191,7 +191,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeRegistrationCommand command)
-            => client.PutValueAsync("registrations", command);
+            => client.PutValueAsync("approvals", command);
 
         protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
         {
