@@ -1,14 +1,18 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using SFA.DAS.ApprenticeCommitments.Api.Controllers;
-using SFA.DAS.ApprenticeCommitments.Data.Models;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using AutoFixture;
+using FluentAssertions;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
+using SFA.DAS.ApprenticeCommitments.Api.Controllers;
+using SFA.DAS.ApprenticeCommitments.Data;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.DTOs;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using TechTalk.SpecFlow;
 
-namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
+namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 {
     [Binding]
     [Scope(Feature = "ChangeEmailAddress")]
@@ -17,11 +21,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
-        private ChangeEmailAddressRequest _command;
+        private Revision _revisionForFirstApprenticeship;
+        private Revision _revisionForSecondApprenticeship;
+        private JsonPatchDocument<ApprenticeDto> _request;
+        private string _newEmailAddress;
 
         public ChangeEmailAddressSteps(TestContext context)
         {
             _context = context;
+            _newEmailAddress = "NewValidEmail@test.com";
         }
 
         [Given(@"we have an existing apprentice")]
@@ -35,33 +43,43 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.DbContext.SaveChanges();
         }
 
+        [Given(@"we have an existing apprentice with multiple apprenticeships")]
+        public void GivenWeHaveAnExistingApprenticeWithMultipleApprenticeships()
+        {
+            _apprentice = _fixture.Create<Apprentice>();
+
+            _revisionForFirstApprenticeship = _fixture.Create<Revision>();
+            _apprentice.AddApprenticeship(_revisionForFirstApprenticeship);
+
+            _revisionForSecondApprenticeship = _fixture.Create<Revision>();
+            _apprentice.AddApprenticeship(_revisionForSecondApprenticeship);
+
+            _context.DbContext.Apprentices.Add(_apprentice);
+            _context.DbContext.SaveChanges();
+        }
+
         [Given(@"a ChangeEmailCommand with a valid email address")]
         public void GivenAChangeEmailCommandWithAValidEmailAddress()
         {
-            _command = _fixture
-                .Build<ChangeEmailAddressRequest>()
-                .With(p => p.Email, (MailAddress adr) => adr.ToString())
-                .Create();
+            _request = new JsonPatchDocument<ApprenticeDto>().Replace(x => x.Email, _newEmailAddress);
         }
 
         [Given(@"a ChangeEmailCommand with an invalid email address")]
         public void GivenAChangeEmailCommandWithAnInvalidEmailAddress()
         {
-            GivenAChangeEmailCommandWithAValidEmailAddress();
-            _command.Email = _fixture.Create<long>().ToString();
+            _request = new JsonPatchDocument<ApprenticeDto>().Replace(x => x.Email, _fixture.Create<long>().ToString());
         }
 
         [Given("a ChangeEmailCommand with the current email address")]
         public void GivenAChangeEmailCommandWithTheCurrentEmailAddress()
         {
-            GivenAChangeEmailCommandWithAValidEmailAddress();
-            _command.Email = _apprentice.Email.ToString();
+            _request = new JsonPatchDocument<ApprenticeDto>().Replace(x => x.Email, _apprentice.Email.ToString());
         }
 
         [When(@"we change the apprentice's email address")]
         public async Task WhenWeChangeTheApprenticesEmailAddress()
         {
-            await _context.Api.Post($"apprentices/{_apprentice.Id}/email", _command);
+            await _context.Api.Patch($"apprentices/{_apprentice.Id}", _request);
         }
 
         [Then(@"the apprentice record is updated")]
@@ -70,7 +88,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.DbContext.Apprentices.Should().ContainEquivalentOf(new
             {
                 _apprentice.Id,
-                Email = new MailAddress(_command.Email),
+                Email = new MailAddress(_newEmailAddress),
             });
         }
 
@@ -89,8 +107,33 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 
             modified.PreviousEmailAddresses.Should().ContainEquivalentOf(new
             {
-                EmailAddress = new MailAddress(_command.Email),
+                EmailAddress = new MailAddress(_newEmailAddress),
             });
+        }
+
+        [Then(@"an ApprenticeEmailAddressedChangedEvent is published for each apprenticeship")]
+        public void ThenAnApprenticeEmailAddressedChangedEventIsPublishedForEachApprenticeship()
+        {
+           var messages =  _context.Messages.PublishedMessages
+                .Where(x=>x.Message is ApprenticeshipEmailAddressChangedEvent);
+
+           messages.Should().ContainEquivalentOf(new
+           {
+               Message = new
+               {
+                   ApprenticeId = _apprentice.Id,
+                   _revisionForFirstApprenticeship.CommitmentsApprenticeshipId
+               }
+           });
+
+           messages.Should().ContainEquivalentOf(new
+           {
+               Message = new
+               {
+                   ApprenticeId = _apprentice.Id,
+                   _revisionForSecondApprenticeship.CommitmentsApprenticeshipId
+               }
+           });
         }
     }
 }

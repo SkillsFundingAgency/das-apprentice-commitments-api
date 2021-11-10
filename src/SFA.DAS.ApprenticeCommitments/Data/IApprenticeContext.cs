@@ -14,16 +14,28 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     {
         internal async Task<Apprentice> GetById(Guid apprenticeId)
             => await Find(apprenticeId)
-                     ?? throw new DomainException(
-                        $"Apprentice {apprenticeId} not found");
+               ?? throw new DomainException(
+                   $"Apprentice {apprenticeId} not found");
 
         internal async Task<Apprentice?> Find(Guid apprenticeId)
-            => await Entities.SingleOrDefaultAsync(a => a.Id == apprenticeId);
-        
+            => await Entities
+                .SingleOrDefaultAsync(a => a.Id == apprenticeId);
+
         internal async Task<Apprentice[]> GetByEmail(MailAddress email)
             =>  await Entities
                 .Include(e => e.Apprenticeships)
                 .Where(x => x.Email == email)
                 .ToArrayAsync();
+
+        internal async Task<Apprentice> GetByIdAndIncludeApprenticeships(Guid apprenticeId)
+            => await FindAndIncludeApprenticeships(apprenticeId)
+               ?? throw new DomainException(
+                   $"Apprentice {apprenticeId} not found");
+
+        internal async Task<Apprentice?> FindAndIncludeApprenticeships(Guid apprenticeId)
+            => await Entities
+                .Include(e => e.Apprenticeships)
+                .ThenInclude(e => e.Revisions)
+                .SingleOrDefaultAsync(a => a.Id == apprenticeId);
     }
 }
