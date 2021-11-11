@@ -76,15 +76,11 @@
     <Build Include="Views\CommitmentStatementDashboardView.sql" />
     <Build Include="Views\RegistrationDashboardView.sql" />
     <Build Include="Schemas\DashboardReporting.sql" />
-    <None Include="PostDeployment\MoveLastViewedToRevision_CS_1006.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.ApprenticeCommitments.Database.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment\PostDeployment.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PreDeploy Include="PreDeployment\ReconcileApprenticeId.sql" />
   </ItemGroup>
 </Project>

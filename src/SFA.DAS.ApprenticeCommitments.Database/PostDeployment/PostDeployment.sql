@@ -25,6 +25,3 @@ GRANT SELECT ON [DashboardReporting].ApprenticeshipDashboardView TO Reporter
 GRANT SELECT ON [DashboardReporting].CommitmentstatementDashboardView TO Reporter
 
 GRANT SELECT ON [DashboardReporting].RegistrationDashboardView TO Reporter
-
-
-:r .\MoveLastViewedToRevision_CS_1006.sql
