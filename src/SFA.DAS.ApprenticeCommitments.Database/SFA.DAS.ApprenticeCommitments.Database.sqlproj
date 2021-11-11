@@ -61,6 +61,7 @@
     <Folder Include="Views" />
     <Folder Include="Schemas" />
     <Folder Include="PreDeployment" />
+    <Folder Include="ManualScripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\Registration.sql" />
@@ -76,7 +77,6 @@
     <Build Include="Views\CommitmentStatementDashboardView.sql" />
     <Build Include="Views\RegistrationDashboardView.sql" />
     <Build Include="Schemas\DashboardReporting.sql" />
-    <None Include="PostDeployment\MoveLastViewedToRevision_CS_1006.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.ApprenticeCommitments.Database.refactorlog" />
@@ -86,5 +86,11 @@
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="PreDeployment\ReconcileApprenticeId.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ManualScripts\CS-1226-Remove-Duplicate-Apprenticeship-records-and-revision-records.sql" />
+    <None Include="ManualScripts\CS-1226-Update-apprenticeid-registration-table-with-userIdentityId-where-null.sql" />
+    <None Include="ManualScripts\CS-1225-RemoveDuplicatedAccountDetails.sql" />
+    <None Include="ManualScripts\CS-1225-GeneratedScript-records-to-update-remove.sql" />
   </ItemGroup>
 </Project>

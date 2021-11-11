@@ -21,7 +21,8 @@ SELECT
     HowApprenticeshipDeliveredCorrect,
     ConfirmBefore,
     ConfirmedOn,
-    CourseDuration
+    CourseDuration,
+    LastViewed
 FROM
     dbo.Revision
 GO
