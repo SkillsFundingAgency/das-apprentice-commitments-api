@@ -78,7 +78,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (RolesAndResponsibilitiesConfirmations == null)
                 return rolesAndResponsibilitiesConfirmations;
 
-            return RolesAndResponsibilitiesConfirmations.Value & rolesAndResponsibilitiesConfirmations;
+            return RolesAndResponsibilitiesConfirmations.Value | rolesAndResponsibilitiesConfirmations;
         }
 
         private void ConfirmRevision(DateTimeOffset time)

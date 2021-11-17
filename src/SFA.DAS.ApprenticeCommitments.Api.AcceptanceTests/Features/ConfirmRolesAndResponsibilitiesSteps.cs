@@ -39,8 +39,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _revision.Confirm(new Confirmations
             {
-                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed &
-                                                        RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed &
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                                                        RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed |
                                                         RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
             }, _fixture.Create<DateTimeOffset>());
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
@@ -71,7 +71,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _revision.Confirm(new Confirmations
             {
                 RolesAndResponsibilitiesConfirmations =
-                    RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed &
+                    RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
                     RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed
             }, _fixture.Create<DateTimeOffset>());
 
@@ -113,7 +113,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
                 _revision.ApprenticeshipId,
-                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed & _rolesAndResponsibilitiesConfirmations,
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed | _rolesAndResponsibilitiesConfirmations,
             });
         }
 
@@ -124,8 +124,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             {
                 _revision.ApprenticeshipId,
                 RolesAndResponsibilitiesConfirmations =
-                    RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed &
-                    RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed &
+                    RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                    RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed |
                     RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
             });
         }
