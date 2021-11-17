@@ -40,7 +40,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     EmployerCorrect = true,
                     TrainingProviderCorrect = true,
                     ApprenticeshipDetailsCorrect = true,
-                    RolesAndResponsibilitiesCorrect = true,
+                    RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed | 
+                                                            RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed | 
+                                                            RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
                     HowApprenticeshipDeliveredCorrect = true,
                     ApprenticeshipCorrect = true,
                 }, DateTime.Now))
@@ -159,7 +161,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                         x.TrainingProviderCorrect,
                         x.ApprenticeshipDetailsCorrect,
                         x.HowApprenticeshipDeliveredCorrect,
-                        x.RolesAndResponsibilitiesCorrect,
+                        x.RolesAndResponsibilitiesConfirmations,
                         CourseDuration = 32 + 1, // Duration is inclusive of start and end months
                     }
                     ),

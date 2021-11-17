@@ -42,7 +42,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 EmployerCorrect = revision.EmployerCorrect,
                 ApprenticeshipDetailsCorrect = revision.ApprenticeshipDetailsCorrect,
                 HowApprenticeshipDeliveredCorrect = revision.HowApprenticeshipDeliveredCorrect,
-                RolesAndResponsibilitiesCorrect = revision.RolesAndResponsibilitiesCorrect,
+                RolesAndResponsibilitiesConfirmations = revision.RolesAndResponsibilitiesConfirmations ?? RolesAndResponsibilitiesConfirmations.NoneConfirmed,
                 ConfirmBefore = revision.ConfirmBefore,
                 ConfirmedOn = revision.ConfirmedOn,
                 LastViewed = revision.LastViewed

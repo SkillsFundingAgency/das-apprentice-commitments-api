@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
@@ -68,12 +69,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             {
                 account.ApprenticeId,
                 approval.CommitmentsApprenticeshipId,
-                //approval.CommitmentsApprovedOn,
                 EmployerCorrect = (bool?)null,
                 TrainingProviderCorrect = (bool?)null,
                 ApprenticeshipDetailsCorrect = (bool?)null,
                 HowApprenticeshipDeliveredCorrect = (bool?)null,
-                RolesAndResponsibilitiesCorrect = (bool?)null,
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.NoneConfirmed,
             });
         }
 

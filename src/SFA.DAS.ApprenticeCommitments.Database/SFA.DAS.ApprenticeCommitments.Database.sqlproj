@@ -83,4 +83,7 @@
   <ItemGroup>
     <PostDeploy Include="PostDeployment\PostDeployment.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="PostDeployment\CS1227_Convert_RoleResponsibitiies_bit.sql" />
+  </ItemGroup>
 </Project>

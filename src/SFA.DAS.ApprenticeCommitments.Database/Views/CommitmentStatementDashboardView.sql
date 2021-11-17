@@ -16,7 +16,7 @@ SELECT
     PlannedEndDate,
     TrainingProviderCorrect,
     EmployerCorrect,
-    RolesAndResponsibilitiesCorrect,
+    RolesAndResponsibilitiesConfirmations,
     ApprenticeshipDetailsCorrect,
     HowApprenticeshipDeliveredCorrect,
     ConfirmBefore,
