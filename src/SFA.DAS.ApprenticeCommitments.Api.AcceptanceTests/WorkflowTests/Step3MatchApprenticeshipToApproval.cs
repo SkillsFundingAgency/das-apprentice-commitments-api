@@ -73,7 +73,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 TrainingProviderCorrect = (bool?)null,
                 ApprenticeshipDetailsCorrect = (bool?)null,
                 HowApprenticeshipDeliveredCorrect = (bool?)null,
-                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.NoneConfirmed,
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.None,
             });
         }
 

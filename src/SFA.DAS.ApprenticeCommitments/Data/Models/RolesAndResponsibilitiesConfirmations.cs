@@ -5,7 +5,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
     [Flags]
     public enum RolesAndResponsibilitiesConfirmations : byte
     {
-        NoneConfirmed = 0,
+        None = 0,
         ApprenticeRolesAndResponsibilitiesConfirmed = 1,
         EmployerRolesAndResponsibilitiesConfirmed = 2,
         ProviderRolesAndResponsibilitiesConfirmed = 4
