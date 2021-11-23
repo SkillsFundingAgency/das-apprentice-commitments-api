@@ -196,4 +196,11 @@
     <Property Name="ParentElementType" Value="SqlSchema" />
     <Property Name="NewName" Value="Revision" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e4ec0e1e-7d1a-4ed8-b2ac-9686bc675f23" ChangeDateTime="11/17/2021 07:29:30">
+    <Property Name="ElementName" Value="[dbo].[Revision].[RolesAndResponsibilitiesCorrect]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Revision]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RolesAndResponsibilitiesConfirmations" />
+  </Operation>
 </Operations>

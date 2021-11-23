@@ -48,6 +48,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var factory = Bindings.Api.CreateApiFactory();
             context = new TestContext();
+            
+            // TODO - Fix Unit tests so they are disposing of all objects correctly
+            // These workflow tests are hanging at the end, I think it may be because we are newing up this object 
+            // on this line, but I can't quite get to the root cause. 
             _ = new Bindings.Api(context);
             client = factory.CreateClient();
         }

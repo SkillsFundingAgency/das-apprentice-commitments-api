@@ -1,4 +1,5 @@
 ﻿using System;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
@@ -21,7 +22,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
 
         public bool? TrainingProviderCorrect { get; set; }
         public bool? EmployerCorrect { get; set; }
-        public bool? RolesAndResponsibilitiesCorrect { get; set; }
+        public RolesAndResponsibilitiesConfirmations RolesAndResponsibilitiesConfirmations { get; set; }
         public bool? ApprenticeshipDetailsCorrect { get; set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; set; }
         public DateTime ConfirmBefore { get; set; }

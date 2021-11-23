@@ -39,7 +39,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                     EmployerCorrect = true,
                     TrainingProviderCorrect = true,
                     ApprenticeshipDetailsCorrect = true,
-                    RolesAndResponsibilitiesCorrect = true,
+                    RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                                                            RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed |
+                                                            RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
                     HowApprenticeshipDeliveredCorrect = true,
                     ApprenticeshipCorrect = true,
                 }, DateTime.Now))

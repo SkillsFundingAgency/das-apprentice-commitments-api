@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 {
@@ -19,10 +20,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [TestCase("HowApprenticeshipDeliveredCorrect", true)]
         [TestCase("HowApprenticeshipDeliveredCorrect", false)]
         [TestCase("HowApprenticeshipDeliveredCorrect", null)]
-        [TestCase("RolesAndResponsibilitiesCorrect", true)]
-        [TestCase("RolesAndResponsibilitiesCorrect", false)]
-        [TestCase("RolesAndResponsibilitiesCorrect", null)]
-        public async Task Can_confirm_new_api(string confirmation, bool? value)
+        [TestCase("RolesAndResponsibilitiesConfirmations", null, RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed)]
+        [TestCase("RolesAndResponsibilitiesConfirmations", null, RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed)]
+        [TestCase("RolesAndResponsibilitiesConfirmations", null, RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed)]
+        public async Task Can_confirm_new_api(string confirmation, bool? value, RolesAndResponsibilitiesConfirmations? confirmations = null)
         {
             var apprenticeship = await CreateVerifiedApprenticeship();
 
@@ -32,7 +33,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 "TrainingProviderCorrect" => new { TrainingProviderCorrect = value },
                 "ApprenticeshipDetailsCorrect" => new { ApprenticeshipDetailsCorrect = value },
                 "HowApprenticeshipDeliveredCorrect" => new { HowApprenticeshipDeliveredCorrect = value },
-                "RolesAndResponsibilitiesCorrect" => new { RolesAndResponsibilitiesCorrect = value },
+                "RolesAndResponsibilitiesConfirmations" => new { RolesAndResponsibilitiesConfirmations = confirmations },
                 _ => throw new ArgumentOutOfRangeException(nameof(confirmation)),
             };
 

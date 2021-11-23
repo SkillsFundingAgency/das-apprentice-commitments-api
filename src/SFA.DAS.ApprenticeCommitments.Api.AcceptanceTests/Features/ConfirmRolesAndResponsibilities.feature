@@ -3,23 +3,48 @@
 Feature: ConfirmRolesAndResponsibilities
 	As an apprentice I want to be able to confirm my roles and responsibilities
 
-Scenario: Positively confirm roles and responsibilities
+Scenario: Positively confirm roles and responsibilities section - any step
 	Given we have an apprenticeship waiting to be confirmed
-	And a ConfirmRolesAndResponsibilitiesRequest stating the roles and responsibilities are correct
+	And a confirmation stating the roles and responsibilities for have been read for <Confirmation> is set
 	When we send the confirmation
 	Then the response is OK
 	And the apprenticeship record is updated
 
-Scenario: Negatively confirm an employer
-	Given we have an apprenticeship waiting to be confirmed
-	And a ConfirmRolesAndResponsibilitiesRequest stating the roles and responsibilities are incorrect
+	Examples: 
+	| Confirmation                                |
+	| ApprenticeRolesAndResponsibilitiesConfirmed |
+	| EmployerRolesAndResponsibilitiesConfirmed   |
+	| ProviderRolesAndResponsibilitiesConfirmed   |
+
+
+Scenario: Positively confirm roles and responsibilities section - step 2
+	Given we have an apprenticeship with ApprenticeRolesAndResponsibilitiesConfirmed 
+	And a confirmation stating the roles and responsibilities for have been read for <Confirmation> is set
 	When we send the confirmation
 	Then the response is OK
-	And the apprenticeship record is updated
+	And the apprenticeship record now contains ApprenticeRolesAndResponsibilitiesConfirmed and <Confirmation>
 
-Scenario: Attempt to change an employer confirmirmation
+	Examples: 
+	| Confirmation                              |
+	| EmployerRolesAndResponsibilitiesConfirmed |
+	| ProviderRolesAndResponsibilitiesConfirmed |
+
+Scenario: Positively confirm roles and responsibilities section - step 3
+	Given we have an apprenticeship with ApprenticeRolesAndResponsibilitiesConfirmed and EmployerRolesAndResponsibilitiesConfirmed
+	And a confirmation stating the roles and responsibilities for have been read for ProviderRolesAndResponsibilitiesConfirmed is set
+	When we send the confirmation
+	Then the response is OK
+	And the apprenticeship record shows the roles and responsibilities is fully confirmed
+
+Scenario: Attempt to reconfirm a section already confirmed
 	Given we have an apprenticeship that has previously had its roles and responsibilities confirmed
-	And a ConfirmRolesAndResponsibilitiesRequest stating the roles and responsibilities are incorrect
+	And a confirmation stating the roles and responsibilities for have been read for <Confirmation> is set
 	When we send the confirmation
 	Then the response is OK
-	And the apprenticeship record is updated
+	And the apprenticeship record shows the roles and responsibilities is fully confirmed
+
+	Examples: 
+	| Confirmation                                |
+	| ApprenticeRolesAndResponsibilitiesConfirmed |
+	| EmployerRolesAndResponsibilitiesConfirmed   |
+	| ProviderRolesAndResponsibilitiesConfirmed   |

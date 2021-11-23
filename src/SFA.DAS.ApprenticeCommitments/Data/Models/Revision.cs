@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public bool? TrainingProviderCorrect { get; private set; }
         public bool? ApprenticeshipDetailsCorrect { get; private set; }
 
-        public bool? RolesAndResponsibilitiesCorrect { get; private set; }
+        public RolesAndResponsibilitiesConfirmations? RolesAndResponsibilitiesConfirmations { get; private set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; private set; }
         public bool ApprenticeshipConfirmed => ConfirmedOn.HasValue;
 
@@ -50,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
             TrainingProviderCorrect = confirmations.TrainingProviderCorrect ?? TrainingProviderCorrect;
             ApprenticeshipDetailsCorrect = confirmations.ApprenticeshipDetailsCorrect ?? ApprenticeshipDetailsCorrect;
-            RolesAndResponsibilitiesCorrect = confirmations.RolesAndResponsibilitiesCorrect ?? RolesAndResponsibilitiesCorrect;
+            RolesAndResponsibilitiesConfirmations = DetermineRolesAndResponsibilitiesConfirmationsStatus(confirmations.RolesAndResponsibilitiesConfirmations);
             HowApprenticeshipDeliveredCorrect = confirmations.HowApprenticeshipDeliveredCorrect ?? HowApprenticeshipDeliveredCorrect;
 
             if (confirmations.ApprenticeshipCorrect == true)
@@ -58,7 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 if (EmployerCorrect == true
                     && TrainingProviderCorrect == true
                     && ApprenticeshipDetailsCorrect == true
-                    && RolesAndResponsibilitiesCorrect == true
+                    && RolesAndResponsibilitiesConfirmations.IsConfirmed()
                     && HowApprenticeshipDeliveredCorrect == true)
                 {
                     ConfirmRevision(time);
@@ -68,6 +68,17 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     throw new DomainException($"Cannot confirm apprenticeship `{ApprenticeshipId}` ({Id}) with unconfirmed section(s).");
                 }
             }
+        }
+
+        private RolesAndResponsibilitiesConfirmations? DetermineRolesAndResponsibilitiesConfirmationsStatus(RolesAndResponsibilitiesConfirmations? rolesAndResponsibilitiesConfirmations)
+        {
+            if (rolesAndResponsibilitiesConfirmations == null)
+                return RolesAndResponsibilitiesConfirmations;
+
+            if (RolesAndResponsibilitiesConfirmations == null)
+                return rolesAndResponsibilitiesConfirmations;
+
+            return RolesAndResponsibilitiesConfirmations.Value | rolesAndResponsibilitiesConfirmations;
         }
 
         private void ConfirmRevision(DateTimeOffset time)
@@ -90,7 +101,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (ProviderIsEquivalent()) revision.TrainingProviderCorrect = TrainingProviderCorrect;
             if (ApprenticeshipIsEquivalent()) revision.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             revision.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
-            revision.RolesAndResponsibilitiesCorrect = RolesAndResponsibilitiesCorrect;
+            revision.RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations;
 
             return revision;
         }

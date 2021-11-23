@@ -16,12 +16,14 @@ SELECT
     PlannedEndDate,
     TrainingProviderCorrect,
     EmployerCorrect,
-    RolesAndResponsibilitiesCorrect,
+    RolesAndResponsibilitiesConfirmations,
     ApprenticeshipDetailsCorrect,
     HowApprenticeshipDeliveredCorrect,
     ConfirmBefore,
     ConfirmedOn,
-    CourseDuration
+    CourseDuration,
+    LastViewed,
+    CreatedOn
 FROM
     dbo.Revision
 GO
