@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
@@ -20,5 +21,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPut("approvals")]
         public async Task ChangeOfCircumstances([FromBody] ChangeRegistrationCommand request)
             => await _mediator.Send(request);
+
+        [HttpPost("approvals/stopped")]
+        public async Task StoppedApprenticeship([FromBody] StoppedApprenticeshipCommand request)
+        => await _mediator.Send(request);
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Api.Types;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
 using System;
@@ -47,9 +46,5 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPost("registrations/{apprenticeId}/firstseen")]
         public async Task RegistrationFirstSeen(Guid apprenticeId, [FromBody] RegistrationFirstSeenRequest request)
             => await _mediator.Send(new RegistrationFirstSeenCommand(apprenticeId, request.SeenOn));
-
-        [HttpPost("registrations/stopped")]
-        public async Task StoppedApprenticeship([FromBody] StoppedApprenticeshipCommand request)
-            => await _mediator.Send(request);
     }
 }
