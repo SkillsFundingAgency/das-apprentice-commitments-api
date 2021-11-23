@@ -2,7 +2,9 @@
 using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
@@ -84,6 +86,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 registration.CommitmentsApprovedOn.AddDays(1));
 
             // create apprenticeship and revision and immediately stop it???
+        }
+
+        [Test, AutoData]
+        public async Task Publish_event(DateTime stoppedOn)
+        {
+            var apprenticeship = await CreateVerifiedApprenticeship();
+            await StopApprenticeship(apprenticeship.CommitmentsApprenticeshipId, stoppedOn);
+
+            context.Messages.PublishedMessages
+                .Select(x => x.Message as ApprenticeshipStoppedEvent)
+                .Should().ContainEquivalentOf(new
+                {
+                    ApprenticeshipId = apprenticeship.Id,
+                    apprenticeship.ApprenticeId,
+                    apprenticeship.EmployerName,
+                    apprenticeship.CourseName,
+                });
         }
     }
 }

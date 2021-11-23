@@ -31,6 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         internal async Task<Revision?> FindLatestByCommitmentsApprenticeshipId(long apprenticeshipId)
             => await Entities
+                .Include(x => x.Apprenticeship)
                 .Where(x => x.CommitmentsApprenticeshipId == apprenticeshipId)
                 .OrderByDescending(x => x.CommitmentsApprovedOn)
                 .FirstOrDefaultAsync();

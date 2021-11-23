@@ -11,9 +11,4 @@ namespace SFA.DAS.ApprenticeCommitments.Messages.Events
         public long CommitmentsApprenticeshipId { get; set; }
         public DateTime CommitmentsApprovedOn { get; set; }
     }
-
-    public class ApprenticeshipRegisteredEvent
-    {
-        public Guid RegistrationId { get; set; }
-    }
 }
