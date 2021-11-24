@@ -190,7 +190,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
-                Apprenticeship = new
+                Approval = new
                 {
                     _request.EmployerAccountLegalEntityId,
                     _request.EmployerName,
@@ -251,7 +251,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 _request.FirstName,
                 _request.LastName,
                 _request.DateOfBirth,
-                Apprenticeship = new
+                Approval = new
                 {
                     _request.EmployerAccountLegalEntityId,
                     _request.EmployerName,

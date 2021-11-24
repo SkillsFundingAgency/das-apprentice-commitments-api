@@ -172,17 +172,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                     CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
                     Details = new
                     {
-                        _registration.Apprenticeship.EmployerName,
-                        _registration.Apprenticeship.EmployerAccountLegalEntityId,
-                        _registration.Apprenticeship.TrainingProviderId,
-                        _registration.Apprenticeship.TrainingProviderName,
+                        _registration.Approval.EmployerName,
+                        _registration.Approval.EmployerAccountLegalEntityId,
+                        _registration.Approval.TrainingProviderId,
+                        _registration.Approval.TrainingProviderName,
                         Course = new
                         {
-                            _registration.Apprenticeship.Course.Name,
-                            _registration.Apprenticeship.Course.Level,
-                            _registration.Apprenticeship.Course.Option,
-                            _registration.Apprenticeship.Course.PlannedStartDate,
-                            _registration.Apprenticeship.Course.PlannedEndDate,
+                            _registration.Approval.Course.Name,
+                            _registration.Approval.Course.Level,
+                            _registration.Approval.Course.Option,
+                            _registration.Approval.Course.PlannedStartDate,
+                            _registration.Approval.Course.PlannedEndDate,
                         }
                     },
                 });
