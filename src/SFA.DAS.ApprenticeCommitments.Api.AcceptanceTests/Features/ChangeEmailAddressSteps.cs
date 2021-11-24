@@ -1,15 +1,13 @@
-﻿using System.Linq;
-using System.Net.Mail;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
-using SFA.DAS.ApprenticeCommitments.Api.Controllers;
-using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
+using System.Linq;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
@@ -44,17 +42,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Given(@"we have an existing apprentice with multiple apprenticeships")]
-        public void GivenWeHaveAnExistingApprenticeWithMultipleApprenticeships()
+        public async Task GivenWeHaveAnExistingApprenticeWithMultipleApprenticeships()
         {
             _apprentice = _fixture.Create<Apprentice>();
+            _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
 
             _revisionForFirstApprenticeship = _fixture.Create<Revision>();
-            _apprentice.AddApprenticeship(_revisionForFirstApprenticeship);
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revisionForFirstApprenticeship, _apprentice.Id));
 
             _revisionForSecondApprenticeship = _fixture.Create<Revision>();
-            _apprentice.AddApprenticeship(_revisionForSecondApprenticeship);
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revisionForSecondApprenticeship, _apprentice.Id)); 
 
-            _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
         }
 
