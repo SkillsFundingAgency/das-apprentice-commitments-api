@@ -26,11 +26,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid Id { get; private set; }
 
-        public void AddApprenticeship(Revision apprenticeship)
-        {
-            Apprenticeships.Add(new Apprenticeship(apprenticeship));
-        }
-
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public MailAddress Email { get; private set; } = null!;

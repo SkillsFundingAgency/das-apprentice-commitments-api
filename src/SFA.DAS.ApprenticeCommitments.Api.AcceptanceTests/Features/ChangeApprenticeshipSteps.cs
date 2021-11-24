@@ -41,9 +41,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
             var apprentice = _fixture.Create<Apprentice>();
-            apprentice.AddApprenticeship(_revision);
 
             _context.DbContext.Apprentices.Add(apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 

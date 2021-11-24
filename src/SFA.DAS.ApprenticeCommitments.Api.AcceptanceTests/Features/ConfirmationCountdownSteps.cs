@@ -37,10 +37,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                              typeof(DateTime),
                              "approvedOn")));
 
-            _apprenticeship = _fixture.Create<Revision>();
-            _apprentice.AddApprenticeship(_apprenticeship);
-
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _apprenticeship = _fixture.Create<Revision>();
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_apprenticeship, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 

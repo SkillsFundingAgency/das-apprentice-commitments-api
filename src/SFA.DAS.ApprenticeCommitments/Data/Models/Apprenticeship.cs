@@ -16,6 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Apprenticeship(Revision apprenticeship, Guid apprenticeId) : this(apprenticeship)
         {
+            AddRevision(apprenticeship);
             ApprenticeId = apprenticeId;
         }
 
