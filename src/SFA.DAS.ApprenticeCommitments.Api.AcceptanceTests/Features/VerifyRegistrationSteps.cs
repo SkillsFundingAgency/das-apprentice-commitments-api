@@ -110,8 +110,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _registration = _f.Create<Registration>();
             GivenWeHaveAnExistingAccount();
-            _registration.AssociateWithApprentice(_apprentice, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.Registrations.Add(_registration);
+            _context.DbContext.SaveChanges();
+            _registration.AssociateWithApprentice(_apprentice, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.SaveChanges();
         }
 
