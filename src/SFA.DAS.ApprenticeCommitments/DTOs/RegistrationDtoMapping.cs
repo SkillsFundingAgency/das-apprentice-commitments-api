@@ -15,12 +15,12 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 LastName = registration.LastName,
                 DateOfBirth = registration.DateOfBirth,
                 Email = registration.Email.ToString(),
-                EmployerName = registration.Apprenticeship.EmployerName,
-                EmployerAccountLegalEntityId = registration.Apprenticeship.EmployerAccountLegalEntityId,
+                EmployerName = registration.Approval.EmployerName,
+                EmployerAccountLegalEntityId = registration.Approval.EmployerAccountLegalEntityId,
                 UserIdentityId = registration.ApprenticeId,
-                TrainingProviderId = registration.Apprenticeship.TrainingProviderId,
-                TrainingProviderName = registration.Apprenticeship.TrainingProviderName,
-                CourseName = registration.Apprenticeship.Course.Name,
+                TrainingProviderId = registration.Approval.TrainingProviderId,
+                TrainingProviderName = registration.Approval.TrainingProviderName,
+                CourseName = registration.Approval.Course.Name,
             };
         }
     }
