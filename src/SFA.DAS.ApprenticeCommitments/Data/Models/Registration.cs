@@ -48,6 +48,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
+        public Apprenticeship? Apprenticeship { get; private set; }
 
         public bool HasBeenCompleted => ApprenticeId != null;
 
@@ -64,7 +65,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     CommitmentsApprovedOn,
                     Approval);
 
-            apprentice.AddApprenticeship(apprenticeship);
+            Apprenticeship = new Apprenticeship(apprenticeship, apprentice.Id);
             ApprenticeId = apprentice.Id;
             AddDomainEvent(new RegistrationMatched(this, apprentice));
         }

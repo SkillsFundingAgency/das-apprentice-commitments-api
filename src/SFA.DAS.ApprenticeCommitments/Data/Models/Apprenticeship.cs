@@ -3,7 +3,6 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 #nullable enable
 
@@ -13,6 +12,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
     {
         private Apprenticeship()
         {
+        }
+
+        public Apprenticeship(Revision apprenticeship, Guid apprenticeId) : this(apprenticeship)
+        {
+            ApprenticeId = apprenticeId;
         }
 
         public Apprenticeship(Revision apprenticeship)
