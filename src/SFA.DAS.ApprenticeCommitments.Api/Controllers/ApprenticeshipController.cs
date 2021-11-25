@@ -5,6 +5,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFro
 using SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionsQuery;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Threading.Tasks;
@@ -24,6 +25,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPost("apprenticeships")]
         public async Task CreateApprenticeship([FromBody] CreateApprenticeshipFromRegistrationCommand request)
             => await _mediator.Send(request);
+
+        [HttpGet("apprentices/{id}/apprenticeships")]
+        public async Task<IActionResult> GetApprenticeApprenticeships(Guid id)
+        {
+            var result = await _mediator.Send(new ApprenticeshipsQuery(id));
+            return Ok(result);
+        }
 
         [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}")]
         public async Task<IActionResult> GetApprenticeship(Guid apprenticeId, long apprenticeshipId)
