@@ -12,6 +12,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -28,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         private protected TestContext context = null!;
         private protected HttpClient client = null!;
         protected ApprenticeCommitmentsDbContext Database { get; private set; } = null!;
-        protected TestableMessageSession Messages => context.Messages;
+        protected ConcurrentBag<PublishedEvent> PublishedNServiceBusEvents => context.PublishedNServiceBusEvents;
 
         private protected TimeSpan TimeBetweenActions = TimeSpan.FromDays(2);
 

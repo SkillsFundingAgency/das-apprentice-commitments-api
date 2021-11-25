@@ -114,21 +114,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"an ApprenticeEmailAddressedChangedEvent is published for each apprenticeship")]
         public void ThenAnApprenticeEmailAddressedChangedEventIsPublishedForEachApprenticeship()
         {
-           var messages =  _context.Messages.PublishedMessages
-                .Where(x=>x.Message is ApprenticeshipEmailAddressChangedEvent);
+           var events =  _context.PublishedNServiceBusEvents
+                .Where(x=>x.Event is ApprenticeshipEmailAddressChangedEvent);
 
-           messages.Should().ContainEquivalentOf(new
+           events.Should().ContainEquivalentOf(new
            {
-               Message = new
+               Event = new
                {
                    ApprenticeId = _apprentice.Id,
                    _revisionForFirstApprenticeship.CommitmentsApprenticeshipId
                }
            });
 
-           messages.Should().ContainEquivalentOf(new
+           events.Should().ContainEquivalentOf(new
            {
-               Message = new
+               Event = new
                {
                    ApprenticeId = _apprentice.Id,
                    _revisionForSecondApprenticeship.CommitmentsApprenticeshipId

@@ -193,9 +193,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var latest = _context.DbContext.Revisions.Single();
 
-            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            _context.PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new ApprenticeshipConfirmationCommencedEvent
+                Event = new ApprenticeshipConfirmationCommencedEvent
                 {
                     ApprenticeId = _registration.RegistrationId,
                     ApprenticeshipId = latest.ApprenticeshipId,
@@ -230,9 +230,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Then(@"the apprenticeship email address confirmed event is published")]
         public void ThenTheApprenticeshipEmailAddressConfirmedEventIsPublished()
         {
-            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            _context.PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new ApprenticeshipEmailAddressConfirmedEvent
+                Event = new ApprenticeshipEmailAddressConfirmedEvent
                 {
                     ApprenticeId = _context.DbContext.Apprentices.Single().Id,
                     CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
@@ -295,8 +295,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Then("do not send a Change of Circumstance email to the user")]
         public void ThenDoNotSendAChangeOfCircumstanceEmailToTheUser()
         {
-            _context.Messages.PublishedMessages
-                .Should().NotContain(x => x.Message is ApprenticeshipChangedEvent);
+            _context.PublishedNServiceBusEvents.Should().NotContain(x => x.Event is ApprenticeshipChangedEvent);
         }
     }
 }

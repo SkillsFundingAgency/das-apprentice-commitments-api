@@ -103,14 +103,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Then("the Confirmation Commenced event is published")]
         public void ThenTheConfirmationStartedEventIsPublished()
         {
-            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            _context.PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new ApprenticeshipConfirmationCommencedEvent
+                Event = new ApprenticeshipConfirmationCommencedEvent
                 {
                     ApprenticeId = _createApprenticeshipRequest.RegistrationId,
-                    ApprenticeshipId = (long?)null,
-                    ConfirmationId = (long?)null,
-                    ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(Revision.DaysBeforeOverdue),
+                    ApprenticeshipId = (long?) null,
+                    ConfirmationId = (long?) null,
+                    ConfirmationOverdueOn =
+                        _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(Revision.DaysBeforeOverdue),
                     CommitmentsApprovedOn = _createApprenticeshipRequest.CommitmentsApprovedOn,
                     CommitmentsApprenticeshipId = _createApprenticeshipRequest.CommitmentsApprenticeshipId,
                 }

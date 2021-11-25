@@ -2,6 +2,7 @@
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using System;
+using System.Collections.Concurrent;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
@@ -20,8 +21,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         public SpecifiedTimeProvider Time { get; set; }
             = new SpecifiedTimeProvider(DateTime.UtcNow);
 
-        public TestableMessageSession Messages { get; set; }
-            = new TestableMessageSession();
+        public ConcurrentBag<PublishedEvent> PublishedNServiceBusEvents { get; set; } =
+            new ConcurrentBag<PublishedEvent>(); 
 
         public void Dispose()
         {
