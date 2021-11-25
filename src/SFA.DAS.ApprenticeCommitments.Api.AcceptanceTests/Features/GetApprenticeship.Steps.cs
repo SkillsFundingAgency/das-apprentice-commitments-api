@@ -192,10 +192,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 
 
         [Then("all revisions should have the same apprenticeship ID")]
-        public async Task ThenAllCommitmentRevisionsShouldHaveTheSameApprenticeshipID()
+        public void ThenAllCommitmentRevisionsShouldHaveTheSameApprenticeshipID()
         {
-            var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
-            apprentice.Apprenticeships.SelectMany(x => x.Revisions)
+            var apprentice = _context.DbContext.Apprenticeships.Where(x => x.ApprenticeId == _apprentice.Id);
+            apprentice.SelectMany(x => x.Revisions)
                 .Should().NotBeEmpty()
                 .And.OnlyContain(a => a.ApprenticeshipId == _revision.ApprenticeshipId);
         }

@@ -58,7 +58,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
             var response = JsonConvert.DeserializeObject<ApprenticeshipsResponse>(content);
-            response.Apprenticeships.Should().BeEquivalentTo(_apprentice.Apprenticeships.Select(a => new
+            var apprenticeship = _context.DbContext.Apprenticeships.Where(x => x.ApprenticeId == _apprentice.Id);
+            response.Apprenticeships.Should().BeEquivalentTo(apprenticeship.Select(a => new
             {
                 a.Id,
                 a.Revisions.OrderByDescending(b => b.Id).First().CommitmentsApprenticeshipId
