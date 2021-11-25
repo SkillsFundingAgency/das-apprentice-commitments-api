@@ -91,15 +91,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
+            var apprenticeship = new Apprenticeship(_revision, _apprentice.Id);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
             await _context.DbContext.SaveChangesAsync();
 
-            _apprentice.Apprenticeships.First().Revise(
+            apprenticeship.Revise(
                 _revision.CommitmentsApprenticeshipId,
                 _fixture.Create<ApprenticeshipDetails>(),
                 _revision.CommitmentsApprovedOn.AddDays(1));
 
-            _newerRevision = _apprentice.Apprenticeships.First().Revisions.Last();
+            _newerRevision = apprenticeship.Revisions.Last();
             _newerRevision.Confirm(new Confirmations
             {
                 TrainingProviderCorrect = true,
