@@ -141,7 +141,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected async Task<ApprenticeshipDto> VerifyRegistration(CreateRegistrationCommand approval)
         {
             var account = await CreateAccount(approval);
-            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
+            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId, account.LastName, account.DateOfBirth);
             var apprenticeship = await GetApprenticeships(account.ApprenticeId);
             context.Time.Now = approval.CommitmentsApprovedOn;
             return apprenticeship[0];
@@ -159,17 +159,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return await client.PostValueAsync("apprentices", create);
         }
 
-        protected async Task VerifyRegistration(Guid registrationId, Guid apprenticeId)
+        protected async Task VerifyRegistration(CreateRegistrationCommand registration, Guid apprenticeId)
         {
-            var response = await PostVerifyRegistrationCommand(registrationId, apprenticeId);
+            var response = await PostVerifyRegistrationCommand(registration, apprenticeId);
             response.Should().Be2XXSuccessful();
         }
 
-        protected async Task<HttpResponseMessage> PostVerifyRegistrationCommand(Guid registrationId, Guid apprenticeId)
+        protected async Task VerifyRegistration(Guid registrationId, Guid apprenticeId, string lastName, DateTime dateOfBirth)
+        {
+            var response = await PostVerifyRegistrationCommand(registrationId, apprenticeId, lastName, dateOfBirth);
+            response.Should().Be2XXSuccessful();
+        }
+
+        protected Task<HttpResponseMessage> PostVerifyRegistrationCommand(CreateRegistrationCommand registration, Guid apprenticeId)
+            => PostVerifyRegistrationCommand(registration.RegistrationId, apprenticeId, registration.LastName, registration.DateOfBirth);
+
+        protected async Task<HttpResponseMessage> PostVerifyRegistrationCommand(Guid registrationId, Guid apprenticeId, string lastName, DateTime dateOfBirth)
         {
             var create = fixture.Build<CreateApprenticeshipFromRegistrationCommand>()
                              .With(p => p.RegistrationId, registrationId)
                              .With(p => p.ApprenticeId, apprenticeId)
+                             .With(p => p.LastName, lastName)
+                             .With(p => p.DateOfBirth, dateOfBirth)
                              .Create();
 
             var response = await client.PostValueAsync("apprenticeships", create);

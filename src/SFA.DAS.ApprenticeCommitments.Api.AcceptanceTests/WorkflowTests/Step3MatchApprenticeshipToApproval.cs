@@ -13,23 +13,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         [Test]
         public async Task Cannot_find_registration_that_doesnt_exist()
         {
-            var response = await PostVerifyRegistrationCommand(Guid.NewGuid(), Guid.NewGuid());
+            var response = await PostVerifyRegistrationCommand(Guid.NewGuid(), Guid.NewGuid(), "", DateTime.UtcNow);
 
             response
                 .Should().Be400BadRequest()
                 .And.MatchInContent("*\"Registration for Apprentice * not found\"*");
-        }
-
-        [Test]
-        public async Task Cannot_find_apprentice_that_doesnt_exist()
-        {
-            var approval = await CreateRegistration();
-
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, Guid.NewGuid());
-
-            response
-                .Should().Be400BadRequest()
-                .And.MatchInContent("*\"Apprentice * not found\"*");
         }
 
         [Test]
@@ -38,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var approval = await CreateRegistration();
 
             var account = await CreateAccount(approval, email: fixture.Create<MailAddress>());
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval, account.ApprenticeId);
 
             response.Should().Be2XXSuccessful();
         }
@@ -49,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var approval = await CreateRegistration();
 
             var account = await CreateAccount(approval, dateOfBirth: fixture.Create<DateTime>());
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId, approval.LastName, DateTime.UtcNow);
 
             response
                 .Should().Be400BadRequest()
@@ -62,7 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
 
-            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
+            await VerifyRegistration(approval, account.ApprenticeId);
 
             var apprenticeships = await GetApprenticeships(account.ApprenticeId);
             apprenticeships.Should().ContainEquivalentOf(new
@@ -82,9 +70,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
-            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId);
+            await VerifyRegistration(approval, account.ApprenticeId);
 
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval, account.ApprenticeId);
 
             response.Should().Be2XXSuccessful();
         }
@@ -94,10 +82,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
             var firstAccount = await CreateAccount(approval);
-            await VerifyRegistration(approval.RegistrationId, firstAccount.ApprenticeId);
+            await VerifyRegistration(approval, firstAccount.ApprenticeId);
             var secondAccount = await CreateAccount();
 
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, secondAccount.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval, secondAccount.ApprenticeId);
 
             response
                 .Should().Be400BadRequest()

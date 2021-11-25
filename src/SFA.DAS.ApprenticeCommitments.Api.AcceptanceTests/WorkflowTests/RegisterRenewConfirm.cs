@@ -4,8 +4,6 @@ using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
-using SFA.DAS.ApprenticeCommitments.DTOs;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -18,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create);
-            await VerifyRegistration(create.RegistrationId, account.ApprenticeId);
+            await VerifyRegistration(create, account.ApprenticeId);
             var apprenticeships = await GetApprenticeships(account.ApprenticeId);
             var apprenticeshipId = apprenticeships[0].Id;
 
@@ -51,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create, apprenticeId: create.RegistrationId);
-            await VerifyRegistration(create.RegistrationId, create.RegistrationId);
+            await VerifyRegistration(create, account.ApprenticeId);
 
             var apprenticeships = await GetApprenticeships(create.RegistrationId);
             var apprenticeshipId = apprenticeships[0].Id;

@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             var subsequentApproval = await CreateRegistration(
                 lastName: firstApproval.LastName, dateOfBirth: firstApproval.DateOfBirth);
-            await VerifyRegistration(subsequentApproval.RegistrationId, firstApprenticeship.ApprenticeId);
+            await VerifyRegistration(subsequentApproval, firstApprenticeship.ApprenticeId);
 
             // When
             var apprenticeships = await GetApprenticeships(firstApprenticeship.ApprenticeId);

@@ -10,13 +10,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 {
     internal class RegistrationMatched : INotification
     {
-        public Registration Registration { get; }
-        public Apprentice Apprentice { get; }
+        public Apprenticeship Apprenticeship { get; }
 
-        public RegistrationMatched(Registration registration, Apprentice apprentice)
+        public RegistrationMatched(Apprenticeship apprenticeship)
         {
-            Registration = registration;
-            Apprentice = apprentice;
+            Apprenticeship = apprenticeship;
         }
     }
 
@@ -35,13 +33,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
         {
             logger.LogInformation(
                 "RegistrationMatched - Publishing ApprenticeshipEmailAddressConfirmedEvent for Apprentice {ApprenticeId}, CommitmentApprenticeship {CommitmentsApprenticeshipId}",
-                notification.Apprentice.Id,
-                notification.Registration.CommitmentsApprenticeshipId);
+                notification.Apprenticeship.ApprenticeId,
+                notification.Apprenticeship.LatestRevision.CommitmentsApprenticeshipId);
 
             await messageSession.Publish(new ApprenticeshipEmailAddressConfirmedEvent
             {
-                ApprenticeId = notification.Apprentice.Id,
-                CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
+                ApprenticeId = notification.Apprenticeship.ApprenticeId,
+                CommitmentsApprenticeshipId = notification.Apprenticeship.LatestRevision.CommitmentsApprenticeshipId,
             });
         }
     }
