@@ -5,13 +5,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 {
     internal class RegistrationMatched : INotification
     {
-        public Registration Registration { get; }
-        public Apprentice Apprentice { get; }
+        public Apprenticeship Apprenticeship { get; }
 
-        public RegistrationMatched(Registration registration, Apprentice apprentice)
+        public RegistrationMatched(Apprenticeship apprenticeship)
         {
-            Registration = registration;
-            Apprentice = apprentice;
+            Apprenticeship = apprenticeship;
         }
     }
 }

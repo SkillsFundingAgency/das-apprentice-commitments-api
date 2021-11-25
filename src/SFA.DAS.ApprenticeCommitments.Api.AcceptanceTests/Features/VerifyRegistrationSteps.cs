@@ -48,8 +48,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _registration.FirstName,
                 _registration.LastName,
                 _registration.Email,
-                _registration.DateOfBirth
-                                        );
+                _registration.DateOfBirth);
+
             _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
         }
@@ -62,8 +62,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _registration.FirstName,
                 _registration.LastName,
                 new MailAddress("another@email.com"),
-                _registration.DateOfBirth
-                                        );
+                _registration.DateOfBirth);
+
             _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
         }
@@ -87,8 +87,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void GivenTheRequestMatchesRegistrationDetails()
         {
             _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
-                .With(p => p.ApprenticeId, _apprentice.Id)
                 .With(p => p.RegistrationId, _registration.RegistrationId)
+                .With(p => p.ApprenticeId, _apprentice.Id)
+                .With(p => p.LastName, _apprentice.LastName)
+                .With(p => p.DateOfBirth, _apprentice.DateOfBirth)
                 .Create();
         }
 
@@ -108,11 +110,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"we have an existing already verified registration")]
         public void GivenWeHaveAnExistingAlreadyVerifiedRegistration()
         {
-            _registration = _f.Create<Registration>();
+            GivenWeHaveAnExistingRegistration();
             GivenWeHaveAnExistingAccount();
-            _context.DbContext.Registrations.Add(_registration);
+
+            _registration.AssociateWithApprentice(_apprentice.Id, _apprentice.LastName, _apprentice.DateOfBirth, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.SaveChanges();
-            _registration.AssociateWithApprentice(_apprentice, FuzzyMatcher.AlwaysMatcher);
+            _registration.AssociateWithApprentice(_apprentice.Id, _apprentice.LastName, _apprentice.DateOfBirth, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.SaveChanges();
         }
 
