@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -91,15 +92,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
-            await _context.DbContext.SaveChangesAsync();
+            var apprenticeship = new Apprenticeship(_revision, _apprentice.Id);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
 
-            _apprentice.Apprenticeships.First().Revise(
+            apprenticeship
+                .Revise(
                 _revision.CommitmentsApprenticeshipId,
                 _fixture.Create<ApprenticeshipDetails>(),
                 _revision.CommitmentsApprovedOn.AddDays(1));
 
-            _newerRevision = _apprentice.Apprenticeships.First().Revisions.Last();
+            _newerRevision = apprenticeship.Revisions.Last();
             _newerRevision.Confirm(new Confirmations
             {
                 TrainingProviderCorrect = true,

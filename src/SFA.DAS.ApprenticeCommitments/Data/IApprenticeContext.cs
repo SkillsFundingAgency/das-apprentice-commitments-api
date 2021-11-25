@@ -18,12 +18,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                    $"Apprentice {apprenticeId} not found");
 
         internal async Task<Apprentice?> Find(Guid apprenticeId)
-            => await Entities
-                .SingleOrDefaultAsync(a => a.Id == apprenticeId);
+            => await Entities.SingleOrDefaultAsync(a => a.Id == apprenticeId);
 
         internal async Task<Apprentice[]> GetByEmail(MailAddress email)
             =>  await Entities
-                .Include(e => e.Apprenticeships)
                 .Where(x => x.Email == email)
                 .ToArrayAsync();
 
@@ -33,9 +31,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data
                    $"Apprentice {apprenticeId} not found");
 
         internal async Task<Apprentice?> FindAndIncludeApprenticeships(Guid apprenticeId)
-            => await Entities
-                .Include(e => e.Apprenticeships)
-                .ThenInclude(e => e.Revisions)
-                .SingleOrDefaultAsync(a => a.Id == apprenticeId);
+            => await Entities.SingleOrDefaultAsync(a => a.Id == apprenticeId);
     }
 }
