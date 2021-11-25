@@ -56,9 +56,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             }
         }
 
-        public ICollection<Apprenticeship> Apprenticeships { get; private set; }
-                    = new List<Apprenticeship>();
-
         public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
 
         internal void UpdateEmail(MailAddress newEmail)

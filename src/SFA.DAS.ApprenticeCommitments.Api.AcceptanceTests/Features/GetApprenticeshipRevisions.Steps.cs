@@ -88,9 +88,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("the apprenticeships exists, has many revisions, and is associated with this apprentice")]
         public async Task GivenTheApprenticeshipsExistsHasManyCommitmentRevisionsAndIsAssociatedWithThisApprentice()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
             var apprenticeship = new Apprenticeship(_revision, _apprentice.Id);
             _context.DbContext.Apprenticeships.Add(apprenticeship);
             await _context.DbContext.SaveChangesAsync();
