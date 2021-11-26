@@ -16,7 +16,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
         private static readonly Func<SpecifiedTimeProvider> _time = () => _timeProvider;
         private static readonly Func<ConcurrentBag<PublishedEvent>> _events = () => _eventsProvider;
         private static SpecifiedTimeProvider _timeProvider;
-        private static TestableMessageSession _messageProvider;
         private static ConcurrentBag<PublishedEvent> _eventsProvider;
 
         private readonly TestContext _context;
@@ -57,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
             Client = null;
             Factory?.Dispose();
             _timeProvider = null;
-            _messageProvider = null;
+            _eventsProvider = null;
         }
     }
 }
