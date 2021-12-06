@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
     [ApiController]
+    [Obsolete]
     public class ApprenticesController : ControllerBase
     {
         private readonly IMediator _mediator;
