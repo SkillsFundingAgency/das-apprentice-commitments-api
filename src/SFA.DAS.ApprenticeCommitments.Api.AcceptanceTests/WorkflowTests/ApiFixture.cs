@@ -7,6 +7,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationComma
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -77,7 +78,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task<HttpResponseMessage> PostCreateRegistrationCommand(CreateRegistrationCommand create)
         {
-            return await client.PostValueAsync("registrations", create);
+            return await client.PostValueAsync("approvals", create);
         }
 
         protected async Task<RegistrationResponse> GetRegistration(Guid apprenticeId)
@@ -190,7 +191,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeRegistrationCommand command)
-            => client.PutValueAsync("registrations", command);
+            => client.PutValueAsync("approvals", command);
 
         protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
         {
@@ -216,5 +217,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 r4.EnsureSuccessStatusCode();
             }
         }
+
+
+        protected async Task StopApprenticeship(long commitmentsApprenticeshipId, DateTime stoppedOn)
+        {
+            var response = await PostStopped(new StoppedApprenticeshipCommand
+            {
+                CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
+                CommitmentsStoppedOn = stoppedOn,
+            });
+
+            response.Should().Be2XXSuccessful();
+        }
+
+        protected Task<HttpResponseMessage> PostStopped(StoppedApprenticeshipCommand command)
+            => client.PostValueAsync("registrations/stopped", command);
     }
 }

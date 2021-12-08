@@ -26,6 +26,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
 
         public async Task<Unit> Handle(ChangeRegistrationCommand command, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("ChangeRegistrationCommand for Approval {Approval} (continuning {PreviousApproval})", command?.CommitmentsApprenticeshipId, command.CommitmentsContinuedApprenticeshipId);
+
             var apprenticeshipId = command.CommitmentsContinuedApprenticeshipId ?? command.CommitmentsApprenticeshipId;
 
             var apprenticeship = await _apprenticeships.FindByCommitmentsApprenticeshipId(apprenticeshipId);
