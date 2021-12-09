@@ -1,26 +1,26 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
-using System.Threading;
-using System.Threading.Tasks;
+using SFA.DAS.NServiceBus.Services;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
+namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
 {
     internal class PublishApprenticeshipConfirmationCommencedEvent
         : INotificationHandler<RegistrationAdded>
         , INotificationHandler<RevisionAdded>
     {
-        private readonly IMessageSession messageSession;
-        private readonly ILogger<PublishApprenticeshipConfirmationCommencedEvent> logger;
+        private readonly IEventPublisher _eventPublisher;
+        private readonly ILogger<PublishApprenticeshipConfirmationCommencedEvent> _logger;
 
         public PublishApprenticeshipConfirmationCommencedEvent(
-            IMessageSession messageSession,
+            IEventPublisher eventPublisher,
             ILogger<PublishApprenticeshipConfirmationCommencedEvent> logger)
         {
-            this.messageSession = messageSession;
-            this.logger = logger;
+            _eventPublisher = eventPublisher;
+            _logger = logger;
         }
 
         public async Task Handle(RegistrationAdded notification, CancellationToken cancellationToken)
@@ -34,12 +34,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
                 notification.Registration.CommitmentsApprovedOn,
                 notification.Registration.Apprenticeship);
 
-            logger.LogInformation(
+            _logger.LogInformation(
                 "RegistrationAdded - Publishing ApprenticeshipConfirmationCommencedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}",
                 notification.Registration.RegistrationId,
                 notification.Registration.CommitmentsApprenticeshipId);
 
-            await messageSession.Publish(new ApprenticeshipConfirmationCommencedEvent
+            await _eventPublisher.Publish(new ApprenticeshipConfirmationCommencedEvent
             {
                 ApprenticeId = notification.Registration.RegistrationId,
                 ConfirmationOverdueOn = pretend.ConfirmBefore,
@@ -50,12 +50,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 
         public async Task Handle(RevisionAdded notification, CancellationToken cancellationToken)
         {
-            logger.LogInformation(
+            _logger.LogInformation(
                 "RevisionAdded - Publishing ApprenticeshipConfirmationCommencedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}",
                 notification.Revision.Apprenticeship.ApprenticeId,
                 notification.Revision.ApprenticeshipId);
 
-            await messageSession.Publish(new ApprenticeshipConfirmationCommencedEvent
+            await _eventPublisher.Publish(new ApprenticeshipConfirmationCommencedEvent
             {
                 ApprenticeId = notification.Revision.Apprenticeship.ApprenticeId,
                 ApprenticeshipId = notification.Revision.ApprenticeshipId,

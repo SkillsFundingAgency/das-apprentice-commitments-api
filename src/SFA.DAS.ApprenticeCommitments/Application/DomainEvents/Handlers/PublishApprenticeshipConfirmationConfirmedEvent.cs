@@ -1,24 +1,24 @@
-﻿using MediatR;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.Logging;
-using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
-using System.Threading;
-using System.Threading.Tasks;
+using SFA.DAS.NServiceBus.Services;
 
-namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
+namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
 {
     internal class PublishApprenticeshipConfirmationConfirmedEvent : INotificationHandler<RevisionConfirmed>
     {
-        private readonly IMessageSession messageSession;
-        private readonly ILogger<PublishApprenticeshipConfirmationConfirmedEvent> logger;
+        private readonly IEventPublisher _eventPublisher;
+        private readonly ILogger<PublishApprenticeshipConfirmationConfirmedEvent> _logger;
 
         public PublishApprenticeshipConfirmationConfirmedEvent(
-            IMessageSession messageSession,
+            IEventPublisher eventPublisher,
             ILogger<PublishApprenticeshipConfirmationConfirmedEvent> logger)
         {
-            this.messageSession = messageSession;
-            this.logger = logger;
+            _eventPublisher = eventPublisher;
+            _logger = logger;
         }
 
         public async Task Handle(RevisionConfirmed notification, CancellationToken cancellationToken)
@@ -26,13 +26,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
             if (notification.Revision.ConfirmedOn == null)
                 throw new DomainException($"Apprenticeship {notification.Revision.ApprenticeshipId} revision {notification.Revision.Id} has not been confirmed");
 
-            logger.LogInformation(
+            _logger.LogInformation(
                 "Publishing ApprenticeshipConfirmationConfirmedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}, confirmed on {ConfirmedOn}",
                 notification.Revision.Apprenticeship.ApprenticeId,
                 notification.Revision.ApprenticeshipId,
                 notification.Revision.ConfirmedOn.Value);
 
-            await messageSession.Publish(new ApprenticeshipConfirmationConfirmedEvent
+            await _eventPublisher.Publish(new ApprenticeshipConfirmationConfirmedEvent
             {
                 ApprenticeId = notification.Revision.Apprenticeship.ApprenticeId,
                 ApprenticeshipId = notification.Revision.ApprenticeshipId,

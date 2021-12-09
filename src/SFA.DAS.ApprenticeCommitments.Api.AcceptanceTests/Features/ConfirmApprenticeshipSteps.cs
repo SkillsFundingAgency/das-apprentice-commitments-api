@@ -110,9 +110,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var latest = _context.DbContext.Revisions.Single();
 
-            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            _context.PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new
+                Event = new
                 {
                     ApprenticeId = _apprentice.Id,
                     latest.ApprenticeshipId,

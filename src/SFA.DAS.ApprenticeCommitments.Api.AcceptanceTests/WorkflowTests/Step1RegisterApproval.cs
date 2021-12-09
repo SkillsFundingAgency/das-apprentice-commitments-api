@@ -59,9 +59,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
 
-            Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new ApprenticeshipRegisteredEvent
+                Event = new ApprenticeshipRegisteredEvent
                 {
                     RegistrationId = approval.RegistrationId,
                 }

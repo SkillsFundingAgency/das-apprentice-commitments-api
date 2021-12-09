@@ -308,9 +308,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var latest = _context.DbContext.Revisions.OrderBy(x => x.Id).Last();
 
-            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            _context.PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new ApprenticeshipConfirmationCommencedEvent
+                Event = new ApprenticeshipConfirmationCommencedEvent
                 {
                     ApprenticeId = _context.DbContext.Apprentices.Single().Id,
                     ApprenticeshipId = _revision.ApprenticeshipId,
@@ -325,8 +325,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("no Confirmation Commenced event is published")]
         public void ThenNoConfirmationCommencedEventIsPublished()
         {
-            _context.Messages.PublishedMessages
-                .Select(x => x.Message is ApprenticeshipConfirmationCommencedEvent)
+            _context.PublishedNServiceBusEvents.Select(x => x.Event is ApprenticeshipConfirmationCommencedEvent)
                 .Should().BeEmpty();
         }
 
@@ -335,11 +334,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var latest = _context.DbContext.Revisions.OrderBy(x => x.Id).Last();
 
-            _context.Messages.PublishedMessages
-                .Where(x => x.Message is ApprenticeshipChangedEvent)
+            _context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipChangedEvent)
                 .Should().ContainEquivalentOf(new
                 {
-                    Message = new
+                    Event = new
                     {
                         ApprenticeId = _context.DbContext.Apprentices.Single().Id,
                         _revision.ApprenticeshipId,
@@ -352,11 +351,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             var registration = _context.DbContext.Registrations.FirstOrDefault(x => x.CommitmentsApprenticeshipId == _commitmentsApprenticeshipId);
 
-            _context.Messages.PublishedMessages
-                .Where(x => x.Message is ApprenticeshipRegisteredEvent)
+            _context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipRegisteredEvent)
                 .Should().ContainEquivalentOf(new
                 {
-                    Message = new
+                    Event = new
                     {
                         RegistrationId = registration.RegistrationId,
                     }

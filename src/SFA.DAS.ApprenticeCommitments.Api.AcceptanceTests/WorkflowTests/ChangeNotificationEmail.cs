@@ -19,8 +19,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             context.Time.Advance(TimeSpan.FromHours(12));
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
-            context.Messages.PublishedMessages
-                .Where(x => x.Message is ApprenticeshipChangedEvent)
+            context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipChangedEvent)
                 .Should().HaveCount(1);
         }
 
@@ -32,8 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             context.Time.Advance(TimeSpan.FromHours(25));
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
-            context.Messages.PublishedMessages
-                .Where(x => x.Message is ApprenticeshipChangedEvent)
+            context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipChangedEvent)
                 .Should().HaveCount(1);
         }
 
@@ -47,8 +47,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             context.Time.Advance(TimeSpan.FromHours(23));
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
-            context.Messages.PublishedMessages
-                .Where(x => x.Message is ApprenticeshipChangedEvent)
+            context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipChangedEvent)
                 .Should().HaveCount(2);
         }
 
@@ -66,8 +66,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             context.Time.Advance(TimeSpan.FromHours(1));
             await ChangeApprenticeship(new ChangeBuilder(apprenticeship));
 
-            context.Messages.PublishedMessages
-                .Where(x => x.Message is ApprenticeshipChangedEvent)
+            context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipChangedEvent)
                 .Should().HaveCount(2);
         }
     }
