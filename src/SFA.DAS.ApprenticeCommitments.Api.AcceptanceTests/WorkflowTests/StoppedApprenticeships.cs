@@ -94,8 +94,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var apprenticeship = await CreateVerifiedApprenticeship();
             await StopApprenticeship(apprenticeship.CommitmentsApprenticeshipId, stoppedOn);
 
-            context.Messages.PublishedMessages
-                .Select(x => x.Message as ApprenticeshipStoppedEvent)
+            context.PublishedNServiceBusEvents
+                .Select(x => x.Event as ApprenticeshipStoppedEvent)
                 .Should().ContainEquivalentOf(new
                 {
                     ApprenticeshipId = apprenticeship.Id,
