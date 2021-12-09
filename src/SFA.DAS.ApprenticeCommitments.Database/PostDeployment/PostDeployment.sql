@@ -26,4 +26,3 @@ GRANT SELECT ON [DashboardReporting].CommitmentstatementDashboardView TO Reporte
 
 GRANT SELECT ON [DashboardReporting].RegistrationDashboardView TO Reporter
 
-:r .\CS1227_Convert_RoleResponsibitiies_bit.sql

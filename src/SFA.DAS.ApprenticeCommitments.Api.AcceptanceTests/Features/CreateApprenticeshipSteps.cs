@@ -56,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"the apprenticeship is posted")]
         public async Task WhenTheApprenticeshipIsPosted()
         {
-            await _context.Api.Post("registrations", _createApprenticeshipRequest);
+            await _context.Api.Post("approvals", _createApprenticeshipRequest);
         }
 
         [Then(@"the result should return bad request")]
