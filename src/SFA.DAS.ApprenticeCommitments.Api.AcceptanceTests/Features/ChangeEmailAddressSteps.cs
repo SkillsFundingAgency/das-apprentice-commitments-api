@@ -63,51 +63,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _request = new JsonPatchDocument<ApprenticeDto>().Replace(x => x.Email, _newEmailAddress);
         }
 
-        [Given(@"a ChangeEmailCommand with an invalid email address")]
-        public void GivenAChangeEmailCommandWithAnInvalidEmailAddress()
-        {
-            _request = new JsonPatchDocument<ApprenticeDto>().Replace(x => x.Email, _fixture.Create<long>().ToString());
-        }
-
-        [Given("a ChangeEmailCommand with the current email address")]
-        public void GivenAChangeEmailCommandWithTheCurrentEmailAddress()
-        {
-            _request = new JsonPatchDocument<ApprenticeDto>().Replace(x => x.Email, _apprentice.Email.ToString());
-        }
-
         [When(@"we change the apprentice's email address")]
         public async Task WhenWeChangeTheApprenticesEmailAddress()
         {
             await _context.Api.Patch($"apprentices/{_apprentice.Id}", _request);
-        }
-
-        [Then(@"the apprentice record is updated")]
-        public void ThenTheApprenticeRecordIsCreated()
-        {
-            _context.DbContext.Apprentices.Should().ContainEquivalentOf(new
-            {
-                _apprentice.Id,
-                Email = new MailAddress(_newEmailAddress),
-            });
-        }
-
-        [Then(@"the apprentice record is not updated")]
-        public void ThenTheApprenticeRecordIsNotUpdated()
-        {
-            _context.DbContext.Apprentices.Should().ContainEquivalentOf(_apprentice);
-        }
-
-        [Then(@"the change history is recorded")]
-        public void ThenTheChangeHistoryIsRecorded()
-        {
-            var modified = _context.DbContext
-                .Apprentices.Include(x => x.PreviousEmailAddresses)
-                .Single(x => x.Id == _apprentice.Id);
-
-            modified.PreviousEmailAddresses.Should().ContainEquivalentOf(new
-            {
-                EmailAddress = new MailAddress(_newEmailAddress),
-            });
+            _context.Api.Response.Should().Be2XXSuccessful();
         }
 
         [Then(@"an ApprenticeEmailAddressedChangedEvent is published for each apprenticeship")]
