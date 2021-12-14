@@ -11,18 +11,15 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
     public class CreateApprenticeshipFromRegistrationCommandHandler : IRequestHandler<CreateApprenticeshipFromRegistrationCommand>
     {
         private readonly IRegistrationContext _registrations;
-        private readonly IApprenticeContext _apprentices;
         private readonly ApplicationSettings _applicationSettings;
         private readonly ILogger<CreateApprenticeshipFromRegistrationCommandHandler> _logger;
 
         public CreateApprenticeshipFromRegistrationCommandHandler(
             IRegistrationContext registrations,
-            IApprenticeContext apprenticeRepository,
             ApplicationSettings applicationSettings,
             ILogger<CreateApprenticeshipFromRegistrationCommandHandler> logger)
         {
             _registrations = registrations;
-            _apprentices = apprenticeRepository;
             _applicationSettings = applicationSettings;
             _logger = logger;
         }
@@ -32,11 +29,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
             _logger.LogInformation($"Create apprenticeship for apprentice {request.ApprenticeId} from registration {request.RegistrationId}");
 
             var registration = await _registrations.GetById(request.RegistrationId);
-            var apprentice = await _apprentices.GetById(request.ApprenticeId);
 
             var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold); 
 
-            registration.AssociateWithApprentice(apprentice, matcher);
+            registration.AssociateWithApprentice(request.ApprenticeId, request.LastName, request.DateOfBirth, matcher);
 
             return Unit.Value;
         }

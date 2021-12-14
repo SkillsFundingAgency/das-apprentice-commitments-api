@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;
             Email = pii.Email;
-            Apprenticeship = apprenticeship;
+            Approval = apprenticeship;
 
             AddDomainEvent(new RegistrationAdded(this));
         }
@@ -43,30 +43,31 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime DateOfBirth { get; private set; }
         public MailAddress Email { get; private set; } = null!;
         public Guid? ApprenticeId { get; private set; }
-        public ApprenticeshipDetails Apprenticeship { get; private set; } = null!;
+        public ApprenticeshipDetails Approval { get; private set; } = null!;
         public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
+        public Apprenticeship? Apprenticeship { get; private set; }
 
         public bool HasBeenCompleted => ApprenticeId != null;
 
-        public void AssociateWithApprentice(Apprentice apprentice, FuzzyMatcher matcher)
+        public void AssociateWithApprentice(Guid apprenticeId, string lastName, DateTime dateOfBirth, FuzzyMatcher matcher)
         {
-            if (AlreadyCompletedByApprentice(apprentice.Id)) return;
+            if (AlreadyCompletedByApprentice(apprenticeId)) return;
 
             EnsureNotAlreadyCompleted();
-            EnsureApprenticeDateOfBirthMatchesApproval(apprentice.DateOfBirth);
-            EnsureApprenticeNameMatchesApproval(apprentice, matcher);
+            EnsureApprenticeDateOfBirthMatchesApproval(apprenticeId, dateOfBirth);
+            EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher);
 
             var apprenticeship = new Revision(
                     CommitmentsApprenticeshipId,
                     CommitmentsApprovedOn,
-                    Apprenticeship);
+                    Approval);
 
-            apprentice.AddApprenticeship(apprenticeship);
-            ApprenticeId = apprentice.Id;
-            AddDomainEvent(new RegistrationMatched(this, apprentice));
+            Apprenticeship = new Apprenticeship(apprenticeship, apprenticeId);
+            ApprenticeId = apprenticeId;
+            AddDomainEvent(new RegistrationMatched(Apprenticeship));
         }
 
         private bool AlreadyCompletedByApprentice(Guid apprenticeId)
@@ -78,20 +79,20 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 throw new RegistrationAlreadyMatchedException(RegistrationId);
         }
 
-        private void EnsureApprenticeDateOfBirthMatchesApproval(DateTime dateOfBirth)
+        private void EnsureApprenticeDateOfBirthMatchesApproval(Guid apprenticeId, DateTime dateOfBirth)
         {
             if (DateOfBirth.Date != dateOfBirth.Date)
             {
                 throw new IdentityNotVerifiedException(
-                    $"Verified DOB ({dateOfBirth.Date}) did not match registration {RegistrationId} ({DateOfBirth.Date})");
+                    $"DoB ({dateOfBirth.Date}) from account {apprenticeId} did not match registration {RegistrationId} ({DateOfBirth.Date})");
             }
         }
-        private void EnsureApprenticeNameMatchesApproval(Apprentice apprentice, FuzzyMatcher matcher)
+        private void EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
         {
-            if (!matcher.IsSimilar(LastName, apprentice.LastName))
+            if (!matcher.IsSimilar(LastName, lastName))
             {
                 throw new IdentityNotVerifiedException(
-                    $"Last name from account {apprentice.Id} did not match registration {RegistrationId}");
+                    $"Last name from account {apprenticeId} did not match registration {RegistrationId}");
             }
         }
 
@@ -124,7 +125,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
-            Apprenticeship = apprenticeshipDetails;
+            Approval = apprenticeshipDetails;
             FirstName = pii.FirstName;
             LastName = pii.LastName;
             DateOfBirth = pii.DateOfBirth;

@@ -24,13 +24,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
             _apprentice = _fixture.Create<Apprentice>();
             _revision = _fixture.Create<Revision>();
-            _apprentice.AddApprenticeship(_revision);
         }
 
         [Given(@"we have an apprenticeship waiting to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipWaitingToBeConfirmed()
         {
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 

@@ -48,8 +48,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _registration.FirstName,
                 _registration.LastName,
                 _registration.Email,
-                _registration.DateOfBirth
-                                        );
+                _registration.DateOfBirth);
+
             _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
         }
@@ -62,8 +62,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 _registration.FirstName,
                 _registration.LastName,
                 new MailAddress("another@email.com"),
-                _registration.DateOfBirth
-                                        );
+                _registration.DateOfBirth);
+
             _context.DbContext.Apprentices.Add(_apprentice);
             _context.DbContext.SaveChanges();
         }
@@ -87,8 +87,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public void GivenTheRequestMatchesRegistrationDetails()
         {
             _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
-                .With(p => p.ApprenticeId, _apprentice.Id)
                 .With(p => p.RegistrationId, _registration.RegistrationId)
+                .With(p => p.ApprenticeId, _apprentice.Id)
+                .With(p => p.LastName, _apprentice.LastName)
+                .With(p => p.DateOfBirth, _apprentice.DateOfBirth)
                 .Create();
         }
 
@@ -108,10 +110,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"we have an existing already verified registration")]
         public void GivenWeHaveAnExistingAlreadyVerifiedRegistration()
         {
-            _registration = _f.Create<Registration>();
+            GivenWeHaveAnExistingRegistration();
             GivenWeHaveAnExistingAccount();
-            _registration.AssociateWithApprentice(_apprentice, FuzzyMatcher.AlwaysMatcher);
-            _context.DbContext.Registrations.Add(_registration);
+
+            _registration.AssociateWithApprentice(_apprentice.Id, _apprentice.LastName, _apprentice.DateOfBirth, FuzzyMatcher.AlwaysMatcher);
+            _context.DbContext.SaveChanges();
+            _registration.AssociateWithApprentice(_apprentice.Id, _apprentice.LastName, _apprentice.DateOfBirth, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.SaveChanges();
         }
 
@@ -153,36 +157,34 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Then("an apprenticeship record is not yet created")]
         public void ThenAnApprenticeshipRecordIsNotYetCreated()
         {
-            var apprentice = _context.DbContext
-                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.Revisions)
-                .Should().Contain(x => x.Id == _command.ApprenticeId)
-                .Which.Apprenticeships.Should().BeEmpty();
+            _context.DbContext.Apprenticeships.Should().BeEmpty();
         }
 
         [Then(@"an apprenticeship record is created")]
         public void ThenAnApprenticeshipRecordIsCreated()
         {
-            var apprentice = _context.DbContext
-                .Apprentices.Include(x => x.Apprenticeships).ThenInclude(x => x.Revisions)
-                .FirstOrDefault(x => x.Id == _command.ApprenticeId);
+            var apprenticeships = _context.DbContext
+                .Apprenticeships
+                .Include(x => x.Revisions)
+                .Where(x => x.ApprenticeId == _command.ApprenticeId);
 
-            apprentice.Apprenticeships.SelectMany(a => a.Revisions)
+            apprenticeships.SelectMany(a => a.Revisions)
                 .Should().ContainEquivalentOf(new
                 {
                     CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
                     Details = new
                     {
-                        _registration.Apprenticeship.EmployerName,
-                        _registration.Apprenticeship.EmployerAccountLegalEntityId,
-                        _registration.Apprenticeship.TrainingProviderId,
-                        _registration.Apprenticeship.TrainingProviderName,
+                        _registration.Approval.EmployerName,
+                        _registration.Approval.EmployerAccountLegalEntityId,
+                        _registration.Approval.TrainingProviderId,
+                        _registration.Approval.TrainingProviderName,
                         Course = new
                         {
-                            _registration.Apprenticeship.Course.Name,
-                            _registration.Apprenticeship.Course.Level,
-                            _registration.Apprenticeship.Course.Option,
-                            _registration.Apprenticeship.Course.PlannedStartDate,
-                            _registration.Apprenticeship.Course.PlannedEndDate,
+                            _registration.Approval.Course.Name,
+                            _registration.Approval.Course.Level,
+                            _registration.Approval.Course.Option,
+                            _registration.Approval.Course.PlannedStartDate,
+                            _registration.Approval.Course.PlannedEndDate,
                         }
                     },
                 });

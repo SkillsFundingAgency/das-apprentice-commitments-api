@@ -9,5 +9,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
     {
         public Guid RegistrationId { get; set; }
         public Guid ApprenticeId { get; set; }
+        public string LastName { get; set; }
+        public DateTime DateOfBirth { get; set; }
     }
 }

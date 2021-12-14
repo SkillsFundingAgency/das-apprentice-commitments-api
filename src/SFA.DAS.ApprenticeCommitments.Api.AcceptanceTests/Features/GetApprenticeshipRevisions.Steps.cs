@@ -62,8 +62,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_revision);
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -74,26 +76,28 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             // the GetApprenticeshipRevision feature finds our one as the latest approval
             _fixture.Register((int i) => _revision.CommitmentsApprovedOn.AddDays(-i));
 
-            _apprentice.AddApprenticeship(_fixture.Create<Revision>());
-            _apprentice.AddApprenticeship(_fixture.Create<Revision>());
-            _apprentice.AddApprenticeship(_revision);
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
         [Given("the apprenticeships exists, has many revisions, and is associated with this apprentice")]
         public async Task GivenTheApprenticeshipsExistsHasManyCommitmentRevisionsAndIsAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_revision);
-            _context.DbContext.Apprentices.Add(_apprentice);
+            var apprenticeship = new Apprenticeship(_revision, _apprentice.Id);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
             await _context.DbContext.SaveChangesAsync();
 
-            _apprentice.Apprenticeships.First().Revise(
+            apprenticeship.Revise(
                 _revision.CommitmentsApprenticeshipId,
                 _fixture.Create<ApprenticeshipDetails>(),
                 _revision.CommitmentsApprovedOn.AddDays(1));
 
-            _newerRevision = _apprentice.Apprenticeships.First().Revisions.Last();
+            _newerRevision = apprenticeship.Revisions.Last();
             _newerRevision.Confirm(new Confirmations
             {
                 TrainingProviderCorrect = true,
@@ -114,10 +118,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task GivenTheApprenticeshipExistsButItSAssociatedWithAnotherApprentice()
         {
             var anotherApprentice = _fixture.Create<Apprentice>();
-            anotherApprentice.AddApprenticeship(_revision);
 
             _context.DbContext.Apprentices.Add(anotherApprentice);
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, anotherApprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 

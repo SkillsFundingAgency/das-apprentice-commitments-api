@@ -3,8 +3,6 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using SFA.DAS.ApprenticeCommitments.DTOs;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,15 +22,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _context = context;
 
-            _apprentice = _fixture.Build<Apprentice>()
-                .Create();
-            _apprentice.AddApprenticeship(_fixture.Create<Revision>());
+            _apprentice = _fixture.Create<Apprentice>();
         }
 
         [Given("there is one apprenticeship")]
         public async Task GivenThereIsOneApprenticeship()
         {
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -59,7 +58,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
             var response = JsonConvert.DeserializeObject<ApprenticeshipsResponse>(content);
-            response.Apprenticeships.Should().BeEquivalentTo(_apprentice.Apprenticeships.Select(a => new
+            var apprenticeship = _context.DbContext.Apprenticeships.Where(x => x.ApprenticeId == _apprentice.Id);
+            response.Apprenticeships.Should().BeEquivalentTo(apprenticeship.Select(a => new
             {
                 a.Id,
                 a.Revisions.OrderByDescending(b => b.Id).First().CommitmentsApprenticeshipId

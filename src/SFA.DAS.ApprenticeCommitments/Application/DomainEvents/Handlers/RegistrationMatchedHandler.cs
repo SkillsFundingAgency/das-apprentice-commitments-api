@@ -22,13 +22,13 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
         {
             _logger.LogInformation(
                 "RegistrationMatched - Publishing ApprenticeshipEmailAddressConfirmedEvent for Apprentice {ApprenticeId}, CommitmentApprenticeship {CommitmentsApprenticeshipId}",
-                notification.Apprentice.Id,
-                notification.Registration.CommitmentsApprenticeshipId);
+                notification.Apprenticeship.ApprenticeId,
+                notification.Apprenticeship.LatestRevision.CommitmentsApprenticeshipId);
 
             await _eventPublisher.Publish(new ApprenticeshipEmailAddressConfirmedEvent
             {
-                ApprenticeId = notification.Apprentice.Id,
-                CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
+                ApprenticeId = notification.Apprenticeship.ApprenticeId,
+                CommitmentsApprenticeshipId = notification.Apprenticeship.LatestRevision.CommitmentsApprenticeshipId,
             });
         }
     }

@@ -89,15 +89,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             registration.FirstName.Should().Be(_createApprenticeshipRequest.FirstName);
             registration.LastName.Should().Be(_createApprenticeshipRequest.LastName);
             registration.Email.Should().Be(_createApprenticeshipRequest.Email);
-            registration.Apprenticeship.EmployerName.Should().Be(_createApprenticeshipRequest.EmployerName);
-            registration.Apprenticeship.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);
+            registration.Approval.EmployerName.Should().Be(_createApprenticeshipRequest.EmployerName);
+            registration.Approval.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);
             registration.CommitmentsApprenticeshipId.Should().Be(_createApprenticeshipRequest.CommitmentsApprenticeshipId);
-            registration.Apprenticeship.TrainingProviderName.Should().Be(_createApprenticeshipRequest.TrainingProviderName);
-            registration.Apprenticeship.Course.Name.Should().Be(_createApprenticeshipRequest.CourseName);
-            registration.Apprenticeship.Course.Level.Should().Be(_createApprenticeshipRequest.CourseLevel);
-            registration.Apprenticeship.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
-            registration.Apprenticeship.Course.PlannedStartDate.Should().Be(_createApprenticeshipRequest.PlannedStartDate);
-            registration.Apprenticeship.Course.PlannedEndDate.Should().Be(_createApprenticeshipRequest.PlannedEndDate);
+            registration.Approval.TrainingProviderName.Should().Be(_createApprenticeshipRequest.TrainingProviderName);
+            registration.Approval.Course.Name.Should().Be(_createApprenticeshipRequest.CourseName);
+            registration.Approval.Course.Level.Should().Be(_createApprenticeshipRequest.CourseLevel);
+            registration.Approval.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
+            registration.Approval.Course.PlannedStartDate.Should().Be(_createApprenticeshipRequest.PlannedStartDate);
+            registration.Approval.Course.PlannedEndDate.Should().Be(_createApprenticeshipRequest.PlannedEndDate);
         }
 
         [Then("the Confirmation Commenced event is published")]

@@ -41,9 +41,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
             var apprentice = _fixture.Create<Apprentice>();
-            apprentice.AddApprenticeship(_revision);
 
             _context.DbContext.Apprentices.Add(apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -190,7 +192,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
             {
-                Apprenticeship = new
+                Approval = new
                 {
                     _request.EmployerAccountLegalEntityId,
                     _request.EmployerName,
@@ -251,7 +253,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 _request.FirstName,
                 _request.LastName,
                 _request.DateOfBirth,
-                Apprenticeship = new
+                Approval = new
                 {
                     _request.EmployerAccountLegalEntityId,
                     _request.EmployerName,

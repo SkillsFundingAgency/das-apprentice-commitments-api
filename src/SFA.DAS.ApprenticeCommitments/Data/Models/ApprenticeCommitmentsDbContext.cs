@@ -59,7 +59,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                                 v => v.ToString(),
                                 v => new MailAddress(v));
                     });
-                a.HasMany(e => e.Apprenticeships).WithOne();
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 a.Ignore(e => e.TermsOfUseAccepted)
                     .Property("_termsOfUseAcceptedOn")
@@ -103,7 +102,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             modelBuilder.Entity<Registration>(entity =>
             {
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
-                entity.OwnsOne(e => e.Apprenticeship, apprenticeship =>
+                entity.OwnsOne(e => e.Approval, apprenticeship =>
                 {
                     apprenticeship.Property(p => p.EmployerAccountLegalEntityId)
                         .HasColumnName("EmployerAccountLegalEntityId");
