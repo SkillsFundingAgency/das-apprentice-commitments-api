@@ -41,6 +41,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.DbContext.SaveChanges();
         }
 
+        [Given("we have no apprentices")]
+        public void GivenWeHaveNoApprentices()
+        {
+            _apprentice = _fixture.Create<Apprentice>();
+        }
+
         [Given(@"we have an existing apprentice with multiple apprenticeships")]
         public async Task GivenWeHaveAnExistingApprenticeWithMultipleApprenticeships()
         {
@@ -73,7 +79,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then(@"an ApprenticeEmailAddressedChangedEvent is published for each apprenticeship")]
         public void ThenAnApprenticeEmailAddressedChangedEventIsPublishedForEachApprenticeship()
         {
-           var events =  _context.PublishedNServiceBusEvents
+            var events =  _context.PublishedNServiceBusEvents
                 .Where(x=>x.Event is ApprenticeshipEmailAddressChangedEvent);
 
            events.Should().ContainEquivalentOf(new
@@ -93,6 +99,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                    _revisionForSecondApprenticeship.CommitmentsApprenticeshipId
                }
            });
+        }
+
+        [Then(@"no ApprenticeEmailAddressedChangedEvent is published")]
+        public void ThenNoApprenticeEmailAddressedChangedEventIsPublished()
+        {
+            _context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipEmailAddressChangedEvent)
+                .Should().BeEmpty();
         }
     }
 }
