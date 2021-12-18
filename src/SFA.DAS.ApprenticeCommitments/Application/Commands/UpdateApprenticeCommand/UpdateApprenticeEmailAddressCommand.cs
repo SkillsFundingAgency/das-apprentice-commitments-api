@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCom
 
     public class UpdateApprenticeCommandHandler : IRequestHandler<UpdateApprenticeEmailAddressCommand>
     {
-        private readonly IApprenticeshipContext _apprentices;
+        private readonly IApprenticeshipContext _apprenticeships;
         private readonly IEventPublisher _eventPublisher;
         private readonly ILogger<UpdateApprenticeCommandHandler> _logger;
 
@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCom
             IEventPublisher eventPublisher,
             ILogger<UpdateApprenticeCommandHandler> logger)
         {
-            _apprentices = apprenticeships;
+            _apprenticeships = apprenticeships;
             _logger = logger;
             _eventPublisher = eventPublisher;
         }
@@ -46,7 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeCom
                 "Processing ApprenticeEmailAddressChanged for {apprentice} ",
                 request.ApprenticeId);
 
-            var apprenticeships = await _apprentices.FindAllForApprentice(request.ApprenticeId);
+            var apprenticeships = await _apprenticeships.FindAllForApprentice(request.ApprenticeId);
 
             foreach (var apprenticeship in apprenticeships)
             {
