@@ -3,8 +3,7 @@ AS
 SELECT
 	Id,
 	ApprenticeId,
-	CreatedOn,
-	LastViewed
+	CreatedOn
 FROM
 	dbo.Apprenticeship
 GO

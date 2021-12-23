@@ -12,14 +12,14 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         {
             if (apprenticeship == null) return null;
 
-            var latest = apprenticeship.LatestCommitmentStatement;
+            var latest = apprenticeship.LatestRevision;
 
             return new ApprenticeshipDto
             {
                 Id = apprenticeship.Id,
                 ApprenticeId = apprenticeship.ApprenticeId,
-                CommitmentStatementId = latest.Id,
-                LastViewed = apprenticeship.LastViewed,
+                RevisionId = latest.Id,
+                LastViewed = latest.LastViewed,
                 CommitmentsApprenticeshipId = latest.CommitmentsApprenticeshipId,
                 EmployerName = latest.Details.EmployerName,
                 EmployerAccountLegalEntityId = latest.Details.EmployerAccountLegalEntityId,
@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ApprenticeshipDetailsCorrect = latest.ApprenticeshipDetailsCorrect,
                 HowApprenticeshipDeliveredCorrect = latest.HowApprenticeshipDeliveredCorrect,
                 EmployerCorrect = latest.EmployerCorrect,
-                RolesAndResponsibilitiesCorrect = latest.RolesAndResponsibilitiesCorrect,
+                RolesAndResponsibilitiesConfirmations = latest.RolesAndResponsibilitiesConfirmations ?? RolesAndResponsibilitiesConfirmations.None,
                 CourseName = latest.Details.Course.Name,
                 CourseLevel = latest.Details.Course.Level,
                 CourseOption = latest.Details.Course.Option,
@@ -39,7 +39,8 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ConfirmedOn = latest.ConfirmedOn,
                 ConfirmBefore = latest.ConfirmBefore,
                 ApprovedOn = latest.CommitmentsApprovedOn,
-                DisplayChangeNotification = apprenticeship.DisplayChangeNotification,
+                ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
+                StoppedReceivedOn = latest.StoppedReceivedOn,
             };
         }
     }

@@ -17,11 +17,14 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         public async Task<Unit> Handle(CreateRegistrationCommand request, CancellationToken cancellationToken)
         {
             await _registrations.AddAsync(new Registration(
-                request.ApprenticeId,
+                request.RegistrationId,
                 request.CommitmentsApprenticeshipId,
                 request.CommitmentsApprovedOn,
-                new PersonalInformation(request.FirstName, request.LastName, request.DateOfBirth),
-                new MailAddress(request.Email),
+                new PersonalInformation(
+                    request.FirstName,
+                    request.LastName,
+                    request.DateOfBirth,
+                    new MailAddress(request.Email)),
                 new ApprenticeshipDetails(
                     request.EmployerAccountLegalEntityId,
                     request.EmployerName,

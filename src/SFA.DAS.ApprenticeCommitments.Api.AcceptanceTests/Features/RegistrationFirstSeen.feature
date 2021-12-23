@@ -8,11 +8,11 @@ Feature: RegistrationFirstSeen
 Scenario: Registration details are seen for the first time
 	Given this is the first time the apprentice has seen the identity flow
 	When we receive a request to mark registration as been viewed
-	Then the response is Accepted
+	Then the response is OK
 	And the registration record is updated
 
 Scenario: Registration details are not seen for the first time
 	Given this is not the first time the apprentice has seen the identity flow
 	When we receive a request to mark registration as been viewed
-	Then the response is Accepted
+	Then the response is OK
 	And the registration record is not updated

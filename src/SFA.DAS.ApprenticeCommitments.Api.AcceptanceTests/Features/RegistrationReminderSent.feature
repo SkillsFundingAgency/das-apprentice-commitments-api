@@ -6,11 +6,11 @@ Feature: RegistrationReminderSent
 Scenario: Registration Reminder is sent the first time
 	Given the apprentice has not been sent a reminder
 	When we receive a request to say reminder has been sent
-	Then the response is Accepted
+	Then the response is OK
 	And the registration record is updated
 
 Scenario: Registration Reminder is sent a second time
 	Given the apprentice has already been sent a reminder
 	When we receive a request to say reminder has been sent
-	Then the response is Accepted
+	Then the response is OK
 	And the registration record is not updated

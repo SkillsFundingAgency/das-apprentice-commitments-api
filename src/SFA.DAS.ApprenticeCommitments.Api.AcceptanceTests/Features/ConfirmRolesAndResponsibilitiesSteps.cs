@@ -1,9 +1,7 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using SFA.DAS.ApprenticeCommitments.Api.Controllers;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
-using System.Net;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -16,16 +14,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly CommitmentStatement _commitmentStatement;
-        private bool? RolesAndResponsibilitiesCorrect { get; set; }        
+        private readonly Revision _revision;
+
+        private RolesAndResponsibilitiesConfirmations _rolesAndResponsibilitiesConfirmations; 
 
         public ConfirmRolesAndResponsibilitiesSteps(TestContext context)
         {
             _context = context;
 
             _apprentice = _fixture.Create<Apprentice>();
-            _commitmentStatement = _fixture.Create<CommitmentStatement>();
-            _apprentice.AddApprenticeship(_commitmentStatement);
+            _revision = _fixture.Create<Revision>();
         }
 
         [Given("we have an apprenticeship waiting to be confirmed")]
@@ -33,37 +31,65 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
+            await _context.DbContext.SaveChangesAsync();
         }
 
         [Given("we have an apprenticeship that has previously had its roles and responsibilities confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsRolesAndResponsibilitiesConfirmed()
         {
-            _commitmentStatement.Confirm(new Confirmations { RolesAndResponsibilitiesCorrect = true }, _fixture.Create<DateTimeOffset>());
+            _revision.Confirm(new Confirmations
+            {
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                                                        RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed |
+                                                        RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
+            }, _fixture.Create<DateTimeOffset>());
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
-        [Given("a ConfirmRolesAndResponsibilitiesRequest stating the roles and responsibilities are correct")]
-        public void GivenAConfirmRolesAndResponsibilitiesRequestStatingTheRolesAndResponsibilitiesAreCorrect()
+        [Given(@"a confirmation stating the roles and responsibilities for have been read for (.*) is set")]
+        public void GivenAConfirmationStatingTheRolesAndResponsibilitiesForHaveBeenReadForIsSet(RolesAndResponsibilitiesConfirmations hasRead)
         {
-            RolesAndResponsibilitiesCorrect = true;
+            _rolesAndResponsibilitiesConfirmations = hasRead;
         }
 
-        [Given("a ConfirmRolesAndResponsibilitiesRequest stating the roles and responsibilities are incorrect")]
-        public void GivenAConfirmRolesAndResponsibilitiesRequestStatingTheRolesAndResponsibilitiesAreIncorrect()
+        [Given(@"we have an apprenticeship with ApprenticeRolesAndResponsibilitiesConfirmed")]
+        public async Task GivenWeHaveAnApprenticeshipWithApprenticeRolesAndResponsibilitiesConfirmed()
         {
-            RolesAndResponsibilitiesCorrect = false;
+            _revision.Confirm(new Confirmations
+            {
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed
+            }, _fixture.Create<DateTimeOffset>());
+
+            await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
+        }
+
+        [Given(
+            @"we have an apprenticeship with ApprenticeRolesAndResponsibilitiesConfirmed and EmployerRolesAndResponsibilitiesConfirmed")]
+        public async Task
+            GivenWeHaveAnApprenticeshipWithApprenticeRolesAndResponsibilitiesConfirmedAndEmployerRolesAndResponsibilitiesConfirmed()
+        {
+            _revision.Confirm(new Confirmations
+            {
+                RolesAndResponsibilitiesConfirmations =
+                    RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                    RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed
+            }, _fixture.Create<DateTimeOffset>());
+
+            await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
         [When("we send the confirmation")]
         public async Task WhenWeSendTheConfirmation()
         {
-            var command = new ConfirmRolesAndResponsibilitiesRequest
+            var command = new Confirmations
             {
-                RolesAndResponsibilitiesCorrect = (bool)RolesAndResponsibilitiesCorrect,
+                RolesAndResponsibilitiesConfirmations = _rolesAndResponsibilitiesConfirmations,
             };
 
-            await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/revisions/{_commitmentStatement.Id}/RolesAndResponsibilitiesConfirmation",
+            await _context.Api.Patch(
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/confirmations",
                 command);
         }
 
@@ -73,27 +99,45 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context.Api.Response.EnsureSuccessStatusCode();
         }
 
-        [Then("the response is BadRequest")]
-        public void ThenTheResponseIsBadRequest()
-        {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        }
-
         [Then("the apprenticeship record is updated")]
         public void ThenTheApprenticeshipRecordIsUpdated()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                _commitmentStatement.ApprenticeshipId,
-                RolesAndResponsibilitiesCorrect,
+                _revision.ApprenticeshipId,
+                RolesAndResponsibilitiesConfirmations = _rolesAndResponsibilitiesConfirmations,
             });
         }
+
+        [Then(@"the apprenticeship record now contains ApprenticeRolesAndResponsibilitiesConfirmed and (.*)")]
+        public void ThenTheApprenticeshipRecordNowContainsApprenticeRolesAndResponsibilitiesConfirmedAnd(RolesAndResponsibilitiesConfirmations p0)
+        {
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
+            {
+                _revision.ApprenticeshipId,
+                RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed | _rolesAndResponsibilitiesConfirmations,
+            });
+        }
+
+        [Then(@"the apprenticeship record shows the roles and responsibilities is fully confirmed")]
+        public void ThenTheApprenticeshipRecordNowShowsTheRolesAndResponsibilitiesIsFullyConfirmed()
+        {
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
+            {
+                _revision.ApprenticeshipId,
+                RolesAndResponsibilitiesConfirmations =
+                    RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                    RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed |
+                    RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
+            });
+        }
+
 
         [Then("the apprenticeship record remains unchanged")]
         public void ThenTheApprenticeshipRecordRemainsUnchanged()
         {
-            _context.DbContext.CommitmentStatements
-                .Should().ContainEquivalentOf(_commitmentStatement);
+            _context.DbContext.Revisions
+                .Should().ContainEquivalentOf(_revision);
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     public class ApprenticeCommitmentsDbContext
-        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext
+        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext, IRevisionContext
     {
         protected IEventDispatcher _dispatcher;
 
@@ -28,14 +28,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public virtual DbSet<Registration> Registrations { get; set; } = null!;
         public virtual DbSet<Apprentice> Apprentices { get; set; } = null!;
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; } = null!;
-        public virtual DbSet<CommitmentStatement> CommitmentStatements { get; set; } = null!;
+        public virtual DbSet<Revision> Revisions { get; set; } = null!;
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
         DbSet<Apprenticeship> IEntityContext<Apprenticeship>.Entities => Apprenticeships;
+        DbSet<Revision> IEntityContext<Revision>.Entities => Revisions;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Revision>().ToTable("Revision");
             modelBuilder.Entity<Apprenticeship>().ToTable("Apprenticeship");
             modelBuilder.Entity<Apprentice>(a =>
             {
@@ -57,16 +59,18 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                                 v => v.ToString(),
                                 v => new MailAddress(v));
                     });
-                a.HasMany(e => e.Apprenticeships).WithOne();
                 a.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+                a.Ignore(e => e.TermsOfUseAccepted)
+                    .Property("_termsOfUseAcceptedOn")
+                    .HasColumnName("TermsOfUseAcceptedOn");
             });
 
-            modelBuilder.Entity<CommitmentStatement>(a =>
+            modelBuilder.Entity<Revision>(a =>
             {
                 a.HasKey("Id");
             });
 
-            modelBuilder.Entity<CommitmentStatement>()
+            modelBuilder.Entity<Revision>()
                 .OwnsOne(e => e.Details, details =>
                 {
                     details.Property(p => p.EmployerAccountLegalEntityId).HasColumnName("EmployerAccountLegalEntityId");
@@ -86,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             modelBuilder.Entity<Registration>(entity =>
             {
-                entity.HasKey(e => e.ApprenticeId);
+                entity.HasKey(e => e.RegistrationId);
 
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity.Property(e => e.Email)
@@ -98,7 +102,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             modelBuilder.Entity<Registration>(entity =>
             {
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
-                entity.OwnsOne(e => e.Apprenticeship, apprenticeship =>
+                entity.OwnsOne(e => e.Approval, apprenticeship =>
                 {
                     apprenticeship.Property(p => p.EmployerAccountLegalEntityId)
                         .HasColumnName("EmployerAccountLegalEntityId");

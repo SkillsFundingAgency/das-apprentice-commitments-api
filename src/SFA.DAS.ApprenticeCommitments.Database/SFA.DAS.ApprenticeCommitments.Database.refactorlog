@@ -182,4 +182,32 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="CommitmentsApprovedOn" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e9bdbd9a-1d88-4e64-8234-fe02e8fcaa3b" ChangeDateTime="08/05/2021 11:35:44">
+    <Property Name="ElementName" Value="[dbo].[Registration].[ApprenticeId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Registration]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[RegistrationId]" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c8171c13-aeec-4302-937c-b8f3d5229209" ChangeDateTime="08/10/2021 05:32:36">
+    <Property Name="ElementName" Value="[dbo].[CommitmentStatement]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="Revision" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="e4ec0e1e-7d1a-4ed8-b2ac-9686bc675f23" ChangeDateTime="11/17/2021 07:29:30">
+    <Property Name="ElementName" Value="[dbo].[Revision].[RolesAndResponsibilitiesCorrect]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Revision]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="RolesAndResponsibilitiesConfirmations" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a2cdf984-77cc-444b-bd15-33165f98db73" ChangeDateTime="11/08/2021 14:44:07">
+    <Property Name="ElementName" Value="[dbo].[Revision].[StoppedOn]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Revision]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[StoppedReceivedOn]" />
+  </Operation>
 </Operations>

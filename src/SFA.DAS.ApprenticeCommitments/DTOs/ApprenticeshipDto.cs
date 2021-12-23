@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 
 #nullable disable
 
@@ -15,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public string TrainingProviderName { get; set; }
         public bool? TrainingProviderCorrect { get; set; }
         public bool? EmployerCorrect { get; set; }
-        public bool? RolesAndResponsibilitiesCorrect { get; set; }
+        public RolesAndResponsibilitiesConfirmations RolesAndResponsibilitiesConfirmations { get; set; }
         public bool? ApprenticeshipDetailsCorrect { get; set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; set; }
         public string CourseName { get; set; }
@@ -26,9 +27,11 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime PlannedEndDate { get; set; }
         public DateTime ConfirmBefore { get; set; }
         public DateTime? ConfirmedOn { get; set; }
-        public long CommitmentStatementId { get; set; }
-        public bool DisplayChangeNotification { get; set; }
+        public long RevisionId { get; set; }
+        public ChangeOfCircumstanceNotifications ChangeOfCircumstanceNotifications { get; set; }
         public DateTime ApprovedOn { get; set; }
         public DateTime? LastViewed { get; set; }
+        public DateTime? StoppedReceivedOn { get; set; }
+        public bool IsStopped => StoppedReceivedOn != null;
     }
 }

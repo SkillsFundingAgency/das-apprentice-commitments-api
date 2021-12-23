@@ -25,3 +25,4 @@ GRANT SELECT ON [DashboardReporting].ApprenticeshipDashboardView TO Reporter
 GRANT SELECT ON [DashboardReporting].CommitmentstatementDashboardView TO Reporter
 
 GRANT SELECT ON [DashboardReporting].RegistrationDashboardView TO Reporter
+

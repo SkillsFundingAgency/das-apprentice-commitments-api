@@ -23,3 +23,11 @@ Scenario: Ignore change to an existing email address
 	And a ChangeEmailCommand with the current email address
 	When we change the apprentice's email address
 	Then the apprentice record is not updated
+
+#Scenario: Change to a valid email address and notify linked apprenticeships
+#	Given we have an existing apprentice with multiple apprenticeships
+#	And a ChangeEmailCommand with a valid email address
+#	When we change the apprentice's email address
+#	Then the apprentice record is updated
+#	And the change history is recorded
+#	And an ApprenticeEmailAddressedChangedEvent is published for each apprenticeship 

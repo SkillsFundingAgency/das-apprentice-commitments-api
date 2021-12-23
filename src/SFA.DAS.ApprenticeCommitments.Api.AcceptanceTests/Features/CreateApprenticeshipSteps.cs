@@ -1,11 +1,10 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SFA.DAS.ApprenticeCommitments.Api.Extensions;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -36,11 +35,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _createApprenticeshipRequest = new CreateRegistrationCommand
             {
-                ApprenticeId = Guid.NewGuid(),
+                RegistrationId = Guid.NewGuid(),
                 CommitmentsApprenticeshipId = 1233,
                 FirstName = "Bob",
                 LastName = "Bobbertson",
-                DateOfBirth = new DateTime(2000, 1,2),
+                DateOfBirth = new DateTime(2000, 1, 2),
                 Email = "paul@fff.com",
                 EmployerName = "My Company",
                 EmployerAccountLegalEntityId = 61234,
@@ -57,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"the apprenticeship is posted")]
         public async Task WhenTheApprenticeshipIsPosted()
         {
-            await _context.Api.Post("apprenticeships", _createApprenticeshipRequest);
+            await _context.Api.Post("approvals", _createApprenticeshipRequest);
         }
 
         [Then(@"the result should return bad request")]
@@ -71,47 +70,48 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
 
-            var errors = JsonConvert.DeserializeObject<List<ErrorItem>>(content);
-            errors.Count.Should().BeGreaterOrEqualTo(1);
+            var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
+            errors.Errors.Count.Should().BeGreaterOrEqualTo(1);
         }
 
-        [Then(@"the result should return accepted")]
-        public void ThenTheResultShouldReturnAccepted()
+        [Then(@"the result should return OK")]
+        public void ThenTheResultShouldReturnOk()
         {
-            _context.Api.Response.StatusCode.Should().Be(HttpStatusCode.Accepted);
+            _context.Api.Response.Should().Be200Ok();
         }
 
         [Then(@"the registration exists in database")]
         public void ThenTheRegistrationExistsInDatabase()
         {
             var registration = _context.DbContext.Registrations
-                .FirstOrDefault(x => x.ApprenticeId == _createApprenticeshipRequest.ApprenticeId);
+                .FirstOrDefault(x => x.RegistrationId == _createApprenticeshipRequest.RegistrationId);
             registration.Should().NotBeNull();
             registration.FirstName.Should().Be(_createApprenticeshipRequest.FirstName);
             registration.LastName.Should().Be(_createApprenticeshipRequest.LastName);
             registration.Email.Should().Be(_createApprenticeshipRequest.Email);
-            registration.Apprenticeship.EmployerName.Should().Be(_createApprenticeshipRequest.EmployerName);
-            registration.Apprenticeship.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);
+            registration.Approval.EmployerName.Should().Be(_createApprenticeshipRequest.EmployerName);
+            registration.Approval.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);
             registration.CommitmentsApprenticeshipId.Should().Be(_createApprenticeshipRequest.CommitmentsApprenticeshipId);
-            registration.Apprenticeship.TrainingProviderName.Should().Be(_createApprenticeshipRequest.TrainingProviderName);
-            registration.Apprenticeship.Course.Name.Should().Be(_createApprenticeshipRequest.CourseName);
-            registration.Apprenticeship.Course.Level.Should().Be(_createApprenticeshipRequest.CourseLevel);
-            registration.Apprenticeship.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
-            registration.Apprenticeship.Course.PlannedStartDate.Should().Be(_createApprenticeshipRequest.PlannedStartDate);
-            registration.Apprenticeship.Course.PlannedEndDate.Should().Be(_createApprenticeshipRequest.PlannedEndDate);
+            registration.Approval.TrainingProviderName.Should().Be(_createApprenticeshipRequest.TrainingProviderName);
+            registration.Approval.Course.Name.Should().Be(_createApprenticeshipRequest.CourseName);
+            registration.Approval.Course.Level.Should().Be(_createApprenticeshipRequest.CourseLevel);
+            registration.Approval.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
+            registration.Approval.Course.PlannedStartDate.Should().Be(_createApprenticeshipRequest.PlannedStartDate);
+            registration.Approval.Course.PlannedEndDate.Should().Be(_createApprenticeshipRequest.PlannedEndDate);
         }
 
         [Then("the Confirmation Commenced event is published")]
         public void ThenTheConfirmationStartedEventIsPublished()
         {
-            _context.Messages.PublishedMessages.Should().ContainEquivalentOf(new
+            _context.PublishedNServiceBusEvents.Should().ContainEquivalentOf(new
             {
-                Message = new ApprenticeshipConfirmationCommencedEvent
+                Event = new ApprenticeshipConfirmationCommencedEvent
                 {
-                    ApprenticeId = _createApprenticeshipRequest.ApprenticeId,
-                    ApprenticeshipId = (long?)null,
-                    ConfirmationId = (long?)null,
-                    ConfirmationOverdueOn = _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(CommitmentStatement.DaysBeforeOverdue),
+                    ApprenticeId = _createApprenticeshipRequest.RegistrationId,
+                    ApprenticeshipId = (long?) null,
+                    ConfirmationId = (long?) null,
+                    ConfirmationOverdueOn =
+                        _createApprenticeshipRequest.CommitmentsApprovedOn.AddDays(Revision.DaysBeforeOverdue),
                     CommitmentsApprovedOn = _createApprenticeshipRequest.CommitmentsApprovedOn,
                     CommitmentsApprenticeshipId = _createApprenticeshipRequest.CommitmentsApprenticeshipId,
                 }

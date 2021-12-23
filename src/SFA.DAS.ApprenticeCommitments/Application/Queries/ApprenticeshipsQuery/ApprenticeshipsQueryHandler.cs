@@ -12,23 +12,26 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery
 {
     public class ApprenticeshipsQueryHandler
-        : IRequestHandler<ApprenticeshipsQuery, List<ApprenticeshipDto>>
+        : IRequestHandler<ApprenticeshipsQuery, ApprenticeshipsResponse>
     {
         private readonly IApprenticeshipContext _apprenticeshipRepository;
 
         public ApprenticeshipsQueryHandler(IApprenticeshipContext apprenticeshipRepository)
             => _apprenticeshipRepository = apprenticeshipRepository;
 
-        public async Task<List<ApprenticeshipDto>> Handle(
+        public async Task<ApprenticeshipsResponse> Handle(
             ApprenticeshipsQuery request,
             CancellationToken cancellationToken)
         {
             List<Apprenticeship> apprenticeships = await _apprenticeshipRepository
                 .FindAllForApprentice(request.ApprenticeId);
 
-            return apprenticeships
-                .Select(x => x.MapToApprenticeshipDto()!)
+            var dtos = apprenticeships
+                .ConvertAll(x => x.MapToApprenticeshipDto())
+                .OrderByDescending(x => x.ApprovedOn)
                 .ToList();
+
+            return new ApprenticeshipsResponse(dtos);
         }
     }
 }

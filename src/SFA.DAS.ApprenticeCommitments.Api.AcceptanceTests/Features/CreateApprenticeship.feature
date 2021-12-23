@@ -14,6 +14,6 @@ Scenario: Trying to create an apprenticeship with invalid values
 Scenario: Trying to create an apprenticeship with valid values
 	Given we have a valid apprenticeship request
 	When the apprenticeship is posted
-	Then the result should return accepted
+	Then the result should return OK
 	And the registration exists in database
 	And the Confirmation Commenced event is published

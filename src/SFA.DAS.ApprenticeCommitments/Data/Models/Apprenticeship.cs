@@ -14,85 +14,93 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
         }
 
-        public Apprenticeship(CommitmentStatement apprenticeship)
+        public Apprenticeship(Revision apprenticeship, Guid apprenticeId) : this(apprenticeship)
         {
-            AddCommitmentStatement(apprenticeship);
+            AddRevision(apprenticeship);
+            ApprenticeId = apprenticeId;
+        }
+
+        public Apprenticeship(Revision apprenticeship)
+        {
+            AddRevision(apprenticeship);
         }
 
         public long Id { get; private set; }
 
         public Guid ApprenticeId { get; private set; }
 
-        public DateTime LastViewed { get; set; }
+        private readonly List<Revision> _revisions = new List<Revision>();
 
-        private readonly List<CommitmentStatement> _commitmentStatements = new List<CommitmentStatement>();
+        public IReadOnlyCollection<Revision> Revisions => _revisions;
 
-        public IReadOnlyCollection<CommitmentStatement> CommitmentStatements => _commitmentStatements;
+        public Revision LatestRevision
+            => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
+                ?? throw new DomainException($"No revisions found in apprenticeship {Id}");
 
-        public CommitmentStatement LatestCommitmentStatement
-            => CommitmentStatements.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
-                ?? throw new DomainException($"No commitment statements found in apprenticeship {Id}");
-
-        public bool DisplayChangeNotification
+        public ChangeOfCircumstanceNotifications ChangeOfCircumstanceNotifications
         {
             get
             {
-                if (CommitmentStatements.Count == 1) return false;
+                if (Revisions.Count == 1) return ChangeOfCircumstanceNotifications.None;
 
-                var statements = CommitmentStatements.OrderBy(x => x.CommitmentsApprovedOn).ToList();
-                var latest = statements[CommitmentStatements.Count - 1];
-                var previous = statements[CommitmentStatements.Count - 2];
+                var revisions = Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).ToList();
+                var latest = revisions.First();
+                var lastSeen = revisions.FirstOrDefault(x => x.Id != latest.Id && x.LastViewed != null);
+
+                var notification = ChangeOfCircumstanceNotifications.None;
+
+                if (lastSeen == null) return notification;
 
                 if (latest.EmployerCorrect == null &&
-                    !latest.Details.EmployerIsEquivalent(previous.Details))
+                    !latest.Details.EmployerIsEquivalent(lastSeen.Details))
                 {
-                    return true;
+                    notification |= ChangeOfCircumstanceNotifications.EmployerDetailsChanged;
                 }
 
                 if (latest.TrainingProviderCorrect == null &&
-                    !latest.Details.ProviderIsEquivalent(previous.Details))
+                    !latest.Details.ProviderIsEquivalent(lastSeen.Details))
                 {
-                    return true;
+                    notification |= ChangeOfCircumstanceNotifications.ProviderDetailsChanged;
                 }
 
                 if (latest.ApprenticeshipDetailsCorrect == null &&
-                    !latest.Details.ApprenticeshipIsEquivalent(previous.Details))
+                    !latest.Details.ApprenticeshipIsEquivalent(lastSeen.Details))
                 {
-                    return true;
+                    notification |= ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged;
                 }
 
-                return false;
+                return notification;
             }
         }
 
-        private void AddCommitmentStatement(CommitmentStatement apprenticeship)
-            => _commitmentStatements.Add(apprenticeship);
+        private void AddRevision(Revision apprenticeship)
+            => _revisions.Add(apprenticeship);
 
-        private CommitmentStatement GetCommitmentStatement(long commitmentStatementId)
+        private Revision GetRevision(long revisionId)
         {
             // Remove around the end of May 2021
             // https://skillsfundingagency.atlassian.net/browse/CS-655
-            if (commitmentStatementId == 0)
+            if (revisionId == 0)
             {
-                return LatestCommitmentStatement;
+                return LatestRevision;
             }
             else
             {
-                return CommitmentStatements.FirstOrDefault(x => x.Id == commitmentStatementId)
+                return Revisions.FirstOrDefault(x => x.Id == revisionId)
                     ?? throw new DomainException(
-                        $"Commitment Statement {commitmentStatementId} not found in apprenticeship {Id}");
+                        $"Apprenticeship {Id} revision {revisionId} not found");
             }
         }
 
-        internal void Confirm(long commitmentStatementId, Confirmations confirmations, DateTimeOffset now)
-            => GetCommitmentStatement(commitmentStatementId).Confirm(confirmations, now);
+        internal void Confirm(long revisionId, Confirmations confirmations, DateTimeOffset now)
+            => GetRevision(revisionId).Confirm(confirmations, now);
 
-        public void RenewCommitment(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
+        public void Revise(long commitmentsApprenticeshipId, ApprenticeshipDetails details, DateTime approvedOn)
         {
-            var renewed = LatestCommitmentStatement.Renew(commitmentsApprenticeshipId, approvedOn, details);
+            var renewed = LatestRevision.Renew(commitmentsApprenticeshipId, approvedOn, details);
             if (renewed != null)
             {
-                AddCommitmentStatement(renewed);
+                AddRevision(renewed);
                 AddDomainEvent(new ApprenticeshipChanged(this));
             }
         }

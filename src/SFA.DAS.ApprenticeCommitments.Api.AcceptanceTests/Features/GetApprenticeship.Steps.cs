@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -18,32 +19,36 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
         private Apprentice _apprentice;
-        private CommitmentStatement _commitmentStatement;
-        private CommitmentStatement _newerCommitmentStatement;
+        private Revision _revision;
+        private Revision _newerRevision;
 
         public GetApprenticeshipSteps(TestContext context)
         {
             _context = context;
-            _apprentice = _fixture.Build<Apprentice>().Create();
+            _apprentice = _fixture.Build<Apprentice>()
+                .With(a => a.TermsOfUseAccepted, true)
+                .Create();
 
             var startDate = new System.DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
                 _fixture.Create("CourseName"), 1, null,
                 startDate, startDate.AddMonths(32), 33));
 
-            _commitmentStatement = _fixture.Build<CommitmentStatement>()
+            _revision = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations
                 {
                     EmployerCorrect = true,
                     TrainingProviderCorrect = true,
                     ApprenticeshipDetailsCorrect = true,
-                    RolesAndResponsibilitiesCorrect = true,
+                    RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
+                                                            RolesAndResponsibilitiesConfirmations.EmployerRolesAndResponsibilitiesConfirmed |
+                                                            RolesAndResponsibilitiesConfirmations.ProviderRolesAndResponsibilitiesConfirmed,
                     HowApprenticeshipDeliveredCorrect = true,
                     ApprenticeshipCorrect = true,
                 }, DateTime.Now))
                 .Create();
 
-            _newerCommitmentStatement = _fixture.Build<CommitmentStatement>()
+            _newerRevision = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations
                 {
                     TrainingProviderCorrect = true,
@@ -58,8 +63,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -68,29 +75,34 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             // Ensure previous approvals happened before the one we will later assert on, so 
             // the GetApprenticeship feature finds our one as the latest approval
-            _fixture.Register((int i) => _commitmentStatement.CommitmentsApprovedOn.AddDays(-i));
+            _fixture.Register((int i) => _revision.CommitmentsApprovedOn.AddDays(-i));
             
-            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
-            _apprentice.AddApprenticeship(_fixture.Create<CommitmentStatement>());
-            _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
-        [Given("the apprenticeships exists, has many commitment statements, and is associated with this apprentice")]
-        public async Task GivenTheApprenticeshipsExistsHasManyCommitmentStatementsAndIsAssociatedWithThisApprentice()
+        [Given("the apprenticeships exists, has many revisions, and is associated with this apprentice")]
+        public async Task GivenTheApprenticeshipsExistsHasManyCommitmentRevisionsAndIsAssociatedWithThisApprentice()
         {
-            _apprentice.AddApprenticeship(_commitmentStatement);
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
 
-            _apprentice.Apprenticeships.First().RenewCommitment(
-                _commitmentStatement.CommitmentsApprenticeshipId,
-                _fixture.Create<ApprenticeshipDetails>(),
-                _commitmentStatement.CommitmentsApprovedOn.AddDays(1));
+            var apprenticeship = new Apprenticeship(_revision, _apprentice.Id);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
 
-            _newerCommitmentStatement = _apprentice.Apprenticeships.First().CommitmentStatements.Last();
-            _newerCommitmentStatement.Confirm(new Confirmations
+            apprenticeship
+                .Revise(
+                _revision.CommitmentsApprenticeshipId,
+                _fixture.Create<ApprenticeshipDetails>(),
+                _revision.CommitmentsApprovedOn.AddDays(1));
+
+            _newerRevision = apprenticeship.Revisions.Last();
+            _newerRevision.Confirm(new Confirmations
             {
                 TrainingProviderCorrect = true,
                 EmployerCorrect = true,
@@ -110,17 +122,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task GivenTheApprenticeshipExistsButItSAssociatedWithAnotherApprentice()
         {
             var anotherApprentice = _fixture.Create<Apprentice>();
-            anotherApprentice.AddApprenticeship(_commitmentStatement);
 
             _context.DbContext.Apprentices.Add(anotherApprentice);
             _context.DbContext.Apprentices.Add(_apprentice);
+            await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, anotherApprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
 
         [When(@"we try to retrieve the apprenticeship")]
         public async Task WhenWeTryToRetrieveTheApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}");
+            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}");
         }
 
         [Then(@"the result should return ok")]
@@ -135,20 +149,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
-            a.Id.Should().Be(_commitmentStatement.ApprenticeshipId);
-            a.CommitmentsApprenticeshipId.Should().Be(_commitmentStatement.CommitmentsApprenticeshipId);
-            a.EmployerName.Should().Be(_commitmentStatement.Details.EmployerName);
-            a.EmployerAccountLegalEntityId.Should().Be(_commitmentStatement.Details.EmployerAccountLegalEntityId);
-            a.TrainingProviderName.Should().Be(_commitmentStatement.Details.TrainingProviderName);
-            a.TrainingProviderCorrect.Should().Be(_commitmentStatement.TrainingProviderCorrect);
-            a.EmployerCorrect.Should().Be(_commitmentStatement.EmployerCorrect);
-            a.ApprenticeshipDetailsCorrect.Should().Be(_commitmentStatement.ApprenticeshipDetailsCorrect);
-            a.HowApprenticeshipDeliveredCorrect.Should().Be(_commitmentStatement.HowApprenticeshipDeliveredCorrect);
-            a.CourseName.Should().Be(_commitmentStatement.Details.Course.Name);
-            a.CourseLevel.Should().Be(_commitmentStatement.Details.Course.Level);
-            a.CourseOption.Should().Be(_commitmentStatement.Details.Course.Option);
-            a.PlannedStartDate.Should().Be(_commitmentStatement.Details.Course.PlannedStartDate);
-            a.PlannedEndDate.Should().Be(_commitmentStatement.Details.Course.PlannedEndDate);
+            a.Id.Should().Be(_revision.ApprenticeshipId);
+            a.CommitmentsApprenticeshipId.Should().Be(_revision.CommitmentsApprenticeshipId);
+            a.EmployerName.Should().Be(_revision.Details.EmployerName);
+            a.EmployerAccountLegalEntityId.Should().Be(_revision.Details.EmployerAccountLegalEntityId);
+            a.TrainingProviderName.Should().Be(_revision.Details.TrainingProviderName);
+            a.TrainingProviderCorrect.Should().Be(_revision.TrainingProviderCorrect);
+            a.EmployerCorrect.Should().Be(_revision.EmployerCorrect);
+            a.ApprenticeshipDetailsCorrect.Should().Be(_revision.ApprenticeshipDetailsCorrect);
+            a.HowApprenticeshipDeliveredCorrect.Should().Be(_revision.HowApprenticeshipDeliveredCorrect);
+            a.CourseName.Should().Be(_revision.Details.Course.Name);
+            a.CourseLevel.Should().Be(_revision.Details.Course.Level);
+            a.CourseOption.Should().Be(_revision.Details.Course.Option);
+            a.PlannedStartDate.Should().Be(_revision.Details.Course.PlannedStartDate);
+            a.PlannedEndDate.Should().Be(_revision.Details.Course.PlannedEndDate);
             a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
 
@@ -158,32 +172,32 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
-            a.Id.Should().Be(_newerCommitmentStatement.ApprenticeshipId);
-            a.CommitmentsApprenticeshipId.Should().Be(_newerCommitmentStatement.CommitmentsApprenticeshipId);
-            a.EmployerName.Should().Be(_newerCommitmentStatement.Details.EmployerName);
-            a.EmployerAccountLegalEntityId.Should().Be(_newerCommitmentStatement.Details.EmployerAccountLegalEntityId);
-            a.TrainingProviderName.Should().Be(_newerCommitmentStatement.Details.TrainingProviderName);
-            a.TrainingProviderCorrect.Should().Be(_newerCommitmentStatement.TrainingProviderCorrect);
-            a.EmployerCorrect.Should().Be(_newerCommitmentStatement.EmployerCorrect);
-            a.ApprenticeshipDetailsCorrect.Should().Be(_newerCommitmentStatement.ApprenticeshipDetailsCorrect);
-            a.HowApprenticeshipDeliveredCorrect.Should().Be(_newerCommitmentStatement.HowApprenticeshipDeliveredCorrect);
-            a.CourseName.Should().Be(_newerCommitmentStatement.Details.Course.Name);
-            a.CourseLevel.Should().Be(_newerCommitmentStatement.Details.Course.Level);
-            a.CourseOption.Should().Be(_commitmentStatement.Details.Course.Option);
-            a.PlannedStartDate.Should().Be(_newerCommitmentStatement.Details.Course.PlannedStartDate);
-            a.PlannedEndDate.Should().Be(_newerCommitmentStatement.Details.Course.PlannedEndDate);
+            a.Id.Should().Be(_newerRevision.ApprenticeshipId);
+            a.CommitmentsApprenticeshipId.Should().Be(_newerRevision.CommitmentsApprenticeshipId);
+            a.EmployerName.Should().Be(_newerRevision.Details.EmployerName);
+            a.EmployerAccountLegalEntityId.Should().Be(_newerRevision.Details.EmployerAccountLegalEntityId);
+            a.TrainingProviderName.Should().Be(_newerRevision.Details.TrainingProviderName);
+            a.TrainingProviderCorrect.Should().Be(_newerRevision.TrainingProviderCorrect);
+            a.EmployerCorrect.Should().Be(_newerRevision.EmployerCorrect);
+            a.ApprenticeshipDetailsCorrect.Should().Be(_newerRevision.ApprenticeshipDetailsCorrect);
+            a.HowApprenticeshipDeliveredCorrect.Should().Be(_newerRevision.HowApprenticeshipDeliveredCorrect);
+            a.CourseName.Should().Be(_newerRevision.Details.Course.Name);
+            a.CourseLevel.Should().Be(_newerRevision.Details.Course.Level);
+            a.CourseOption.Should().Be(_revision.Details.Course.Option);
+            a.PlannedStartDate.Should().Be(_newerRevision.Details.Course.PlannedStartDate);
+            a.PlannedEndDate.Should().Be(_newerRevision.Details.Course.PlannedEndDate);
             a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
 
 
 
-        [Then("all commitment statements should have the same apprenticeship ID")]
-        public async Task ThenAllCommitmentStatementsShouldHaveTheSameApprenticeshipID()
+        [Then("all revisions should have the same apprenticeship ID")]
+        public void ThenAllCommitmentRevisionsShouldHaveTheSameApprenticeshipID()
         {
-            var apprentice = await _context.DbContext.Apprentices.FindAsync(_apprentice.Id);
-            apprentice.Apprenticeships.SelectMany(x => x.CommitmentStatements)
+            var apprentice = _context.DbContext.Apprenticeships.Where(x => x.ApprenticeId == _apprentice.Id);
+            apprentice.SelectMany(x => x.Revisions)
                 .Should().NotBeEmpty()
-                .And.OnlyContain(a => a.ApprenticeshipId == _commitmentStatement.ApprenticeshipId);
+                .And.OnlyContain(a => a.ApprenticeshipId == _revision.ApprenticeshipId);
         }
 
         [Then(@"the result should return NotFound")]

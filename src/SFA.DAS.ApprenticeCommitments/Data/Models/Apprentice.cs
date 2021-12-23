@@ -1,10 +1,13 @@
-﻿using System;
+﻿using FluentValidation;
+using SFA.DAS.ApprenticeCommitments.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Net.Mail;
+using SFA.DAS.ApprenticeCommitments.Application.DomainEvents;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Apprentice
+    public class Apprentice : Entity
     {
         private Apprentice()
         {
@@ -23,19 +26,35 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Guid Id { get; private set; }
 
-        public void AddApprenticeship(CommitmentStatement apprenticeship)
-        {
-            Apprenticeships.Add(new Apprenticeship(apprenticeship));
-        }
-
-        public string FirstName { get; private set; } = null!;
-        public string LastName { get; private set; } = null!;
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
         public MailAddress Email { get; private set; } = null!;
         public ICollection<ApprenticeEmailAddressHistory> PreviousEmailAddresses { get; private set; } = null!;
-        public DateTime DateOfBirth { get; private set; }
 
-        public ICollection<Apprenticeship> Apprenticeships { get; private set; }
-            = new List<Apprenticeship>();
+        private DateTime _dateOfBirth;
+
+        public DateTime DateOfBirth
+        {
+            get => _dateOfBirth;
+            set
+            {
+                // domain validation to go here
+                if (false) throw new DomainException("validation error");
+                _dateOfBirth = value;
+            }
+        }
+
+        private DateTime? _termsOfUseAcceptedOn;
+
+        public bool TermsOfUseAccepted
+        {
+            get => _termsOfUseAcceptedOn != null;
+            set
+            {
+                if (!value) throw new ValidationException("Cannot decline the Terms of Use");
+                _termsOfUseAcceptedOn = DateTime.Now;
+            }
+        }
 
         public DateTime CreatedOn { get; private set; } = DateTime.UtcNow;
 
@@ -44,6 +63,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (newEmail.Address == Email.Address) return;
             Email = newEmail;
             PreviousEmailAddresses.Add(new ApprenticeEmailAddressHistory(Email));
+            AddDomainEvent(new ApprenticeEmailAddressChanged(this));
         }
     }
 

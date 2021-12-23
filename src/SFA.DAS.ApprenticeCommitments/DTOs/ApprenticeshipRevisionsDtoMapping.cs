@@ -17,12 +17,11 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
             {
                 ApprenticeId = apprenticeship.ApprenticeId,
                 ApprenticeshipId = apprenticeship.Id,
-                LastViewed = apprenticeship.LastViewed,
-                Revisions = apprenticeship.CommitmentStatements.Select(MapToApprenticeshipRevisionDto).ToList(),
+                Revisions = apprenticeship.Revisions.Select(MapToApprenticeshipRevisionDto).ToList(),
             };
         }
 
-        public static ApprenticeshipRevisionDto MapToApprenticeshipRevisionDto(this CommitmentStatement revision)
+        public static ApprenticeshipRevisionDto MapToApprenticeshipRevisionDto(this Revision revision)
         {
             return new ApprenticeshipRevisionDto
             {
@@ -43,9 +42,10 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 EmployerCorrect = revision.EmployerCorrect,
                 ApprenticeshipDetailsCorrect = revision.ApprenticeshipDetailsCorrect,
                 HowApprenticeshipDeliveredCorrect = revision.HowApprenticeshipDeliveredCorrect,
-                RolesAndResponsibilitiesCorrect = revision.RolesAndResponsibilitiesCorrect,
+                RolesAndResponsibilitiesConfirmations = revision.RolesAndResponsibilitiesConfirmations ?? RolesAndResponsibilitiesConfirmations.None,
                 ConfirmBefore = revision.ConfirmBefore,
                 ConfirmedOn = revision.ConfirmedOn,
+                LastViewed = revision.LastViewed
             };
         }
     }

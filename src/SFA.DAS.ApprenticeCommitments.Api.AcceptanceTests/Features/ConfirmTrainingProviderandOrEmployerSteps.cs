@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private readonly Apprentice _apprentice;
-        private readonly CommitmentStatement _commitmentStatement;
+        private readonly Revision _revision;
         private bool? TrainingProviderCorrect { get; set; }
         private bool? EmployerCorrect { get; set; }
         private bool? ApprenticeshipDetailsCorrect { get; set; }
@@ -31,8 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _context = context;
 
             _apprentice = _fixture.Create<Apprentice>();
-            _commitmentStatement = _fixture.Create<CommitmentStatement>();
-            _apprentice.AddApprenticeship(_commitmentStatement);
+            _revision = _fixture.Create<Revision>();
             _anytime = _fixture.Create<DateTimeOffset>();
         }
 
@@ -41,26 +40,29 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context.DbContext.Apprentices.Add(_apprentice);
             await _context.DbContext.SaveChangesAsync();
+
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
+            await _context.DbContext.SaveChangesAsync();
         }
 
         [Given("we have an apprenticeship that has previously had its training provider positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsTrainingProviderConfirmed()
         {
-            _commitmentStatement.Confirm(new Confirmations { TrainingProviderCorrect = true }, _anytime);
+            _revision.Confirm(new Confirmations { TrainingProviderCorrect = true }, _anytime);
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
         [Given("we have an apprenticeship that has previously had its employer positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsEmployerPositivelyConfirmed()
         {
-            _commitmentStatement.Confirm(new Confirmations { EmployerCorrect = true }, _anytime);
+            _revision.Confirm(new Confirmations { EmployerCorrect = true }, _anytime);
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
         [Given("we have an apprenticeship that has previously had its apprenticeship details positively confirmed")]
         public async Task GivenWeHaveAnApprenticeshipThatHasPreviouslyHadItsApprenticeshipDetailsPositivelyConfirmed()
         {
-            _commitmentStatement.Confirm(new Confirmations { ApprenticeshipDetailsCorrect = true }, _anytime);
+            _revision.Confirm(new Confirmations { ApprenticeshipDetailsCorrect = true }, _anytime);
             await GivenWeHaveAnApprenticeshipWaitingToBeConfirmed();
         }
 
@@ -134,7 +136,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public async Task WhenWeSendTheConfirmation()
         {
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_commitmentStatement.ApprenticeshipId}/revisions/{_commitmentStatement.Id}/{endpoint}",
+                $"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/{endpoint}",
                 command);
         }
 
@@ -153,9 +155,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record is updated")]
         public void ThenTheApprenticeshipRecordIsUpdated()
         {
-            _context.DbContext.CommitmentStatements.Should().ContainEquivalentOf(new
+            _context.DbContext.Revisions.Should().ContainEquivalentOf(new
             {
-                _commitmentStatement.ApprenticeshipId,
+                _revision.ApprenticeshipId,
                 TrainingProviderCorrect,
                 EmployerCorrect,
                 ApprenticeshipDetailsCorrect,
@@ -165,8 +167,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Then("the apprenticeship record remains unchanged")]
         public void ThenTheApprenticeshipRecordRemainsUnchanged()
         {
-            _context.DbContext.CommitmentStatements
-                .Should().ContainEquivalentOf(_commitmentStatement);
+            _context.DbContext.Revisions
+                .Should().ContainEquivalentOf(_revision);
         }
     }
 }

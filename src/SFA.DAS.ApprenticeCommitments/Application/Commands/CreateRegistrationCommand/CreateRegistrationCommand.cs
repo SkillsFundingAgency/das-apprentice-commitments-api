@@ -7,7 +7,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
 {
     public class CreateRegistrationCommand : IUnitOfWorkCommand
     {
-        public Guid ApprenticeId { get; set; }
+        public Guid RegistrationId { get; set; }
         public long CommitmentsApprenticeshipId { get; set; }
         public DateTime CommitmentsApprovedOn { get; set; }
         public string FirstName { get; set; }
