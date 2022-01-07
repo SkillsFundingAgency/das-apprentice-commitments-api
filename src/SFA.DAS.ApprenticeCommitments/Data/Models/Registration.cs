@@ -2,6 +2,7 @@
 using SFA.DAS.ApprenticeCommitments.Data.FuzzyMatching;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net.Mail;
 
@@ -50,15 +51,22 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? SignUpReminderSentOn { get; private set; }
         public Apprenticeship? Apprenticeship { get; private set; }
 
+        public List<ApprenticeshipMatchAttempt> MatchAttempts = new List<ApprenticeshipMatchAttempt>();
+
         public bool HasBeenCompleted => ApprenticeId != null;
 
-        public void AssociateWithApprentice(Guid apprenticeId, string lastName, DateTime dateOfBirth, FuzzyMatcher matcher)
+        public Result AssociateWithApprentice(Guid apprenticeId, string lastName, DateTime dateOfBirth, FuzzyMatcher matcher)
         {
-            if (AlreadyCompletedByApprentice(apprenticeId)) return;
+            var attempt = new ApprenticeshipMatchAttempt(RegistrationId, apprenticeId);
+            MatchAttempts.Add(attempt);
 
-            EnsureNotAlreadyCompleted();
-            EnsureApprenticeDateOfBirthMatchesApproval(apprenticeId, dateOfBirth);
-            EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher);
+            var result =
+                AlreadyCompletedByApprentice(attempt, apprenticeId)
+                ?? EnsureNotAlreadyCompleted(attempt)
+                ?? EnsureApprenticeDateOfBirthMatchesApproval(attempt, apprenticeId, dateOfBirth)
+                ?? EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher);
+
+            if (result != null) return result;
 
             var apprenticeship = new Revision(
                     CommitmentsApprenticeshipId,
@@ -68,32 +76,55 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Apprenticeship = new Apprenticeship(apprenticeship, apprenticeId);
             ApprenticeId = apprenticeId;
             AddDomainEvent(new RegistrationMatched(Apprenticeship));
+
+            return new SuccessResult();
         }
 
-        private bool AlreadyCompletedByApprentice(Guid apprenticeId)
-            => ApprenticeId == apprenticeId;
+        public Result? AlreadyCompletedByApprentice(ApprenticeshipMatchAttempt attempt, Guid apprenticeId)
+        {
+            if (ApprenticeId == apprenticeId)
+            {
+                attempt.Status = ApprenticeshipMatchAttemptStatus.AlreadyCompleted;
+                return new SuccessResult();
+            }
 
-        private void EnsureNotAlreadyCompleted()
+            return null;
+        }
+
+        private Result? EnsureNotAlreadyCompleted(ApprenticeshipMatchAttempt attempt)
         {
             if (HasBeenCompleted)
-                throw new RegistrationAlreadyMatchedException(RegistrationId);
+            {
+                attempt.Status = ApprenticeshipMatchAttemptStatus.AlreadyCompleted;
+                return new ExceptionResult(new RegistrationAlreadyMatchedException(RegistrationId));
+            }
+
+            return default;
         }
 
-        private void EnsureApprenticeDateOfBirthMatchesApproval(Guid apprenticeId, DateTime dateOfBirth)
+        private Result? EnsureApprenticeDateOfBirthMatchesApproval(ApprenticeshipMatchAttempt attempt, Guid apprenticeId, DateTime dateOfBirth)
         {
             if (DateOfBirth.Date != dateOfBirth.Date)
             {
-                throw new IdentityNotVerifiedException(
-                    $"DoB ({dateOfBirth.Date}) from account {apprenticeId} did not match registration {RegistrationId} ({DateOfBirth.Date})");
+                attempt.Status = ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth;
+                return new ExceptionResult(
+                    new IdentityNotVerifiedException(
+                        $"DoB ({dateOfBirth.Date}) from account {apprenticeId} did not match registration {RegistrationId} ({DateOfBirth.Date})"));
             }
+
+            return default;
         }
-        private void EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
+
+        private Result? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
         {
             if (!matcher.IsSimilar(LastName, lastName))
             {
-                throw new IdentityNotVerifiedException(
-                    $"Last name from account {apprenticeId} did not match registration {RegistrationId}");
+                return new ExceptionResult(
+                    new IdentityNotVerifiedException(
+                        $"Last name from account {apprenticeId} did not match registration {RegistrationId}"));
             }
+
+            return default;
         }
 
         public void ViewedByUser(DateTime viewedOn)

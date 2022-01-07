@@ -21,6 +21,23 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test]
+        public async Task Record_succsessful_match()
+        {
+            var approval = await CreateRegistration();
+            var account = await CreateAccount(approval);
+
+            var response = await PostVerifyRegistrationCommand(approval, account.ApprenticeId);
+            response.Should().Be2XXSuccessful();
+
+            Database.ApprenticeshipMatchAttempts.Should().ContainEquivalentOf(new
+            {
+                approval.RegistrationId,
+                account.ApprenticeId,
+                Status = ApprenticeshipMatchAttemptStatus.Succeeded,
+            });
+        }
+
+        [Test]
         public async Task Can_match_incorrect_email()
         {
             var approval = await CreateRegistration();
@@ -42,6 +59,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             response
                 .Should().Be400BadRequest()
                 .And.MatchInContent("*\"Sorry, your identity has not been verified, please check your details\"*");
+
+            Database.ApprenticeshipMatchAttempts.Should().ContainEquivalentOf(new
+            {
+                approval.RegistrationId,
+                account.ApprenticeId,
+                Status = ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth,
+            });
         }
 
         [Test]

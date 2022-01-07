@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     public class ApprenticeCommitmentsDbContext
-        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext, IRevisionContext
+        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext, IRevisionContext, IApprenticeshipMatchAttemptContext
     {
         protected IEventDispatcher _dispatcher;
 
@@ -29,14 +29,18 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public virtual DbSet<Apprentice> Apprentices { get; set; } = null!;
         public virtual DbSet<Apprenticeship> Apprenticeships { get; set; } = null!;
         public virtual DbSet<Revision> Revisions { get; set; } = null!;
+        public virtual DbSet<ApprenticeshipMatchAttempt> ApprenticeshipMatchAttempts { get; set; } = null!;
 
         DbSet<Registration> IEntityContext<Registration>.Entities => Registrations;
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
         DbSet<Apprenticeship> IEntityContext<Apprenticeship>.Entities => Apprenticeships;
         DbSet<Revision> IEntityContext<Revision>.Entities => Revisions;
+        DbSet<ApprenticeshipMatchAttempt> IEntityContext<ApprenticeshipMatchAttempt>.Entities => ApprenticeshipMatchAttempts;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ApprenticeshipMatchAttempt>().ToTable("ApprenticeshipMatchAttempt");
             modelBuilder.Entity<Revision>().ToTable("Revision");
             modelBuilder.Entity<Apprenticeship>().ToTable("Apprenticeship");
             modelBuilder.Entity<Apprentice>(a =>
@@ -92,6 +96,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 entity.HasKey(e => e.RegistrationId);
 
+                entity.HasMany(e => e.MatchAttempts);
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity.Property(e => e.Email)
                     .HasConversion(

@@ -32,4 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data
         public Task<bool> RegistrationsExist()
             => Entities.AnyAsync();
     }
+
+    public interface IApprenticeshipMatchAttemptContext : IEntityContext<ApprenticeshipMatchAttempt>
+    {
+    }
 }

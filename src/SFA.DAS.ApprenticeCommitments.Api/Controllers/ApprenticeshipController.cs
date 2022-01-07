@@ -23,8 +23,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         }
 
         [HttpPost("apprenticeships")]
-        public async Task CreateApprenticeship([FromBody] CreateApprenticeshipFromRegistrationCommand request)
-            => await _mediator.Send(request);
+        public async Task<IActionResult> CreateApprenticeship([FromBody] CreateApprenticeshipFromRegistrationCommand request)
+        {
+            var result = await _mediator.Send(request);
+            if (result.Success) return Ok();
+            throw (result as ExceptionResult).Exception;
+        }
 
         [HttpGet("apprentices/{id}/apprenticeships")]
         public async Task<IActionResult> GetApprenticeApprenticeships(Guid id)
