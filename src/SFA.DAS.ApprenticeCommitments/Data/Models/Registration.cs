@@ -55,7 +55,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public bool HasBeenCompleted => ApprenticeId != null;
 
-        public Result AssociateWithApprentice(Guid apprenticeId, string lastName, DateTime dateOfBirth, FuzzyMatcher matcher)
+        public IResult AssociateWithApprentice(Guid apprenticeId, string lastName, DateTime dateOfBirth, FuzzyMatcher matcher)
         {
             var attempt = new ApprenticeshipMatchAttempt(RegistrationId, apprenticeId);
             MatchAttempts.Add(attempt);
@@ -66,7 +66,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 ?? EnsureApprenticeDateOfBirthMatchesApproval(attempt, apprenticeId, dateOfBirth)
                 ?? EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher);
 
-            if (result != null) return result;
+            if(result is IStatusResult<ApprenticeshipMatchAttemptStatus> r2)
+            {
+                attempt.Status = r2.Status;
+                return result;
+            }
 
             var apprenticeship = new Revision(
                     CommitmentsApprenticeshipId,
@@ -80,34 +84,34 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             return new SuccessResult();
         }
 
-        public Result? AlreadyCompletedByApprentice(ApprenticeshipMatchAttempt attempt, Guid apprenticeId)
+        public IStatusResult<ApprenticeshipMatchAttemptStatus>? AlreadyCompletedByApprentice(ApprenticeshipMatchAttempt attempt, Guid apprenticeId)
         {
             if (ApprenticeId == apprenticeId)
             {
-                attempt.Status = ApprenticeshipMatchAttemptStatus.AlreadyCompleted;
-                return new SuccessResult();
+                return ResultX.SuccessStatus(ApprenticeshipMatchAttemptStatus.AlreadyCompleted);
             }
 
             return null;
         }
 
-        private Result? EnsureNotAlreadyCompleted(ApprenticeshipMatchAttempt attempt)
+        private IResult? EnsureNotAlreadyCompleted(ApprenticeshipMatchAttempt attempt)
         {
             if (HasBeenCompleted)
             {
-                attempt.Status = ApprenticeshipMatchAttemptStatus.AlreadyCompleted;
-                return new ExceptionResult(new RegistrationAlreadyMatchedException(RegistrationId));
+                return ResultX.ExceptionStatus(
+                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted, 
+                    new RegistrationAlreadyMatchedException(RegistrationId));
             }
 
             return default;
         }
 
-        private Result? EnsureApprenticeDateOfBirthMatchesApproval(ApprenticeshipMatchAttempt attempt, Guid apprenticeId, DateTime dateOfBirth)
+        private IResult? EnsureApprenticeDateOfBirthMatchesApproval(ApprenticeshipMatchAttempt attempt, Guid apprenticeId, DateTime dateOfBirth)
         {
             if (DateOfBirth.Date != dateOfBirth.Date)
             {
-                attempt.Status = ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth;
-                return new ExceptionResult(
+                return ResultX.ExceptionStatus(
+                    ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth,
                     new IdentityNotVerifiedException(
                         $"DoB ({dateOfBirth.Date}) from account {apprenticeId} did not match registration {RegistrationId} ({DateOfBirth.Date})"));
             }
@@ -115,11 +119,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             return default;
         }
 
-        private Result? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
+        private IResult? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
         {
             if (!matcher.IsSimilar(LastName, lastName))
             {
-                return new ExceptionResult(
+                return ResultX.ExceptionStatus(
+                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted,
                     new IdentityNotVerifiedException(
                         $"Last name from account {apprenticeId} did not match registration {RegistrationId}"));
             }

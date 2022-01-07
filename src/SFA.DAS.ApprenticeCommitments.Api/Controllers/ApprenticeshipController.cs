@@ -26,8 +26,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public async Task<IActionResult> CreateApprenticeship([FromBody] CreateApprenticeshipFromRegistrationCommand request)
         {
             var result = await _mediator.Send(request);
-            if (result.Success) return Ok();
-            throw (result as ExceptionResult).Exception;
+            return result switch
+            {
+                SuccessResult _ => Ok(),
+                SuccessResult2 _ => Ok(),
+                ExceptionResult er => throw er.Exception,
+                ExceptionResult2 er => throw er.Exception,
+                _ => StatusCode(500),
+            };
         }
 
         [HttpGet("apprentices/{id}/apprenticeships")]

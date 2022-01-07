@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand
 {
-    public class CreateApprenticeshipFromRegistrationCommandHandler : IRequestHandler<CreateApprenticeshipFromRegistrationCommand, Result>
+    public class CreateApprenticeshipFromRegistrationCommandHandler : IRequestHandler<CreateApprenticeshipFromRegistrationCommand, IResult>
     {
         private readonly IRegistrationContext _registrations;
         private readonly ApplicationSettings _applicationSettings;
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
             _logger = logger;
         }
 
-        public async Task<Result> Handle(CreateApprenticeshipFromRegistrationCommand request, CancellationToken cancellationToken)
+        public async Task<IResult> Handle(CreateApprenticeshipFromRegistrationCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Create apprenticeship for apprentice {request.ApprenticeId} from registration {request.RegistrationId}");
 
