@@ -94,8 +94,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             modelBuilder.Entity<Registration>(entity =>
             {
                 entity.HasKey(e => e.RegistrationId);
-
-                entity.HasMany(e => e.MatchAttempts);
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
                 entity.Property(e => e.Email)
                     .HasConversion(

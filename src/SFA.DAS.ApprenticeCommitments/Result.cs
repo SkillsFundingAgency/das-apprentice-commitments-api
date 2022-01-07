@@ -2,7 +2,7 @@
 
 namespace SFA.DAS.ApprenticeCommitments
 {
-    public partial class Result
+    public static class Result
     {
         public static SuccessResult Success() => new SuccessResult();
         
@@ -31,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments
         public bool IsError => !IsSuccess;
     }
 
-    public interface IResult<T> : IResult
+    public interface IResult<out T> : IResult
     {
         T Data { get; }
     }
@@ -79,7 +79,7 @@ namespace SFA.DAS.ApprenticeCommitments
         public ExceptionResult(Exception exception) => Exception = exception;
     }
 
-    public interface IStatusResult<TStatus> : IResult
+    public interface IStatusResult<out TStatus> : IResult
     {
         public TStatus Status { get; }
     }

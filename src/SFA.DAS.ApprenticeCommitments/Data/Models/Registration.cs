@@ -51,7 +51,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? SignUpReminderSentOn { get; private set; }
         public Apprenticeship? Apprenticeship { get; private set; }
 
-        public List<ApprenticeshipMatchAttempt> MatchAttempts = new List<ApprenticeshipMatchAttempt>();
+        public List<ApprenticeshipMatchAttempt> MatchAttempts { get; set; } = new List<ApprenticeshipMatchAttempt>();
 
         public bool HasBeenCompleted => ApprenticeId != null;
 
