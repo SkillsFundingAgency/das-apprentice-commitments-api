@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     public class ApprenticeCommitmentsDbContext
-        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext, IRevisionContext, IApprenticeshipMatchAttemptContext
+        : DbContext, IRegistrationContext, IApprenticeContext, IApprenticeshipContext, IRevisionContext
     {
         protected IEventDispatcher _dispatcher;
 
@@ -35,7 +35,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         DbSet<Apprentice> IEntityContext<Apprentice>.Entities => Apprentices;
         DbSet<Apprenticeship> IEntityContext<Apprenticeship>.Entities => Apprenticeships;
         DbSet<Revision> IEntityContext<Revision>.Entities => Revisions;
-        DbSet<ApprenticeshipMatchAttempt> IEntityContext<ApprenticeshipMatchAttempt>.Entities => ApprenticeshipMatchAttempts;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
