@@ -57,99 +57,67 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public IResult AssociateWithApprentice(Guid apprenticeId, string lastName, DateTime dateOfBirth, FuzzyMatcher matcher)
         {
-            var attempt = new ApprenticeshipMatchAttempt(RegistrationId, apprenticeId);
-            MatchAttempts.Add(attempt);
-
             var result =
-                AlreadyCompletedByApprentice(attempt, apprenticeId)
-                ?? EnsureNotAlreadyCompleted(attempt)
-                ?? EnsureApprenticeDateOfBirthMatchesApproval(attempt, apprenticeId, dateOfBirth)
-                ?? EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher);
+                CheckAlreadyCompletedByApprentice(apprenticeId)
+                ?? EnsureNotAlreadyCompleted()
+                ?? EnsureApprenticeDateOfBirthMatchesApproval(apprenticeId, dateOfBirth)
+                ?? EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher)
+                ?? AssociateWithApprentice(apprenticeId);
 
-            if(result is IStatusResult<ApprenticeshipMatchAttemptStatus> r2)
-            {
-                attempt.Status = r2.Status;
-                return result;
-            }
+            MatchAttempts.Add(
+                new ApprenticeshipMatchAttempt(RegistrationId, apprenticeId, result.Status));
 
+            return result;
+        }
+
+        public IStatusResult<ApprenticeshipMatchAttemptStatus>? CheckAlreadyCompletedByApprentice(Guid apprenticeId) =>
+            ApprenticeId == apprenticeId
+                ? Result.SuccessStatus(ApprenticeshipMatchAttemptStatus.AlreadyCompleted)
+                : null;
+
+        private IStatusResult<ApprenticeshipMatchAttemptStatus>? EnsureNotAlreadyCompleted()
+            => HasBeenCompleted
+                ? Result.ExceptionStatus(
+                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted,
+                    new RegistrationAlreadyMatchedException(RegistrationId))
+                : null;
+
+        private IStatusResult<ApprenticeshipMatchAttemptStatus>? EnsureApprenticeDateOfBirthMatchesApproval(Guid apprenticeId, DateTime dateOfBirth)
+            => DateOfBirth.Date != dateOfBirth.Date
+                ? Result.ExceptionStatus(
+                    ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth,
+                    new RegistrationMismatchDateOfBirthException(apprenticeId, RegistrationId))
+                : default;
+
+        private IStatusResult<ApprenticeshipMatchAttemptStatus>? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
+            => !matcher.IsSimilar(LastName, lastName)
+                ? Result.ExceptionStatus(
+                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted,
+                    new RegistrationMismatchLastNameException(apprenticeId, RegistrationId))
+                : default;
+
+        private SuccessStatusResult<ApprenticeshipMatchAttemptStatus> AssociateWithApprentice(Guid apprenticeId)
+        {
             var apprenticeship = new Revision(
-                    CommitmentsApprenticeshipId,
-                    CommitmentsApprovedOn,
-                    Approval);
+                                CommitmentsApprenticeshipId,
+                                CommitmentsApprovedOn,
+                                Approval);
 
             Apprenticeship = new Apprenticeship(apprenticeship, apprenticeId);
             ApprenticeId = apprenticeId;
             AddDomainEvent(new RegistrationMatched(Apprenticeship));
 
-            return new SuccessResult();
-        }
-
-        public IStatusResult<ApprenticeshipMatchAttemptStatus>? AlreadyCompletedByApprentice(ApprenticeshipMatchAttempt attempt, Guid apprenticeId)
-        {
-            if (ApprenticeId == apprenticeId)
-            {
-                return ResultX.SuccessStatus(ApprenticeshipMatchAttemptStatus.AlreadyCompleted);
-            }
-
-            return null;
-        }
-
-        private IResult? EnsureNotAlreadyCompleted(ApprenticeshipMatchAttempt attempt)
-        {
-            if (HasBeenCompleted)
-            {
-                return ResultX.ExceptionStatus(
-                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted, 
-                    new RegistrationAlreadyMatchedException(RegistrationId));
-            }
-
-            return default;
-        }
-
-        private IResult? EnsureApprenticeDateOfBirthMatchesApproval(ApprenticeshipMatchAttempt attempt, Guid apprenticeId, DateTime dateOfBirth)
-        {
-            if (DateOfBirth.Date != dateOfBirth.Date)
-            {
-                return ResultX.ExceptionStatus(
-                    ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth,
-                    new IdentityNotVerifiedException(
-                        $"DoB ({dateOfBirth.Date}) from account {apprenticeId} did not match registration {RegistrationId} ({DateOfBirth.Date})"));
-            }
-
-            return default;
-        }
-
-        private IResult? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
-        {
-            if (!matcher.IsSimilar(LastName, lastName))
-            {
-                return ResultX.ExceptionStatus(
-                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted,
-                    new IdentityNotVerifiedException(
-                        $"Last name from account {apprenticeId} did not match registration {RegistrationId}"));
-            }
-
-            return default;
+            return Result.SuccessStatus(ApprenticeshipMatchAttemptStatus.Succeeded);
         }
 
         public void ViewedByUser(DateTime viewedOn)
         {
-            if (FirstViewedOn.HasValue)
-            {
-                return;
-            }
-
-            FirstViewedOn = viewedOn;
+            if (FirstViewedOn == null) FirstViewedOn = viewedOn;
         }
 
         public void SignUpReminderSent(DateTime sentOn)
         {
-            if (SignUpReminderSentOn.HasValue)
-            {
-                return;
-            }
-
-            SignUpReminderSentOn = sentOn;
+            if (SignUpReminderSentOn == null) SignUpReminderSentOn = sentOn;
         }
 
         public void RenewApprenticeship(long commitmentsApprenticeshipId, DateTime commitmentsApprovedOn, ApprenticeshipDetails apprenticeshipDetails, PersonalInformation pii)

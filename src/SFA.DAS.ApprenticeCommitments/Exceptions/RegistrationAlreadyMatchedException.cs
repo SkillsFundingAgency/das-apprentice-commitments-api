@@ -25,4 +25,34 @@ namespace SFA.DAS.ApprenticeCommitments.Exceptions
         {
         }
     }
+
+    [Serializable]
+    public class RegistrationMismatchDateOfBirthException : IdentityNotVerifiedException
+    {
+        public RegistrationMismatchDateOfBirthException(Guid apprenticeId, Guid registrationId)
+            : base($"DoB from account {apprenticeId} did not match registration {registrationId}")
+        {
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        protected RegistrationMismatchDateOfBirthException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
+
+    [Serializable]
+    public class RegistrationMismatchLastNameException : IdentityNotVerifiedException
+    {
+        public RegistrationMismatchLastNameException(Guid apprenticeId, Guid registrationId)
+            : base($"Last name from account {apprenticeId} did not match registration {registrationId}")
+        {
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        protected RegistrationMismatchLastNameException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+    }
 }

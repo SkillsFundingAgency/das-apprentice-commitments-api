@@ -29,9 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             return result switch
             {
                 SuccessResult _ => Ok(),
-                SuccessResult2 _ => Ok(),
                 ExceptionResult er => throw er.Exception,
-                ExceptionResult2 er => throw er.Exception,
                 _ => StatusCode(500),
             };
         }
