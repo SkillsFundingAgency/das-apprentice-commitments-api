@@ -27,5 +27,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         Succeeded,
         AlreadyCompleted,
         MismatchedDateOfBirth,
+        MismatchedLastName,
     }
 }

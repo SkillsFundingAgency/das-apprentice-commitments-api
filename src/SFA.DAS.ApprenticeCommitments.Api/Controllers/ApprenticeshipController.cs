@@ -8,6 +8,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionsQ
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
@@ -25,12 +26,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         [HttpPost("apprenticeships")]
         public async Task<IActionResult> CreateApprenticeship([FromBody] CreateApprenticeshipFromRegistrationCommand request)
         {
-            var result = await _mediator.Send(request);
-            return result switch
+            return await _mediator.Send(request) switch
             {
                 SuccessResult _ => Ok(),
-                ExceptionResult er => throw er.Exception,
-                _ => StatusCode(500),
+                ExceptionResult result => throw result.Exception,
+                object result => StatusCode((int)HttpStatusCode.InternalServerError, result),
             };
         }
 

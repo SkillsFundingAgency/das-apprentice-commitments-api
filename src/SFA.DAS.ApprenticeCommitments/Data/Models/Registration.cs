@@ -92,7 +92,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private IStatusResult<ApprenticeshipMatchAttemptStatus>? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
             => !matcher.IsSimilar(LastName, lastName)
                 ? Result.ExceptionStatus(
-                    ApprenticeshipMatchAttemptStatus.AlreadyCompleted,
+                    ApprenticeshipMatchAttemptStatus.MismatchedLastName,
                     new RegistrationMismatchLastNameException(apprenticeId, RegistrationId))
                 : default;
 

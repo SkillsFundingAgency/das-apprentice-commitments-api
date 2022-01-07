@@ -16,7 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create);
-            await VerifyRegistration(create, account.ApprenticeId);
+            await VerifyRegistration(create, account);
             var apprenticeships = await GetApprenticeships(account.ApprenticeId);
             var apprenticeshipId = apprenticeships[0].Id;
 
@@ -49,7 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var create = await CreateRegistration();
             var account = await CreateAccount(create, apprenticeId: create.RegistrationId);
-            await VerifyRegistration(create, account.ApprenticeId);
+            await VerifyRegistration(create, account);
 
             var apprenticeships = await GetApprenticeships(create.RegistrationId);
             var apprenticeshipId = apprenticeships[0].Id;

@@ -11,14 +11,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             // Given
             var firstApproval = await CreateRegistration();
-            var firstApprenticeship = await VerifyRegistration(firstApproval);
+            var account = await CreateAccount(firstApproval);
+            await VerifyRegistration(firstApproval, account);
 
             var subsequentApproval = await CreateRegistration(
                 lastName: firstApproval.LastName, dateOfBirth: firstApproval.DateOfBirth);
-            await VerifyRegistration(subsequentApproval, firstApprenticeship.ApprenticeId);
+            await VerifyRegistration(subsequentApproval, account);
 
             // When
-            var apprenticeships = await GetApprenticeships(firstApprenticeship.ApprenticeId);
+            var apprenticeships = await GetApprenticeships(account.ApprenticeId);
 
             // Then
             apprenticeships.Should().HaveCount(2).And.BeInDescendingOrder(x => x.ApprovedOn);

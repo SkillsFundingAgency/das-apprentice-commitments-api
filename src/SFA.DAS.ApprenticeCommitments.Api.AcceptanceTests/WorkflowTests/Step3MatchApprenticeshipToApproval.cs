@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
 
-            var response = await PostVerifyRegistrationCommand(approval, account.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval, account);
             response.Should().Be2XXSuccessful();
 
             Database.ApprenticeshipMatchAttempts.Should().ContainEquivalentOf(new
@@ -41,20 +41,40 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         public async Task Can_match_incorrect_email()
         {
             var approval = await CreateRegistration();
-
             var account = await CreateAccount(approval, email: fixture.Create<MailAddress>());
-            var response = await PostVerifyRegistrationCommand(approval, account.ApprenticeId);
+            
+            var response = await PostVerifyRegistrationCommand(approval, account);
 
             response.Should().Be2XXSuccessful();
+        }
+
+        [Test]
+        public async Task Cannot_match_incorrect_last_name()
+        {
+            var approval = await CreateRegistration(lastName: "onething");
+            var account = await CreateAccount(approval, lastName: "different");
+            
+            var response = await PostVerifyRegistrationCommand(approval, account);
+
+            response
+                .Should().Be400BadRequest()
+                .And.MatchInContent("*\"Sorry, your identity has not been verified, please check your details\"*");
+
+            Database.ApprenticeshipMatchAttempts.Should().ContainEquivalentOf(new
+            {
+                approval.RegistrationId,
+                account.ApprenticeId,
+                Status = ApprenticeshipMatchAttemptStatus.MismatchedLastName,
+            });
         }
 
         [Test]
         public async Task Cannot_match_incorrect_date_of_birth()
         {
             var approval = await CreateRegistration();
-
             var account = await CreateAccount(approval, dateOfBirth: fixture.Create<DateTime>());
-            var response = await PostVerifyRegistrationCommand(approval.RegistrationId, account.ApprenticeId, approval.LastName, DateTime.UtcNow);
+            
+            var response = await PostVerifyRegistrationCommand(approval, account);
 
             response
                 .Should().Be400BadRequest()
@@ -74,7 +94,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
 
-            await VerifyRegistration(approval, account.ApprenticeId);
+            await VerifyRegistration(approval, account);
 
             var apprenticeships = await GetApprenticeships(account.ApprenticeId);
             apprenticeships.Should().ContainEquivalentOf(new
@@ -94,11 +114,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
             var account = await CreateAccount(approval);
-            await VerifyRegistration(approval, account.ApprenticeId);
+            await VerifyRegistration(approval, account);
 
-            var response = await PostVerifyRegistrationCommand(approval, account.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval, account);
 
             response.Should().Be2XXSuccessful();
+
+            Database.ApprenticeshipMatchAttempts.Should().ContainEquivalentOf(new
+            {
+                approval.RegistrationId,
+                account.ApprenticeId,
+                Status = ApprenticeshipMatchAttemptStatus.Succeeded,
+            });
         }
 
         [Test]
@@ -106,14 +133,21 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         {
             var approval = await CreateRegistration();
             var firstAccount = await CreateAccount(approval);
-            await VerifyRegistration(approval, firstAccount.ApprenticeId);
+            await VerifyRegistration(approval, firstAccount);
             var secondAccount = await CreateAccount();
 
-            var response = await PostVerifyRegistrationCommand(approval, secondAccount.ApprenticeId);
+            var response = await PostVerifyRegistrationCommand(approval, secondAccount);
 
             response
                 .Should().Be400BadRequest()
                 .And.MatchInContent("*\"Registration * is already verified\"*");
+
+            Database.ApprenticeshipMatchAttempts.Should().ContainEquivalentOf(new
+            {
+                approval.RegistrationId,
+                firstAccount.ApprenticeId,
+                Status = ApprenticeshipMatchAttemptStatus.Succeeded,
+            });
         }
     }
 }
