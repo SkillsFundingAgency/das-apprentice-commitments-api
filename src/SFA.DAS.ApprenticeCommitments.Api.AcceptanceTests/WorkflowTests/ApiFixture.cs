@@ -90,18 +90,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         protected async Task<CreateApprenticeAccountCommand> CreateAccount(CreateRegistrationCommand? approval = default,
-            Guid? apprenticeId = default, MailAddress? email = default, DateTime? dateOfBirth = default)
+            Guid? apprenticeId = default, MailAddress? email = default, string? lastName = null, DateTime? dateOfBirth = default)
         {
             approval ??= fixture.Create<CreateRegistrationCommand>();
             email ??= new MailAddress(approval.Email);
             dateOfBirth ??= approval.DateOfBirth;
+            lastName ??= approval.LastName;
 
             var create = fixture.Build<CreateApprenticeAccountCommand>()
                 .With(p => p.ApprenticeId, (Guid id) => apprenticeId ?? id)
                 .With(p => p.Email, email.ToString())
                 .With(p => p.DateOfBirth, dateOfBirth)
                 .With(p => p.FirstName, approval.FirstName)
-                .With(p => p.LastName, approval.LastName)
+                .With(p => p.LastName, lastName)
                 .Create();
 
             var response = await PostCreateAccountCommand(create);
@@ -143,7 +144,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected async Task<ApprenticeshipDto> VerifyRegistration(CreateRegistrationCommand approval)
         {
             var account = await CreateAccount(approval);
-            await VerifyRegistration(approval.RegistrationId, account.ApprenticeId, account.LastName, account.DateOfBirth);
+            await VerifyRegistration(approval, account);
             var apprenticeship = await GetApprenticeships(account.ApprenticeId);
             context.Time.Now = approval.CommitmentsApprovedOn;
             return apprenticeship[0];
@@ -161,29 +162,26 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return await client.PostValueAsync("apprentices", create);
         }
 
-        protected async Task VerifyRegistration(CreateRegistrationCommand registration, Guid apprenticeId)
+        protected async Task VerifyRegistration(CreateRegistrationCommand registration, CreateApprenticeAccountCommand apprentice)
         {
-            var response = await PostVerifyRegistrationCommand(registration, apprenticeId);
-            response.Should().Be2XXSuccessful();
-        }
-
-        protected async Task VerifyRegistration(Guid registrationId, Guid apprenticeId, string lastName, DateTime dateOfBirth)
-        {
-            var response = await PostVerifyRegistrationCommand(registrationId, apprenticeId, lastName, dateOfBirth);
+            var response = await PostVerifyRegistrationCommand(registration, apprentice);
             response.Should().Be2XXSuccessful();
         }
 
         protected Task<HttpResponseMessage> PostVerifyRegistrationCommand(CreateRegistrationCommand registration, Guid apprenticeId)
             => PostVerifyRegistrationCommand(registration.RegistrationId, apprenticeId, registration.LastName, registration.DateOfBirth);
 
+        protected Task<HttpResponseMessage> PostVerifyRegistrationCommand(CreateRegistrationCommand registration, CreateApprenticeAccountCommand apprentice)
+            => PostVerifyRegistrationCommand(registration.RegistrationId, apprentice.ApprenticeId, apprentice.LastName, apprentice.DateOfBirth);
+
         protected async Task<HttpResponseMessage> PostVerifyRegistrationCommand(Guid registrationId, Guid apprenticeId, string lastName, DateTime dateOfBirth)
         {
             var create = fixture.Build<CreateApprenticeshipFromRegistrationCommand>()
-                             .With(p => p.RegistrationId, registrationId)
-                             .With(p => p.ApprenticeId, apprenticeId)
-                             .With(p => p.LastName, lastName)
-                             .With(p => p.DateOfBirth, dateOfBirth)
-                             .Create();
+                .With(p => p.RegistrationId, registrationId)
+                .With(p => p.ApprenticeId, apprenticeId)
+                .With(p => p.LastName, lastName)
+                .With(p => p.DateOfBirth, dateOfBirth)
+                .Create();
 
             var response = await client.PostValueAsync("apprenticeships", create);
             return response;

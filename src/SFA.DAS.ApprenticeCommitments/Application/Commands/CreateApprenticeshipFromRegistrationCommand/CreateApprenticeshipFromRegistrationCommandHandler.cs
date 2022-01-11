@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand
 {
-    public class CreateApprenticeshipFromRegistrationCommandHandler : IRequestHandler<CreateApprenticeshipFromRegistrationCommand>
+    public class CreateApprenticeshipFromRegistrationCommandHandler : IRequestHandler<CreateApprenticeshipFromRegistrationCommand, IResult>
     {
         private readonly IRegistrationContext _registrations;
         private readonly ApplicationSettings _applicationSettings;
@@ -24,7 +24,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(CreateApprenticeshipFromRegistrationCommand request, CancellationToken cancellationToken)
+        public async Task<IResult> Handle(CreateApprenticeshipFromRegistrationCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Create apprenticeship for apprentice {request.ApprenticeId} from registration {request.RegistrationId}");
 
@@ -32,9 +32,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
 
             var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold); 
 
-            registration.AssociateWithApprentice(request.ApprenticeId, request.LastName, request.DateOfBirth, matcher);
-
-            return Unit.Value;
+            return registration.AssociateWithApprentice(request.ApprenticeId, request.LastName, request.DateOfBirth, matcher);
         }
     }
 }

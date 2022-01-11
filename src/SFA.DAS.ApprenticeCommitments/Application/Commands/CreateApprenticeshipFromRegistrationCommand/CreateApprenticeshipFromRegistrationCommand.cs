@@ -5,7 +5,7 @@ using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand
 {
-    public class CreateApprenticeshipFromRegistrationCommand : IUnitOfWorkCommand
+    public class CreateApprenticeshipFromRegistrationCommand : IUnitOfWorkCommand<IResult>
     {
         public Guid RegistrationId { get; set; }
         public Guid ApprenticeId { get; set; }

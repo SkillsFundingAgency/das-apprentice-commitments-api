@@ -43,7 +43,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Bindings
             var config = new Dictionary<string, string>
                 {
                     { "EnvironmentName", "ACCEPTANCE_TESTS" },
-                    { "ApplicationSettings:DbConnectionString", TestsDbConnectionFactory.ConnectionString }
+                    { "ApplicationSettings:DbConnectionString", TestsDbConnectionFactory.ConnectionString },
+                    { "ApplicationSettings:FuzzyMatchingSimilarityThreshold", "60" }
                 };
 
             return new LocalWebApplicationFactory<Startup>(config, _time, _events);

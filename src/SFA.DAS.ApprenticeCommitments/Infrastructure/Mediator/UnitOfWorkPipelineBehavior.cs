@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            if (!(request is IUnitOfWorkCommand))
+            if (!ShouldHandleRequest(request))
             {
                 return await next();
             }
@@ -36,5 +36,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
                 throw;
             }
         }
+
+        private bool ShouldHandleRequest(TRequest request) => request is IUnitOfWorkCommandMarker;
     }
 }
