@@ -4,6 +4,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationComma
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprovalsRegistrationQuery;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
@@ -15,15 +16,32 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public ApprovalController(IMediator mediator) => _mediator = mediator;
 
         [HttpPost("approvals")]
-        public async Task ApprenticeshipCreated(CreateRegistrationCommand command)
-            => await _mediator.Send(command);
+        public Task ApprenticeshipCreated(CreateRegistrationCommand command)
+            => _mediator.Send(command);
 
         [HttpPut("approvals")]
-        public async Task ChangeOfCircumstances([FromBody] ChangeRegistrationCommand request)
-            => await _mediator.Send(request);
+        public Task ChangeOfCircumstances([FromBody] ChangeRegistrationCommand request)
+            => _mediator.Send(request);
 
         [HttpPost("approvals/stopped")]
-        public async Task StoppedApprenticeship([FromBody] StoppedApprenticeshipCommand request)
-        => await _mediator.Send(request);
+        public Task StoppedApprenticeship([FromBody] StoppedApprenticeshipCommand request)
+            => _mediator.Send(request);
+
+        [HttpGet("approvals/{commitmentsApprenticeshipId}/registration")]
+        public async Task<IActionResult> GetApprovalsRegistration(long commitmentsApprenticeshipId)
+        {
+
+            var approvalsRegistration = await _mediator.Send(new ApprovalsRegistrationQuery
+            {
+                CommitmentsApprenticeshipId = commitmentsApprenticeshipId
+            });
+
+            if (approvalsRegistration == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(approvalsRegistration);
+        }
     }
 }
