@@ -19,5 +19,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime? CreatedOn { get; set; }
         public Guid? UserIdentityId { get; set; }
         public string CourseName { get; set; }
+        public Guid? ApprenticeId { get; set; }
     }
 }

@@ -9,12 +9,12 @@ Scenario: Getting a registration which does exist
 	Given there is a registration with an <ApprenticeId> assigned to it
 	When we try to retrieve the registration using approvals identity
 	Then the result should return ok
-	And the response should match the registration in the database with <ExpectedHasApprenticeAssigned>
+	And the response should match the registration in the database with <ApprenticeId>
 
 Examples:
-	| ApprenticeId                         | ExpectedHasApprenticeAssigned |
-	| 15AC916D-C20A-4521-B7D5-07DB472C26BA | true                          |
-	|                                      | false                         |
+	| ApprenticeId                         | 
+	| 15AC916D-C20A-4521-B7D5-07DB472C26BA | 
+	|                                      | 
 
 Scenario: Trying to get a registration for an approvals identity which does NOT exist
 	Given there is no registration

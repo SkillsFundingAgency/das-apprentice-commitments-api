@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprovalsRegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.DTOs;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
@@ -34,12 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given(@"there is a registration with an (.*) assigned to it")]
         public Task GivenThereIsARegistrationWithAnAssignedToIt(string apprenticeId)
         {
-            Guid? id = null;
-            if (!string.IsNullOrWhiteSpace(apprenticeId))
-            {
-                id = Guid.Parse(apprenticeId);
-            }
-            _registration.SetProperty(x => x.ApprenticeId, id);
+            _registration.SetProperty(x => x.ApprenticeId, apprenticeId.ToGuid());
             _context.DbContext.Registrations.Add(_registration);
             return _context.DbContext.SaveChangesAsync();
         }
@@ -71,14 +67,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Then(@"the response should match the registration in the database with (.*)")]
-        public async Task ThenTheResponseShouldMatchTheRegistrationInTheDatabaseWith(bool expected)
+        public async Task ThenTheResponseShouldMatchTheRegistrationInTheDatabaseWith(string apprenticeId)
         {
+
+
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
-            var response = JsonConvert.DeserializeObject<ApprovalsRegistrationResponse>(content);
+            var response = JsonConvert.DeserializeObject<RegistrationDto>(content);
             response.Email.Should().Be(_registration.Email.ToString());
             response.RegistrationId.Should().Be(_registration.RegistrationId);
-            response.HasApprenticeAssigned.Should().Be(expected);
+            response.ApprenticeId.Should().Be(apprenticeId.ToGuid());
         }
 
         [Then("the result should return not found")]
@@ -103,4 +101,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .WhichValue.Should().Contain("The approvals apprenticeship identity must be valid");
         }
     }
+
+
+
 }
