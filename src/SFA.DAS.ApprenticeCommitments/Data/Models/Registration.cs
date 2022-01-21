@@ -58,9 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             set
             {
                 _stoppedReceivedOn = value;
-                if(Apprenticeship != null)
-                    Apprenticeship.LatestRevision.StoppedReceivedOn = value;
-                AddDomainEvent(new ApprenticeshipStopped(this));
+                AddDomainEvent(new RegistrationStopped(this));
             }
         }
 

@@ -203,10 +203,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeRegistrationCommand command)
             => client.PutValueAsync("approvals", command);
 
-        protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+        protected Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+            => GetApprenticeship(apprenticeship.ApprenticeId);
+
+        protected async Task<ApprenticeshipDto> GetApprenticeship(Guid apprenticeshipId)
         {
             var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
+                $"apprentices/{apprenticeshipId}/apprenticeships");
             r2.EnsureSuccessStatusCode();
 
             apprenticeships.Should().NotBeNull();

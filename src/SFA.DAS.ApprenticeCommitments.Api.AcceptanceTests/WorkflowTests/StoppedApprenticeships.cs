@@ -1,6 +1,8 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture;
+using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Linq;
@@ -59,6 +61,38 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             {
                 original.ApprenticeId,
                 StoppedReceivedOn = context.Time.Now,
+            });
+        }
+
+        [Test, AutoData]
+        public async Task Stopped_after_change_of_circumstance()
+        {
+            // Given
+            var original = await CreateRegistration();
+            var apprenticeship = await VerifyRegistration(original);
+
+            var coc = fixture.Create<ChangeRegistrationCommand>();
+            coc.CommitmentsContinuedApprenticeshipId = original.CommitmentsApprenticeshipId;
+            coc.CommitmentsApprovedOn = original.CommitmentsApprovedOn.AddDays(1);
+            await ChangeOfCircumstances(coc);
+
+            // When
+            var stoppedOn = original.CommitmentsApprovedOn.AddDays(15);
+            context.Time.Now = stoppedOn;
+            await StopApprenticeship(coc.CommitmentsApprenticeshipId, stoppedOn);
+
+            // Then
+            //var reg = await GetRegistration(original.RegistrationId);
+            var rev = await GetApprenticeship(apprenticeship.ApprenticeId);
+            Database.Registrations.Should().ContainEquivalentOf(new
+            {
+                original.CommitmentsApprenticeshipId,
+                StoppedReceivedOn = (DateTime?)null,
+            });
+            rev.Should().BeEquivalentTo(new
+            {
+                coc.CommitmentsApprenticeshipId,
+                StoppedReceivedOn = (DateTime?)stoppedOn,
             });
         }
 
