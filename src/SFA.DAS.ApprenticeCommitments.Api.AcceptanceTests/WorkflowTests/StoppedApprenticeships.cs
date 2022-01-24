@@ -175,5 +175,29 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .Select(x => x.Event as ApprenticeshipStoppedEvent)
                 .Should().BeEmpty();
         }
+
+        [Test, AutoData]
+        public async Task Matching_a_stopped_registraiton_creates_a_stopped_apprenticeship(DateTime stoppedOn)
+        {
+            // Given
+            var approval = await CreateRegistration();
+
+            context.Time.Now = stoppedOn;
+            await PostStopped(approval.CommitmentsApprenticeshipId);
+
+            // When
+            var account = await CreateAccount(approval);
+            await VerifyRegistration(approval, account);
+
+            // Then
+            var apprenticeships = await GetApprenticeships(account.ApprenticeId);
+            apprenticeships.Should().ContainEquivalentOf(new
+            {
+                account.ApprenticeId,
+                approval.CommitmentsApprenticeshipId,
+                StoppedReceivedOn = stoppedOn,
+                ConfirmedOn = (DateTime?)null,
+            });
+        }
     }
 }

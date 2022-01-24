@@ -110,9 +110,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private SuccessStatusResult<ApprenticeshipMatchAttemptStatus> AssociateWithApprentice(Guid apprenticeId)
         {
             var apprenticeship = new Revision(
-                                CommitmentsApprenticeshipId,
-                                CommitmentsApprovedOn,
-                                Approval);
+                    CommitmentsApprenticeshipId,
+                    CommitmentsApprovedOn,
+                    Approval,
+                    StoppedReceivedOn);
 
             Apprenticeship = new Apprenticeship(apprenticeship, apprenticeId);
             ApprenticeId = apprenticeId;

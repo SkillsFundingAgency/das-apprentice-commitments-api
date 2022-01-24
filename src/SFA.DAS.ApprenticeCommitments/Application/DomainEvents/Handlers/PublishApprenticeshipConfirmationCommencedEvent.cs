@@ -32,7 +32,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
             var pretend = new Revision(
                 notification.Registration.CommitmentsApprenticeshipId,
                 notification.Registration.CommitmentsApprovedOn,
-                notification.Registration.Approval);
+                notification.Registration.Approval,
+                notification.Registration.StoppedReceivedOn);
 
             _logger.LogInformation(
                 "RegistrationAdded - Publishing ApprenticeshipConfirmationCommencedEvent for Apprentice {ApprenticeId}, Apprenticeship {ApprenticeshipId}",

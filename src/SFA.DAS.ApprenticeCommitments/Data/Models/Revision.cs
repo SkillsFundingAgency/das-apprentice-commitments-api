@@ -16,12 +16,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Revision(long commitmentsApprenticeshipId,
             DateTime approvedOn,
-            ApprenticeshipDetails details)
+            ApprenticeshipDetails details,
+            DateTime? stoppedReceivedOn = null)
         {
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = approvedOn;
             ConfirmBefore = CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
             Details = details;
+            StoppedReceivedOn = stoppedReceivedOn;
 
             AddDomainEvent(new RevisionAdded(this));
         }
