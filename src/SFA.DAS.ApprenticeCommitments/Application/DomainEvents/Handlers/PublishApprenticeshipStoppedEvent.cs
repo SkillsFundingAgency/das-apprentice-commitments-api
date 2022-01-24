@@ -21,15 +21,15 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
         public async Task Handle(RegistrationStopped notification, CancellationToken cancellationToken)
         {
             _logger.LogInformation(
-                "ApprenticeshipStopped - Publishing ApprenticeshipStopped for Apprenticeship {ApprenticeshipId}, CommitmentsApprenticeshipId {CommitmentsApprenticeshipId}",
-                notification.Registration.Apprenticeship?.Id,
+                "ApprenticeshipStopped - Publishing ApprenticeshipStopped for Registration {RegistrationId}, CommitmentsApprenticeshipId {CommitmentsApprenticeshipId}",
+                notification.Registration.RegistrationId,
                 notification.Registration.CommitmentsApprenticeshipId
                 );
 
             await _eventPublisher.Publish(new ApprenticeshipStoppedEvent
             {
-                ApprenticeshipId = notification.Registration.Apprenticeship?.Id,
                 CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
+                RegistrationId = notification.Registration.RegistrationId,
                 ApprenticeId = notification.Registration.ApprenticeId,
                 CourseName = notification.Registration.Approval.Course.Name,
                 EmployerName = notification.Registration.Approval.EmployerName,
@@ -46,9 +46,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
 
             await _eventPublisher.Publish(new ApprenticeshipStoppedEvent
             {
-                ApprenticeshipId = notification.Revision.Apprenticeship?.Id,
                 CommitmentsApprenticeshipId = notification.Revision.CommitmentsApprenticeshipId,
                 ApprenticeId = notification.Revision.Apprenticeship.ApprenticeId,
+                ApprenticeshipId = notification.Revision.Apprenticeship.Id,
                 CourseName = notification.Revision.Details.Course.Name,
                 EmployerName = notification.Revision.Details.EmployerName,
             });
