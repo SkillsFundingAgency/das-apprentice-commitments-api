@@ -44,17 +44,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
         public DateTime? LastViewed { get; set; }
-
-        private DateTime? _stoppedReceivedOn;
-        public DateTime? StoppedReceivedOn
-        {
-            get => _stoppedReceivedOn;
-            set
-            {
-                _stoppedReceivedOn = value;
-                AddDomainEvent(new ApprenticeshipStopped(this));
-            }
-        }
+        public DateTime? StoppedReceivedOn { get; set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {

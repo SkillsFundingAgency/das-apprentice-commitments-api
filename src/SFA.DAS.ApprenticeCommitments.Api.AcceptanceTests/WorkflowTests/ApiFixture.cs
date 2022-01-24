@@ -231,13 +231,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task StopApprenticeship(long commitmentsApprenticeshipId, DateTime stoppedOn)
         {
-            var response = await PostStopped(new StoppedApprenticeshipCommand
+            var response = await PostStopped(commitmentsApprenticeshipId, stoppedOn);
+            response.Should().Be2XXSuccessful();
+        }
+        
+        protected Task<HttpResponseMessage> PostStopped(long commitmentsApprenticeshipId, DateTime? stoppedOn = null)
+        {
+            return PostStopped(new StoppedApprenticeshipCommand
             {
                 CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
-                CommitmentsStoppedOn = stoppedOn,
+                CommitmentsStoppedOn = stoppedOn ?? DateTime.UtcNow,
             });
-
-            response.Should().Be2XXSuccessful();
         }
 
         protected Task<HttpResponseMessage> PostStopped(StoppedApprenticeshipCommand command)

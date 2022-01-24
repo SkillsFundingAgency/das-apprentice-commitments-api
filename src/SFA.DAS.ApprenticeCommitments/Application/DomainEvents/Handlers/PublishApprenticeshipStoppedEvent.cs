@@ -22,17 +22,17 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
         {
             _logger.LogInformation(
                 "ApprenticeshipStopped - Publishing ApprenticeshipStopped for Apprenticeship {ApprenticeshipId}, CommitmentsApprenticeshipId {CommitmentsApprenticeshipId}",
-                notification.Revision.ApprenticeshipId,
-                notification.Revision.CommitmentsApprenticeshipId
+                notification.Registration.Apprenticeship?.Id,
+                notification.Registration.CommitmentsApprenticeshipId
                 );
 
             await _eventPublisher.Publish(new ApprenticeshipStoppedEvent
             {
-                ApprenticeshipId = notification.Revision.ApprenticeshipId,
-                CommitmentsApprenticeshipId = notification.Revision.CommitmentsApprenticeshipId,
-                ApprenticeId = notification.Revision.Apprenticeship.ApprenticeId,
-                CourseName = notification.Revision.Details.Course.Name,
-                EmployerName = notification.Revision.Details.EmployerName,
+                ApprenticeshipId = notification.Registration.Apprenticeship?.Id,
+                CommitmentsApprenticeshipId = notification.Registration.CommitmentsApprenticeshipId,
+                ApprenticeId = notification.Registration.ApprenticeId,
+                CourseName = notification.Registration.Approval.Course.Name,
+                EmployerName = notification.Registration.Approval.EmployerName,
             });
         }
     }

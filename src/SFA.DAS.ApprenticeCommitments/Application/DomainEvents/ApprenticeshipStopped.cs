@@ -5,9 +5,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents
 {
     internal class ApprenticeshipStopped : INotification
     {
-        public Revision Revision { get;}
+        public Registration Registration { get; }
 
-        public ApprenticeshipStopped(Revision revision)
-            => Revision = revision;
+        public ApprenticeshipStopped(Registration registration)
+            => Registration = registration;
     }
 }

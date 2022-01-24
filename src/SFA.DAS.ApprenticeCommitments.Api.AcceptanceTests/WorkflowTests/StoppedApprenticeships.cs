@@ -1,7 +1,6 @@
 ﻿using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Linq;
@@ -64,14 +63,25 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test, AutoData]
-        public async Task Stopped_without_apprenticeship(long id, DateTime stoppedOn)
+        public async Task Stopped_known_approval_without_apprenticeship(DateTime stoppedOn)
         {
-            var response = await PostStopped(new StoppedApprenticeshipCommand
-            {
-                CommitmentsApprenticeshipId = id,
-                CommitmentsStoppedOn = stoppedOn,
-            });
+            var original = await CreateRegistration();
 
+            var response = await PostStopped(original.CommitmentsApprenticeshipId, stoppedOn);
+            response.Should().Be200Ok();
+
+            var modified = await GetRegistration(original.RegistrationId);
+            modified.Should().BeEquivalentTo(new
+            {
+                original.RegistrationId,
+                //StoppedReceivedOn = context.Time.Now, // TODO reconcile RegistrationResponse with RegistrationDto
+            });
+        }
+
+        [Test, AutoData]
+        public async Task Stopped_unknown_approval(long id, DateTime stoppedOn)
+        {
+            var response = await PostStopped(id, stoppedOn);
             response.Should().Be404NotFound();
         }
 
@@ -103,6 +113,33 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                     apprenticeship.EmployerName,
                     apprenticeship.CourseName,
                 });
+        }
+
+        [Test, AutoData]
+        public async Task Publish_event_for_unmatched_approval(DateTime stoppedOn)
+        {
+            var approval = await CreateRegistration();
+            await StopApprenticeship(approval.CommitmentsApprenticeshipId, stoppedOn);
+
+            context.PublishedNServiceBusEvents
+                .Select(x => x.Event as ApprenticeshipStoppedEvent)
+                .Should().ContainEquivalentOf(new
+                {
+                    ApprenticeshipId = (long?)null,
+                    ApprenticeId = (Guid?)null,
+                    approval.EmployerName,
+                    approval.CourseName,
+                });
+        }
+
+        [Test, AutoData]
+        public async Task Does_not_publish_event_for_unknown_approval(long commitmentsApprenticeshipId, DateTime stoppedOn)
+        {
+            await PostStopped(commitmentsApprenticeshipId, stoppedOn);
+
+            context.PublishedNServiceBusEvents
+                .Select(x => x.Event as ApprenticeshipStoppedEvent)
+                .Should().BeEmpty();
         }
     }
 }
