@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     public static class RegistrationContextExtensions
     {
         public static IQueryable<Registration> IncludeApprenticeships(this IQueryable<Registration> registrations)
-            => registrations.Include(x => x.Apprenticeship).ThenInclude(x => x.Revisions);
+            => registrations.Include(x => x.Apprenticeship).ThenInclude(x => x!.Revisions);
 
         public static async Task<Registration> GetByCommitmentsApprenticeshipId(
             this IQueryable<Registration> registrations,
