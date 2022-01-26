@@ -210,4 +210,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[StoppedReceivedOn]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="a3a019f3-3c4b-4b9f-92d3-d4c38aea49e1" ChangeDateTime="01/26/2022 10:11:06">
+    <Property Name="ElementName" Value="[dbo].[ApprenticeshipMatchAttempt].[Timestamp]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ApprenticeshipMatchAttempt]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="[AttemptedOn]" />
+  </Operation>
 </Operations>
