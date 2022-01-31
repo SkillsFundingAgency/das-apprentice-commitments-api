@@ -31,11 +31,15 @@ begin
     begin
         raiserror (N'There are multiple apprentices for a registration', 16, 127) with nowait
     end
-
-    update Registration
-    set ApprenticeshipId = 
-        (select distinct ApprenticeshipId
-         from Revision
-         where Revision.CommitmentsApprenticeshipId = Registration.CommitmentsApprenticeshipId)
-    where ApprenticeshipId is null
+    else
+    begin
+    
+        update Registration
+        set ApprenticeshipId = 
+            (select distinct ApprenticeshipId
+             from Revision
+             where Revision.CommitmentsApprenticeshipId = Registration.CommitmentsApprenticeshipId)
+        where ApprenticeshipId is null
+    
+    end
 end
