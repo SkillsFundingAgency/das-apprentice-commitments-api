@@ -78,6 +78,13 @@
     <Build Include="Views\RegistrationDashboardView.sql" />
     <Build Include="Schemas\DashboardReporting.sql" />
     <Build Include="Tables\ApprenticeshipMatchAttempt.sql" />
+    <Build Include="Views\DashboardReporting.InvitationByStatus.sql" />
+    <Build Include="Views\DashboardReporting.EmployerSectionCompletionStatus.sql" />
+    <Build Include="Views\DashboardReporting.ProviderSectionCompletionStatus.sql" />
+    <Build Include="Views\DashboardReporting.DetailsSectionCompletionStatus.sql" />
+    <Build Include="Views\DashboardReporting.DeliverySectionCompletionStatus.sql" />
+    <Build Include="Views\DashboardReporting.ResponsibilitiesSectionCompletionStatus.sql" />
+    <Build Include="Views\DashboardReporting.ConfirmedCompletionStatus.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.ApprenticeCommitments.Database.refactorlog" />
