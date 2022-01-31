@@ -85,6 +85,8 @@
     <Build Include="Views\DashboardReporting.DeliverySectionCompletionStatus.sql" />
     <Build Include="Views\DashboardReporting.ResponsibilitiesSectionCompletionStatus.sql" />
     <Build Include="Views\DashboardReporting.ConfirmedCompletionStatus.sql" />
+    <Build Include="Views\DashboardReporting.HoursBeforeActingOnInvite.sql" />
+    <Build Include="Views\DashboardReporting.MedianHoursBeforeActingOnInvite.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="SFA.DAS.ApprenticeCommitments.Database.refactorlog" />

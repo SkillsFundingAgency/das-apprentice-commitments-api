@@ -16,7 +16,8 @@ SELECT
     PlannedEndDate,
     FirstViewedOn,
     SignUpReminderSentOn,
-    ApprenticeId
+    ApprenticeId,
+    ApprenticeshipId
 FROM
     dbo.Registration
 GO
