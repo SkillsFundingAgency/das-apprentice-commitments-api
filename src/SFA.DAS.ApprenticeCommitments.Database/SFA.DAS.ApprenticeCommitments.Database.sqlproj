@@ -84,6 +84,5 @@
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="PostDeployment\PostDeployment.sql" />
-    <PostDeploy Include="PostDeployment\AddMissingApprenticeIdsToRegistration.sql" />
   </ItemGroup>
 </Project>
