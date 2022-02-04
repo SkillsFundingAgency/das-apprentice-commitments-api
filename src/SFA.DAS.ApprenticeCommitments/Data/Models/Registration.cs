@@ -11,7 +11,7 @@ using System.Net.Mail;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("Registration")]
-    public class Registration : Entity
+    public class Registration : Entity, IStoppable
     {
         private Registration()
         {
@@ -140,7 +140,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             DomainEvents.Add(new RegistrationUpdated(this));
         }
 
-        internal void Stop(DateTime now)
+        public void Stop(DateTime now)
         {
             StoppedReceivedOn = now;
             AddDomainEvent(new RegistrationStopped(this));

@@ -6,7 +6,7 @@ using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Revision : Entity
+    public class Revision : Entity, IStoppable
     {
         public static int DaysBeforeOverdue { get; set; } = 14;
 
@@ -109,7 +109,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             return revision;
         }
 
-        internal void Stop(DateTime now)
+        public void Stop(DateTime now)
         {
             StoppedReceivedOn = now;
             AddDomainEvent(new RevisionStopped(this));
