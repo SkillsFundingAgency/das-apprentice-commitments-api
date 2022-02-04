@@ -50,17 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
         public Apprenticeship? Apprenticeship { get; private set; }
-
-        private DateTime? _stoppedReceivedOn;
-        public DateTime? StoppedReceivedOn
-        {
-            get => _stoppedReceivedOn;
-            set
-            {
-                _stoppedReceivedOn = value;
-                AddDomainEvent(new RegistrationStopped(this));
-            }
-        }
+        public DateTime? StoppedReceivedOn { get; private set; }
 
         public List<ApprenticeshipMatchAttempt> MatchAttempts { get; set; } = new List<ApprenticeshipMatchAttempt>();
 
@@ -148,6 +138,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Email = pii.Email;
 
             DomainEvents.Add(new RegistrationUpdated(this));
+        }
+
+        internal void Stop(DateTime now)
+        {
+            StoppedReceivedOn = now;
+            AddDomainEvent(new RegistrationStopped(this));
         }
     }
 }

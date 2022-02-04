@@ -25,7 +25,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
 
             if (apprenticeship != null)
             {
-                apprenticeship.StoppedReceivedOn = _timeProvider.Now;
+                apprenticeship.Stop(_timeProvider.Now);
                 return Unit.Value;
             }
 
@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
 
             if (registration != null)
             {
-                registration.StoppedReceivedOn = _timeProvider.Now;
+                registration.Stop(_timeProvider.Now);
                 return Unit.Value;
             }
 

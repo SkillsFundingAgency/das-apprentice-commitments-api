@@ -186,18 +186,44 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             await PostStopped(approval.CommitmentsApprenticeshipId);
 
             // When
-            var account = await CreateAccount(approval);
-            await VerifyRegistration(approval, account);
+            var apprenticeship = await VerifyRegistration(approval);
 
             // Then
-            var apprenticeships = await GetApprenticeships(account.ApprenticeId);
+            var apprenticeships = await GetApprenticeships(apprenticeship.ApprenticeId);
             apprenticeships.Should().ContainEquivalentOf(new
             {
-                account.ApprenticeId,
+                apprenticeship.ApprenticeId,
                 approval.CommitmentsApprenticeshipId,
                 StoppedReceivedOn = stoppedOn,
                 ConfirmedOn = (DateTime?)null,
             });
+        }
+
+        [Test, AutoData]
+        public async Task Matching_a_stopped_registraiton_sends_only_one_stopped_notification()
+        {
+            // Given
+            var approval = await CreateRegistration();
+
+            await PostStopped(approval.CommitmentsApprenticeshipId);
+
+            // When
+            await VerifyRegistration(approval);
+
+            // Then
+            context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipStoppedEvent)
+                .Should().HaveCount(1)
+                .And.ContainEquivalentOf(new
+                {
+                    Event = new
+                    {
+                        ApprenticeshipId = (long?)null,
+                        ApprenticeId = (Guid?)null,
+                        approval.EmployerName,
+                        approval.CourseName,
+                    }
+                });
         }
     }
 }

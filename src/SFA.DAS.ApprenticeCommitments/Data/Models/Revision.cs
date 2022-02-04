@@ -46,17 +46,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
         public DateTime? LastViewed { get; set; }
-        private DateTime? _stoppedReceivedOn;
-        
-        public DateTime? StoppedReceivedOn
-        {
-            get => _stoppedReceivedOn;
-            set
-            {
-                _stoppedReceivedOn = value;
-                AddDomainEvent(new RevisionStopped(this));
-            }
-        }
+        public DateTime? StoppedReceivedOn { get; private set; }
+
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;
@@ -116,6 +107,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             revision.RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations;
 
             return revision;
+        }
+
+        internal void Stop(DateTime now)
+        {
+            StoppedReceivedOn = now;
+            AddDomainEvent(new RevisionStopped(this));
         }
     }
 }
