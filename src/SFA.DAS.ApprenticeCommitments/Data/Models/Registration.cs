@@ -11,7 +11,7 @@ using System.Net.Mail;
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
     [Table("Registration")]
-    public class Registration : Entity
+    public class Registration : Entity, IStoppable
     {
         private Registration()
         {
@@ -50,6 +50,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? FirstViewedOn { get; private set; }
         public DateTime? SignUpReminderSentOn { get; private set; }
         public Apprenticeship? Apprenticeship { get; private set; }
+        public DateTime? StoppedReceivedOn { get; private set; }
 
         public List<ApprenticeshipMatchAttempt> MatchAttempts { get; set; } = new List<ApprenticeshipMatchAttempt>();
 
@@ -99,9 +100,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         private SuccessStatusResult<ApprenticeshipMatchAttemptStatus> AssociateWithApprentice(Guid apprenticeId)
         {
             var apprenticeship = new Revision(
-                                CommitmentsApprenticeshipId,
-                                CommitmentsApprovedOn,
-                                Approval);
+                    CommitmentsApprenticeshipId,
+                    CommitmentsApprovedOn,
+                    Approval,
+                    StoppedReceivedOn);
 
             Apprenticeship = new Apprenticeship(apprenticeship, apprenticeId);
             ApprenticeId = apprenticeId;
@@ -136,6 +138,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             Email = pii.Email;
 
             DomainEvents.Add(new RegistrationUpdated(this));
+        }
+
+        public void Stop(DateTime now)
+        {
+            StoppedReceivedOn = now;
+            AddDomainEvent(new RegistrationStopped(this));
         }
     }
 }

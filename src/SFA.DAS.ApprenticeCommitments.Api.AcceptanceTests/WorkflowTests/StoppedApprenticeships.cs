@@ -1,7 +1,8 @@
-﻿using AutoFixture.NUnit3;
+﻿using AutoFixture;
+using AutoFixture.NUnit3;
 using FluentAssertions;
 using NUnit.Framework;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Linq;
@@ -64,14 +65,57 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test, AutoData]
-        public async Task Stopped_without_apprenticeship(long id, DateTime stoppedOn)
+        public async Task Stopped_after_change_of_circumstance()
         {
-            var response = await PostStopped(new StoppedApprenticeshipCommand
-            {
-                CommitmentsApprenticeshipId = id,
-                CommitmentsStoppedOn = stoppedOn,
-            });
+            // Given
+            var original = await CreateRegistration();
+            var apprenticeship = await VerifyRegistration(original);
 
+            var coc = fixture.Create<ChangeRegistrationCommand>();
+            coc.CommitmentsContinuedApprenticeshipId = original.CommitmentsApprenticeshipId;
+            coc.CommitmentsApprovedOn = original.CommitmentsApprovedOn.AddDays(1);
+            await ChangeOfCircumstances(coc);
+
+            // When
+            var stoppedOn = original.CommitmentsApprovedOn.AddDays(15);
+            context.Time.Now = stoppedOn;
+            await StopApprenticeship(coc.CommitmentsApprenticeshipId, stoppedOn);
+
+            // Then
+            //var reg = await GetRegistration(original.RegistrationId);
+            var rev = await GetApprenticeship(apprenticeship.ApprenticeId);
+            Database.Registrations.Should().ContainEquivalentOf(new
+            {
+                original.CommitmentsApprenticeshipId,
+                StoppedReceivedOn = (DateTime?)null,
+            });
+            rev.Should().BeEquivalentTo(new
+            {
+                coc.CommitmentsApprenticeshipId,
+                StoppedReceivedOn = (DateTime?)stoppedOn,
+            });
+        }
+
+        [Test, AutoData]
+        public async Task Stopped_known_approval_without_apprenticeship(DateTime stoppedOn)
+        {
+            var original = await CreateRegistration();
+
+            var response = await PostStopped(original.CommitmentsApprenticeshipId, stoppedOn);
+            response.Should().Be200Ok();
+
+            var modified = await GetRegistration(original.RegistrationId);
+            modified.Should().BeEquivalentTo(new
+            {
+                original.RegistrationId,
+                //StoppedReceivedOn = context.Time.Now, // TODO reconcile RegistrationResponse with RegistrationDto
+            });
+        }
+
+        [Test, AutoData]
+        public async Task Stopped_unknown_approval(long id, DateTime stoppedOn)
+        {
+            var response = await PostStopped(id, stoppedOn);
             response.Should().Be404NotFound();
         }
 
@@ -102,6 +146,83 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                     apprenticeship.ApprenticeId,
                     apprenticeship.EmployerName,
                     apprenticeship.CourseName,
+                });
+        }
+
+        [Test, AutoData]
+        public async Task Publish_event_for_unmatched_approval(DateTime stoppedOn)
+        {
+            var approval = await CreateRegistration();
+            await StopApprenticeship(approval.CommitmentsApprenticeshipId, stoppedOn);
+
+            context.PublishedNServiceBusEvents
+                .Select(x => x.Event as ApprenticeshipStoppedEvent)
+                .Should().ContainEquivalentOf(new
+                {
+                    ApprenticeshipId = (long?)null,
+                    ApprenticeId = (Guid?)null,
+                    approval.EmployerName,
+                    approval.CourseName,
+                });
+        }
+
+        [Test, AutoData]
+        public async Task Does_not_publish_event_for_unknown_approval(long commitmentsApprenticeshipId, DateTime stoppedOn)
+        {
+            await PostStopped(commitmentsApprenticeshipId, stoppedOn);
+
+            context.PublishedNServiceBusEvents
+                .Select(x => x.Event as ApprenticeshipStoppedEvent)
+                .Should().BeEmpty();
+        }
+
+        [Test, AutoData]
+        public async Task Matching_a_stopped_registraiton_creates_a_stopped_apprenticeship(DateTime stoppedOn)
+        {
+            // Given
+            var approval = await CreateRegistration();
+
+            context.Time.Now = stoppedOn;
+            await PostStopped(approval.CommitmentsApprenticeshipId);
+
+            // When
+            var apprenticeship = await VerifyRegistration(approval);
+
+            // Then
+            var apprenticeships = await GetApprenticeships(apprenticeship.ApprenticeId);
+            apprenticeships.Should().ContainEquivalentOf(new
+            {
+                apprenticeship.ApprenticeId,
+                approval.CommitmentsApprenticeshipId,
+                StoppedReceivedOn = stoppedOn,
+                ConfirmedOn = (DateTime?)null,
+            });
+        }
+
+        [Test, AutoData]
+        public async Task Matching_a_stopped_registraiton_sends_only_one_stopped_notification()
+        {
+            // Given
+            var approval = await CreateRegistration();
+
+            await PostStopped(approval.CommitmentsApprenticeshipId);
+
+            // When
+            await VerifyRegistration(approval);
+
+            // Then
+            context.PublishedNServiceBusEvents
+                .Where(x => x.Event is ApprenticeshipStoppedEvent)
+                .Should().HaveCount(1)
+                .And.ContainEquivalentOf(new
+                {
+                    Event = new
+                    {
+                        ApprenticeshipId = (long?)null,
+                        ApprenticeId = (Guid?)null,
+                        approval.EmployerName,
+                        approval.CourseName,
+                    }
                 });
         }
     }
