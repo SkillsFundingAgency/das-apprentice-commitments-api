@@ -21,6 +21,8 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 TrainingProviderId = registration.Approval.TrainingProviderId,
                 TrainingProviderName = registration.Approval.TrainingProviderName,
                 CourseName = registration.Approval.Course.Name,
+                StoppedReceivedOn = registration.StoppedReceivedOn,
+                ApprenticeId = registration.ApprenticeId,
             };
         }
     }

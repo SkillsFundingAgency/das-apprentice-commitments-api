@@ -203,10 +203,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         protected Task<HttpResponseMessage> PutChangeOfCircumstances(ChangeRegistrationCommand command)
             => client.PutValueAsync("approvals", command);
 
-        protected async Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+        protected Task<ApprenticeshipDto> GetApprenticeship(ApprenticeshipDto apprenticeship)
+            => GetApprenticeship(apprenticeship.ApprenticeId);
+
+        protected async Task<ApprenticeshipDto> GetApprenticeship(Guid apprenticeshipId)
         {
             var (r2, apprenticeships) = await client.GetValueAsync<ApprenticeshipsResponse>(
-                $"apprentices/{apprenticeship.ApprenticeId}/apprenticeships");
+                $"apprentices/{apprenticeshipId}/apprenticeships");
             r2.EnsureSuccessStatusCode();
 
             apprenticeships.Should().NotBeNull();
@@ -231,13 +234,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected async Task StopApprenticeship(long commitmentsApprenticeshipId, DateTime stoppedOn)
         {
-            var response = await PostStopped(new StoppedApprenticeshipCommand
+            var response = await PostStopped(commitmentsApprenticeshipId, stoppedOn);
+            response.Should().Be2XXSuccessful();
+        }
+        
+        protected Task<HttpResponseMessage> PostStopped(long commitmentsApprenticeshipId, DateTime? stoppedOn = null)
+        {
+            return PostStopped(new StoppedApprenticeshipCommand
             {
                 CommitmentsApprenticeshipId = commitmentsApprenticeshipId,
-                CommitmentsStoppedOn = stoppedOn,
+                CommitmentsStoppedOn = stoppedOn ?? DateTime.UtcNow,
             });
-
-            response.Should().Be2XXSuccessful();
         }
 
         protected Task<HttpResponseMessage> PostStopped(StoppedApprenticeshipCommand command)

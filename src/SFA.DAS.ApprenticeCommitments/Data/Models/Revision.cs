@@ -6,7 +6,7 @@ using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
-    public class Revision : Entity
+    public class Revision : Entity, IStoppable
     {
         public static int DaysBeforeOverdue { get; set; } = 14;
 
@@ -16,12 +16,14 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public Revision(long commitmentsApprenticeshipId,
             DateTime approvedOn,
-            ApprenticeshipDetails details)
+            ApprenticeshipDetails details,
+            DateTime? stoppedReceivedOn = null)
         {
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = approvedOn;
             ConfirmBefore = CommitmentsApprovedOn.AddDays(DaysBeforeOverdue);
             Details = details;
+            StoppedReceivedOn = stoppedReceivedOn;
 
             AddDomainEvent(new RevisionAdded(this));
         }
@@ -44,17 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime ConfirmBefore { get; private set; }
         public DateTime? ConfirmedOn { get; private set; }
         public DateTime? LastViewed { get; set; }
-
-        private DateTime? _stoppedReceivedOn;
-        public DateTime? StoppedReceivedOn
-        {
-            get => _stoppedReceivedOn;
-            set
-            {
-                _stoppedReceivedOn = value;
-                AddDomainEvent(new ApprenticeshipStopped(this));
-            }
-        }
+        public DateTime? StoppedReceivedOn { get; private set; }
 
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
@@ -115,6 +107,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             revision.RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations;
 
             return revision;
+        }
+
+        public void Stop(DateTime now)
+        {
+            StoppedReceivedOn = now;
+            AddDomainEvent(new RevisionStopped(this));
         }
     }
 }

@@ -8,6 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
     {
         public Guid RegistrationId { get; set; }
         public long ApprenticeshipId { get; set; }
+        public Guid? ApprenticeId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
@@ -19,5 +20,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime? CreatedOn { get; set; }
         public Guid? UserIdentityId { get; set; }
         public string CourseName { get; set; }
+        public DateTime? StoppedReceivedOn { get; set; }
     }
 }
