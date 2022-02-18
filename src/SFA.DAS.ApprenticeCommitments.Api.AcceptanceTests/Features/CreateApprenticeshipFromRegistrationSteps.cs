@@ -17,8 +17,8 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 {
     [Binding]
-    [Scope(Feature = "VerifyRegistration")]
-    public class VerifyRegistrationSteps
+    [Scope(Feature = "CreateApprenticeshipFromRegistration")]
+    public class CreateApprenticeshipFromRegistrationSteps
     {
         private readonly TestContext _context;
         private CreateApprenticeshipFromRegistrationCommand _command;
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private Registration _registration;
         private Apprentice _apprentice;
 
-        public VerifyRegistrationSteps(TestContext context)
+        public CreateApprenticeshipFromRegistrationSteps(TestContext context)
         {
             _context = context;
             _f = new Fixture();
