@@ -90,6 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days + 1))
+                .With(x => x.DeliveryModel, DeliveryModel.Flexible)
                 .Create();
         }
 
@@ -239,7 +240,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 _request.CommitmentsApprenticeshipId,
                 _request.FirstName,
                 _request.LastName,
-                _request.DateOfBirth
+                _request.DateOfBirth,
+                Approval = new
+                {
+                    _request.DeliveryModel,
+                },
             });
         }
 
