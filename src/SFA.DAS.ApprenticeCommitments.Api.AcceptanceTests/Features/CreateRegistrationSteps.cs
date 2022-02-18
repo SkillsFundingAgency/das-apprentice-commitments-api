@@ -13,24 +13,24 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 {
     [Binding]
-    [Scope(Feature = "CreateApprenticeship")]
-    public class CreateApprenticeshipSteps
+    [Scope(Feature = "CreateRegistration")]
+    public class CreateRegistrationSteps
     {
         private readonly TestContext _context;
         private CreateRegistrationCommand _createApprenticeshipRequest;
 
-        public CreateApprenticeshipSteps(TestContext context)
+        public CreateRegistrationSteps(TestContext context)
         {
             _context = context;
         }
 
-        [Given(@"we have an invalid apprenticeship request")]
+        [Given(@"we have an invalid registration request")]
         public void GivenWeHaveAnInvalidApprenticeshipRequest()
         {
             _createApprenticeshipRequest = new CreateRegistrationCommand();
         }
 
-        [Given(@"we have a valid apprenticeship request")]
+        [Given(@"we have a valid registration request")]
         public void GivenWeHaveAValidApprenticeshipRequest()
         {
             _createApprenticeshipRequest = new CreateRegistrationCommand
@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             };
         }
 
-        [When(@"the apprenticeship is posted")]
+        [When(@"the registration is posted")]
         public async Task WhenTheApprenticeshipIsPosted()
         {
             await _context.Api.Post("approvals", _createApprenticeshipRequest);
