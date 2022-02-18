@@ -35,6 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"we have an existing registration")]
         public void GivenWeHaveAnExistingRegistration()
         {
+            _f.Inject(DeliveryModel.Flexible);
             _registration = _f.Create<Registration>();
             _context.DbContext.Registrations.Add(_registration);
             _context.DbContext.SaveChanges();
@@ -171,13 +172,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             apprenticeships.SelectMany(a => a.Revisions)
                 .Should().ContainEquivalentOf(new
                 {
-                    CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
+                    _registration.CommitmentsApprenticeshipId,
                     Details = new
                     {
                         _registration.Approval.EmployerName,
                         _registration.Approval.EmployerAccountLegalEntityId,
                         _registration.Approval.TrainingProviderId,
                         _registration.Approval.TrainingProviderName,
+                        _registration.Approval.DeliveryModel,
                         Course = new
                         {
                             _registration.Approval.Course.Name,

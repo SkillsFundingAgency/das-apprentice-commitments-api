@@ -101,6 +101,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             {
                 account.ApprenticeId,
                 approval.CommitmentsApprenticeshipId,
+                approval.DeliveryModel,
                 EmployerCorrect = (bool?)null,
                 TrainingProviderCorrect = (bool?)null,
                 ApprenticeshipDetailsCorrect = (bool?)null,

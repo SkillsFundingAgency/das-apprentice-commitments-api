@@ -30,6 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 HowApprenticeshipDeliveredCorrect = latest.HowApprenticeshipDeliveredCorrect,
                 EmployerCorrect = latest.EmployerCorrect,
                 RolesAndResponsibilitiesConfirmations = latest.RolesAndResponsibilitiesConfirmations ?? RolesAndResponsibilitiesConfirmations.None,
+                DeliveryModel = latest.Details.DeliveryModel,
                 CourseName = latest.Details.Course.Name,
                 CourseLevel = latest.Details.Course.Level,
                 CourseOption = latest.Details.Course.Option,

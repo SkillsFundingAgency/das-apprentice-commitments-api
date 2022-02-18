@@ -1,4 +1,4 @@
-﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 
 #nullable disable
@@ -19,6 +19,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public RolesAndResponsibilitiesConfirmations RolesAndResponsibilitiesConfirmations { get; set; }
         public bool? ApprenticeshipDetailsCorrect { get; set; }
         public bool? HowApprenticeshipDeliveredCorrect { get; set; }
+        public DeliveryModel DeliveryModel { get; set; }
         public string CourseName { get; set; }
         public int CourseLevel { get; set; }
         public string CourseOption { get; set; }
