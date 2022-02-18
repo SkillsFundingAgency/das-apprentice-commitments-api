@@ -63,7 +63,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddApplicationInsightsTelemetry();
             services.AddSwaggerGen();
 
@@ -93,15 +92,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                 .AddCheck<ApprenticeCommitmentsHealthCheck>(nameof(ApprenticeCommitmentsHealthCheck));
 
             services
-                .AddMvc(o =>
+                .AddControllers(o =>
                 {
                     if (!Configuration.IsLocalAcceptanceOrDev())
                     {
                         o.Filters.Add(new AuthorizeFilter(PolicyNames.Default));
                     }
-                }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            services.AddControllersWithViews()
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddNewtonsoftJson(o => o.SerializerSettings.Converters.Add(new StringEnumConverter()))
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ApprenticeValidator>());
 
