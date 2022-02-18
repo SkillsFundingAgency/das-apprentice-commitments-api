@@ -45,6 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 EmployerAccountLegalEntityId = 61234,
                 TrainingProviderId = 71234,
                 TrainingProviderName = "My Training Provider",
+                DeliveryModel = DeliveryModel.Flexible,
                 CourseName = "My course",
                 CourseLevel = 5,
                 CourseOption = "",
@@ -93,6 +94,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             registration.Approval.EmployerAccountLegalEntityId.Should().Be(_createApprenticeshipRequest.EmployerAccountLegalEntityId);
             registration.CommitmentsApprenticeshipId.Should().Be(_createApprenticeshipRequest.CommitmentsApprenticeshipId);
             registration.Approval.TrainingProviderName.Should().Be(_createApprenticeshipRequest.TrainingProviderName);
+            registration.Approval.DeliveryModel.Should().Be(_createApprenticeshipRequest.DeliveryModel);
             registration.Approval.Course.Name.Should().Be(_createApprenticeshipRequest.CourseName);
             registration.Approval.Course.Level.Should().Be(_createApprenticeshipRequest.CourseLevel);
             registration.Approval.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
