@@ -4,7 +4,6 @@ using FluentAssertions;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.DTOs;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -43,7 +42,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
     }
 
-    class When_change_of_personal_details_before_apprenticeship_is_matched : ChangeOfPersonalDetailsFixture
+    internal class When_change_of_personal_details_before_apprenticeship_is_matched : ChangeOfPersonalDetailsFixture
     {
         [Test]
         public async Task Updates_personal_details_in_registration()
@@ -80,7 +79,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
     }
 
-    class When_change_of_personal_details_includes_email_belonging_to_matched_account : ChangeOfPersonalDetailsFixture
+    internal class When_change_of_personal_details_includes_email_belonging_to_matched_account : ChangeOfPersonalDetailsFixture
     {
         [Test, AutoData]
         public async Task Updates_personal_details_in_registration(MailAddress existingEmail)
@@ -118,48 +117,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                     RegistrationId = approval.RegistrationId,
                 }
             });
-        }
-    }
-
-    class When_change_of_personal_details_after_registration_is_matched : ChangeOfPersonalDetailsFixture
-    {
-        public async Task<(ApprenticeDto apprentice, ChangeRegistrationCommand command)> CreateVerifiedApprenticeshipAndCoc()
-        {
-            var approval = await CreateRegistration();
-            var apprenticeship = await VerifyRegistration(approval);
-            var originalApprentice = await GetApprentice(apprenticeship.ApprenticeId);
-            var command = CreateChangeOfPersonalDetails(approval);
-            Reset();
-
-            return (originalApprentice, command);
-        }
-
-        [Test]
-        public async Task Does_not_update_apprentice()
-        {
-            var (originalApprentice, command) = await CreateVerifiedApprenticeshipAndCoc();
-
-            await ChangeOfCircumstances(command);
-
-            var updatedApprentice = await GetApprentice(originalApprentice.Id);
-            updatedApprentice.Should().BeEquivalentTo(new
-            {
-                originalApprentice.Id,
-                originalApprentice.FirstName,
-                originalApprentice.LastName,
-                originalApprentice.DateOfBirth,
-                originalApprentice.Email,
-            });
-        }
-
-        [Test, AutoData]
-        public async Task Does_not_trigger_ApprenticeshipRegisteredEvent()
-        {
-            var (_, coc) = await CreateVerifiedApprenticeshipAndCoc();
-
-            await ChangeOfCircumstances(coc);
-
-            PublishedNServiceBusEvents.Should().BeEmpty();
         }
     }
 }

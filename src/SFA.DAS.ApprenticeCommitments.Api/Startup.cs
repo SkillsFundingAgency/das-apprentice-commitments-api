@@ -14,7 +14,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using SFA.DAS.ApprenticeCommitments.Api.Authentication;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Configuration;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Exceptions;
@@ -98,10 +98,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                     {
                         o.Filters.Add(new AuthorizeFilter(PolicyNames.Default));
                     }
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddNewtonsoftJson(o => o.SerializerSettings.Converters.Add(new StringEnumConverter()))
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ApprenticeValidator>());
+                }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateRegistrationCommandValidator>());
 
             services.AddProblemDetails(ConfigureProblemDetails);
 
