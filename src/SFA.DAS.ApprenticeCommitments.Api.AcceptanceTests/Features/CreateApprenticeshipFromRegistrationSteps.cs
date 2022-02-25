@@ -35,7 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"we have an existing registration")]
         public void GivenWeHaveAnExistingRegistration()
         {
-            _f.Inject(DeliveryModel.Flexible);
+            _f.Inject(DeliveryModel.PortableFlexiJob);
             _registration = _f.Create<Registration>();
             _context.DbContext.Registrations.Add(_registration);
             _context.DbContext.SaveChanges();

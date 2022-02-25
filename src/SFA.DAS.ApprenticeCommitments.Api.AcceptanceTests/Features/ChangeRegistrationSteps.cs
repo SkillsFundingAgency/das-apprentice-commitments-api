@@ -90,7 +90,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days + 1))
-                .With(x => x.DeliveryModel, DeliveryModel.Flexible)
+                .With(x => x.DeliveryModel, DeliveryModel.PortableFlexiJob)
                 .Create();
         }
 

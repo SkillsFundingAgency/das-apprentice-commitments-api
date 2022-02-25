@@ -45,7 +45,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                 EmployerAccountLegalEntityId = 61234,
                 TrainingProviderId = 71234,
                 TrainingProviderName = "My Training Provider",
-                DeliveryModel = DeliveryModel.Flexible,
+                DeliveryModel = DeliveryModel.PortableFlexiJob,
                 CourseName = "My course",
                 CourseLevel = 5,
                 CourseOption = "",
