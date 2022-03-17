@@ -95,7 +95,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 
     internal class SqlServerTestsConnectionFactory : IConnectionFactory, ITestsDbConnectionFactory
     {
-        public string ConnectionString => "Data Source=.;Initial Catalog=SFA.DAS.ApprenticeCommitments.AcceptanceTests;Integrated Security=True;";
+        public string ConnectionString => "Data Source=(localdb)\\MSSQLLocalDb;Initial Catalog=SFA.DAS.ApprenticeCommitments;Integrated Security=True;";
 
         public void EnsureCreated(ApprenticeCommitmentsDbContext dbContext)
         {
@@ -109,10 +109,11 @@ To ensure that we are testing against the real database schema used in productio
 Instead, manually deploy the database using the `SFA.DAS.ApprenticeCommitments.Database` project, targetting `SFA.DAS.ApprenticeCommitments.AcceptanceTests`");
             }
 
-            dbContext.Database.ExecuteSqlRaw("truncate table Revision");
+            dbContext.Database.ExecuteSqlRaw("delete from Revision");
             dbContext.Database.ExecuteSqlRaw("delete from Apprenticeship");
-            dbContext.Database.ExecuteSqlRaw("truncate table ApprenticeEmailAddressHistory");
-            dbContext.Database.ExecuteSqlRaw("truncate table Registration");
+            dbContext.Database.ExecuteSqlRaw("delete from ApprenticeEmailAddressHistory");
+            dbContext.Database.ExecuteSqlRaw("delete from ApprenticeshipMatchAttempt");
+            dbContext.Database.ExecuteSqlRaw("delete from Registration");
             dbContext.Database.ExecuteSqlRaw("delete from Apprentice");
         }
 

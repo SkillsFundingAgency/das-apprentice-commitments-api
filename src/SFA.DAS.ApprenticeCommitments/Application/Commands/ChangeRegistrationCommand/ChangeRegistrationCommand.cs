@@ -1,4 +1,5 @@
-﻿using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
+﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+using SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator;
 using System;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand
@@ -16,6 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
         public long EmployerAccountLegalEntityId { get; set; }
         public long TrainingProviderId { get; set; }
         public string TrainingProviderName { get; set; } = null!;
+        public DeliveryModel DeliveryModel { get; set; }
         public string CourseName { get; set; } = null!;
         public int CourseLevel { get; set; }
         public int CourseDuration { get; set; }

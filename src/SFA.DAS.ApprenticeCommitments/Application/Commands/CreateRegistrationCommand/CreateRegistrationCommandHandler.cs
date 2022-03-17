@@ -30,6 +30,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
                     request.EmployerName,
                     request.TrainingProviderId,
                     request.TrainingProviderName,
+                    request.DeliveryModel,
                     new CourseDetails(
                         request.CourseName,
                         request.CourseLevel,

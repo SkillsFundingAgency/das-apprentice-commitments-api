@@ -1,7 +1,7 @@
 @database
 @api
 
-Feature: VerifyRegistration
+Feature: CreateApprenticeshipFromRegistration
 	As an application user
 	I want to verify and complete an existing registration
 

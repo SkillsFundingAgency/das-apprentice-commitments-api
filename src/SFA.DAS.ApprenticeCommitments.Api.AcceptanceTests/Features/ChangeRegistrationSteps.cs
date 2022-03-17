@@ -17,8 +17,8 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
 {
     [Binding]
-    [Scope(Feature = "ChangeApprenticeship")]
-    public class ChangeApprenticeshipSteps
+    [Scope(Feature = "ChangeRegistration")]
+    public class ChangeRegistrationSteps
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
@@ -27,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private long _newApprenticeshipId;
         private long _commitmentsApprenticeshipId;
 
-        public ChangeApprenticeshipSteps(TestContext context)
+        public ChangeRegistrationSteps(TestContext context)
         {
             _fixture.Customizations.Add(new EmailPropertyCustomisation());
             _context = context;
@@ -37,7 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             _newApprenticeshipId = _fixture.Create<long>();
         }
 
-        [Given("we have an existing apprenticeship")]
+        [Given("we have an existing registration")]
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
             var apprentice = _fixture.Create<Apprentice>();
@@ -49,12 +49,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.DbContext.SaveChangesAsync();
         }
 
-        [Given("we do not have an existing apprenticeship, confirmed or unconfirmed")]
+        [Given("we do not have an existing registration, confirmed or unconfirmed")]
         public void GivenWeDoNotHaveAnExistingApprenticeshipConfirmedOrUnconfirmed()
         {
         }
 
-        [Given("we do not have an existing apprenticeship")]
+        [Given("we do not have an existing registration")]
         public void GivenWeDoNotHaveAnExistingApprenticeship()
         {
         }
@@ -80,7 +80,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.DbContext.SaveChangesAsync();
         }
 
-        [Given("we have an update apprenticeship request")]
+        [Given("we have an update registration request")]
         public void GivenWeHaveAnUpdateApprenticeshipRequest()
         {
             var start = _fixture.Create<DateTime>();
@@ -90,10 +90,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.CommitmentsApprovedOn, (long days) => _revision.CommitmentsApprovedOn.AddDays(days))
                 .With(x => x.PlannedStartDate, start)
                 .With(x => x.PlannedEndDate, (long days) => start.AddDays(days + 1))
+                .With(x => x.DeliveryModel, DeliveryModel.PortableFlexiJob)
                 .Create();
         }
 
-        [Given("we have an update apprenticeship request without an email")]
+        [Given("we have an update registration request without an email")]
         public void GivenWeHaveAnUpdateApprenticeshipRequestWithoutAnEmail()
         {
             var start = _fixture.Create<DateTime>();
@@ -107,7 +108,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .Create();
         }
 
-        [Given("we have an update apprenticeship request with no material change")]
+        [Given("we have an update registration request with no material change")]
         public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest()
         {
             _request = _fixture.Build<ChangeRegistrationCommand>()
@@ -125,7 +126,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .Create();
         }
 
-        [Given("we have a update apprenticeship continuation request")]
+        [Given("we have a update registration continuation request")]
         public void GivenWeHaveANewApprenticeshipRequest()
         {
             var start = _fixture.Create<DateTime>();
@@ -187,7 +188,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
-        [Then(@"we have updated the apprenticeship details for the unconfirmed registration")]
+        [Then(@"we have updated the registration details for the unconfirmed registration")]
         public void ThenWeHaveUpdatedTheApprenticeshipDetailsForTheUnconfirmedRegistration()
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
@@ -230,7 +231,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             });
         }
 
-        [Then(@"registration commitments apprenticeship are updated correctly")]
+        [Then(@"registration commitments are updated are updated correctly")]
         public void ThenRegistrationCommitmentsApprenticeshipAreUpdatedCorrectly()
         {
             _context.DbContext.Registrations.Should().ContainEquivalentOf(new
@@ -239,7 +240,11 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 _request.CommitmentsApprenticeshipId,
                 _request.FirstName,
                 _request.LastName,
-                _request.DateOfBirth
+                _request.DateOfBirth,
+                Approval = new
+                {
+                    _request.DeliveryModel,
+                },
             });
         }
 

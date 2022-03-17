@@ -17,8 +17,8 @@ using TechTalk.SpecFlow;
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
 {
     [Binding]
-    [Scope(Feature = "VerifyRegistration")]
-    public class VerifyRegistrationSteps
+    [Scope(Feature = "CreateApprenticeshipFromRegistration")]
+    public class CreateApprenticeshipFromRegistrationSteps
     {
         private readonly TestContext _context;
         private CreateApprenticeshipFromRegistrationCommand _command;
@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private Registration _registration;
         private Apprentice _apprentice;
 
-        public VerifyRegistrationSteps(TestContext context)
+        public CreateApprenticeshipFromRegistrationSteps(TestContext context)
         {
             _context = context;
             _f = new Fixture();
@@ -35,6 +35,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"we have an existing registration")]
         public void GivenWeHaveAnExistingRegistration()
         {
+            _f.Inject(DeliveryModel.PortableFlexiJob);
             _registration = _f.Create<Registration>();
             _context.DbContext.Registrations.Add(_registration);
             _context.DbContext.SaveChanges();
@@ -171,13 +172,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             apprenticeships.SelectMany(a => a.Revisions)
                 .Should().ContainEquivalentOf(new
                 {
-                    CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
+                    _registration.CommitmentsApprenticeshipId,
                     Details = new
                     {
                         _registration.Approval.EmployerName,
                         _registration.Approval.EmployerAccountLegalEntityId,
                         _registration.Approval.TrainingProviderId,
                         _registration.Approval.TrainingProviderName,
+                        _registration.Approval.DeliveryModel,
                         Course = new
                         {
                             _registration.Approval.Course.Name,

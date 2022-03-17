@@ -14,12 +14,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public ApprenticeshipDetails(
             long employerAccountLegalEntityId, string employerName,
             long trainingProviderId, string trainingProviderName,
-            CourseDetails course)
+            DeliveryModel deliveryModel, CourseDetails course)
         {
             EmployerAccountLegalEntityId = employerAccountLegalEntityId;
             EmployerName = employerName;
             TrainingProviderId = trainingProviderId;
             TrainingProviderName = trainingProviderName;
+            DeliveryModel = deliveryModel;
             Course = course;
         }
 
@@ -28,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public long TrainingProviderId { get; private set; }
         public string TrainingProviderName { get; private set; } = null!;
-
+        public DeliveryModel DeliveryModel { get; private set; }
         public CourseDetails Course { get; private set; } = null!;
 
         public bool EmployerIsEquivalent(ApprenticeshipDetails? other)

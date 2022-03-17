@@ -80,6 +80,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     details.Property(p => p.EmployerName).HasColumnName("EmployerName");
                     details.Property(p => p.TrainingProviderId).HasColumnName("TrainingProviderId");
                     details.Property(p => p.TrainingProviderName).HasColumnName("TrainingProviderName");
+                    details.Property(p => p.DeliveryModel).HasColumnName("DeliveryModel");
                     details.OwnsOne(e => e.Course, course =>
                     {
                         course.Property(p => p.Name).HasColumnName("CourseName");
@@ -111,6 +112,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     apprenticeship.Property(p => p.EmployerName).HasColumnName("EmployerName");
                     apprenticeship.Property(p => p.TrainingProviderId).HasColumnName("TrainingProviderId");
                     apprenticeship.Property(p => p.TrainingProviderName).HasColumnName("TrainingProviderName");
+                    apprenticeship.Property(p => p.DeliveryModel).HasColumnName("DeliveryModel");
                     apprenticeship.OwnsOne(e => e.Course, course =>
                     {
                         course.Property(p => p.Name).HasColumnName("CourseName");

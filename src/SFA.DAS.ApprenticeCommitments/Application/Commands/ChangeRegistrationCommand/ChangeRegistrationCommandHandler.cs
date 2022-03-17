@@ -81,6 +81,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
                 command.EmployerName,
                 command.TrainingProviderId,
                 command.TrainingProviderName,
+                command.DeliveryModel,
                 new CourseDetails(
                     command.CourseName,
                     command.CourseLevel,
