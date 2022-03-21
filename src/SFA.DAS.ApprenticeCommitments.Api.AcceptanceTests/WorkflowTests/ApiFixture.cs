@@ -1,10 +1,8 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.AspNetCore.JsonPatch;
-using NServiceBus.Testing;
 using NUnit.Framework;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationCommand;
-using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeAccountCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshipFromRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand;
@@ -157,9 +155,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
             return apprentice;
         }
 
-        protected async Task<HttpResponseMessage> PostCreateAccountCommand(CreateApprenticeAccountCommand create)
+        protected Task<HttpResponseMessage> PostCreateAccountCommand(CreateApprenticeAccountCommand create)
         {
-            return await client.PostValueAsync("apprentices", create);
+            return Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK));
         }
 
         protected async Task VerifyRegistration(CreateRegistrationCommand registration, CreateApprenticeAccountCommand apprentice)
@@ -249,5 +247,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
         protected Task<HttpResponseMessage> PostStopped(StoppedApprenticeshipCommand command)
             => client.PostValueAsync("approvals/stopped", command);
+    }
+
+    public class CreateApprenticeAccountCommand
+    {
+        public Guid ApprenticeId { get; set; }
+        public string FirstName { get; set; } = null!;
+        public string LastName { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public DateTime DateOfBirth { get; set; }
     }
 }
