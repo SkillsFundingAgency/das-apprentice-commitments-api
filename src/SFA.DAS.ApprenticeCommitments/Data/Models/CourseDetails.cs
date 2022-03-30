@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public CourseDetails(
             string name, int level, string? option,
             DateTime plannedStartDate, DateTime plannedEndDate,
-            int courseDuration)
+            int courseDuration, DateTime? employmentEndDate = null)
         {
             Name = name;
             Level = level;
@@ -23,13 +23,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             PlannedStartDate = plannedStartDate;
             PlannedEndDate = plannedEndDate;
             CourseDuration = courseDuration;
+            EmploymentEndDate = employmentEndDate;
         }
 
         public string Name { get; private set; } = null!;
         public int Level { get; private set; }
         public string? Option { get; private set; }
-        public DateTime PlannedEndDate { get; private set; }
         public DateTime PlannedStartDate { get; private set; }
+        public DateTime PlannedEndDate { get; private set; }
+        public DateTime? EmploymentEndDate { get; private set; }
         public int CourseDuration { get; private set; }
 
         public bool IsEquivalent(CourseDetails o)

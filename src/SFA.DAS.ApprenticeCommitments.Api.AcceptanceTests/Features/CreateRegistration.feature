@@ -17,3 +17,11 @@ Scenario: Trying to create a registration with valid values
 	Then the result should return OK
 	And the registration exists in database
 	And the Confirmation Commenced event is published
+
+
+Scenario: Trying to create a flexi-job apprenticeship registration
+	Given we have a valid flexi-job registration request
+	When the registration is posted
+	Then the result should return OK
+	And the registration exists in database
+	And the Confirmation Commenced event is published

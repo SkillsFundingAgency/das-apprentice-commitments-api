@@ -26,5 +26,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         public string CourseOption { get; set; }
         public DateTime PlannedStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
+        public DateTime? EmploymentEndDate { get; set; }
     }
 }

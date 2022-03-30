@@ -54,6 +54,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             };
         }
 
+        [Given(@"we have a valid flexi-job registration request")]
+        public void GivenWeHaveAValidFlexijobApprenticeshipRequest()
+        {
+            GivenWeHaveAValidApprenticeshipRequest();
+            _createApprenticeshipRequest.EmploymentEndDate = new DateTime(2001, 08, 01);
+        }
+
         [When(@"the registration is posted")]
         public async Task WhenTheApprenticeshipIsPosted()
         {
@@ -100,6 +107,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             registration.Approval.Course.Option.Should().Be(_createApprenticeshipRequest.CourseOption);
             registration.Approval.Course.PlannedStartDate.Should().Be(_createApprenticeshipRequest.PlannedStartDate);
             registration.Approval.Course.PlannedEndDate.Should().Be(_createApprenticeshipRequest.PlannedEndDate);
+            registration.Approval.Course.EmploymentEndDate.Should().Be(_createApprenticeshipRequest.EmploymentEndDate);
         }
 
         [Then("the Confirmation Commenced event is published")]
