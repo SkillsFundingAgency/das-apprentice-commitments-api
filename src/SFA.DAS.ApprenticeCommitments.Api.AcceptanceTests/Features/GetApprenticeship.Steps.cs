@@ -163,6 +163,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.PlannedStartDate.Should().Be(_revision.Details.Course.PlannedStartDate);
             a.PlannedEndDate.Should().Be(_revision.Details.Course.PlannedEndDate);
             a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
+            a.EmploymentEndDate.Should().Be(_revision.Details.Course.EmploymentEndDate);
         }
 
         [Then(@"the response should match the newer apprenticeship values")]

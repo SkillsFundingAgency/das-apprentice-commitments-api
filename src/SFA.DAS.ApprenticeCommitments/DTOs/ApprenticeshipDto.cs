@@ -26,6 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public int CourseDuration { get; set; }
         public DateTime PlannedStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
+        public DateTime? EmploymentEndDate { get; set; }
         public DateTime ConfirmBefore { get; set; }
         public DateTime? ConfirmedOn { get; set; }
         public long RevisionId { get; set; }
