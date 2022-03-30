@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using System;
-using static SFA.DAS.ApprenticeCommitments.Extensions.DateCalculations;
 
 namespace SFA.DAS.ApprenticeCommitments.Data.Models
 {
@@ -15,7 +14,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public CourseDetails(
             string name, int level, string? option,
             DateTime plannedStartDate, DateTime plannedEndDate,
-            int courseDuration, DateTime? employmentEndDate = null)
+            int courseDuration, DateTime? employmentEndDate)
         {
             Name = name;
             Level = level;

@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var startDate = new System.DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
                 _fixture.Create("CourseName"), 1, null,
-                startDate, startDate.AddMonths(32), 33));
+                startDate, startDate.AddMonths(32), 33, startDate.AddMonths(5)));
 
             _revision = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations
