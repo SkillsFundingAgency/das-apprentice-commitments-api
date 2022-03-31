@@ -25,6 +25,7 @@ CREATE TABLE [dbo].Revision
     [CreatedOn] DATETIME2 NULL DEFAULT current_timestamp, 
     [StoppedReceivedOn] DATETIME2 NULL, 
     [DeliveryModel] INT NOT NULL DEFAULT 0, 
+    [EmploymentEndDate] DATETIME2 NULL, 
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
     CONSTRAINT FK_CommitmentStatement_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )
