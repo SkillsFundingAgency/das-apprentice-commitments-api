@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
@@ -32,7 +31,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var startDate = new System.DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
                 _fixture.Create("CourseName"), 1, null,
-                startDate, startDate.AddMonths(32), 33));
+                startDate, startDate.AddMonths(32), 33, startDate.AddMonths(5)));
 
             _revision = _fixture.Build<Revision>()
                 .Do(a => a.Confirm(new Confirmations
@@ -164,6 +163,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.PlannedStartDate.Should().Be(_revision.Details.Course.PlannedStartDate);
             a.PlannedEndDate.Should().Be(_revision.Details.Course.PlannedEndDate);
             a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
+            a.EmploymentEndDate.Should().Be(_revision.Details.Course.EmploymentEndDate);
         }
 
         [Then(@"the response should match the newer apprenticeship values")]

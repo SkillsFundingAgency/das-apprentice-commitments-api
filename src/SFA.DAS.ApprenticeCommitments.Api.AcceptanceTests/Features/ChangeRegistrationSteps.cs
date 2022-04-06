@@ -271,6 +271,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                         Option = _request.CourseOption,
                         _request.PlannedStartDate,
                         _request.PlannedEndDate,
+                        _request.EmploymentEndDate,
                     },
                 }
             });

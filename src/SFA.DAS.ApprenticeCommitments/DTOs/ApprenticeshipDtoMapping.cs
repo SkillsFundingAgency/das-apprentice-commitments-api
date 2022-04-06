@@ -37,6 +37,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 CourseDuration = latest.Details.Course.CourseDuration,
                 PlannedStartDate = latest.Details.Course.PlannedStartDate,
                 PlannedEndDate = latest.Details.Course.PlannedEndDate,
+                EmploymentEndDate = latest.Details.Course.EmploymentEndDate,
                 ConfirmedOn = latest.ConfirmedOn,
                 ConfirmBefore = latest.ConfirmBefore,
                 ApprovedOn = latest.CommitmentsApprovedOn,

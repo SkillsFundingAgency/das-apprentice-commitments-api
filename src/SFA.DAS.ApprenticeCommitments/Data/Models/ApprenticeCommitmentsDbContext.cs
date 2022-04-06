@@ -89,6 +89,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                         course.Property(p => p.PlannedStartDate).HasColumnName("PlannedStartDate");
                         course.Property(p => p.PlannedEndDate).HasColumnName("PlannedEndDate");
                         course.Property(p => p.CourseDuration).HasColumnName("CourseDuration");
+                        course.Property(p => p.EmploymentEndDate).HasColumnName("EmploymentEndDate");
                     });
                 });
 
@@ -121,6 +122,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                         course.Property(p => p.PlannedStartDate).HasColumnName("PlannedStartDate");
                         course.Property(p => p.PlannedEndDate).HasColumnName("PlannedEndDate");
                         course.Property(p => p.CourseDuration).HasColumnName("CourseDuration");
+                        course.Property(p => p.EmploymentEndDate).HasColumnName("EmploymentEndDate");
                     });
                 });
             });
