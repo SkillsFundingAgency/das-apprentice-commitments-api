@@ -121,7 +121,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
                 .With(x => x.CourseLevel, Apprenticeship.CourseLevel)
                 .With(x => x.CourseOption, Apprenticeship.CourseOption)
                 .With(x => x.PlannedStartDate, Apprenticeship.PlannedStartDate)
-                .With(x => x.PlannedEndDate, Apprenticeship.PlannedEndDate);
+                .With(x => x.PlannedEndDate, Apprenticeship.PlannedEndDate)
+                .With(x => x.EmploymentEndDate, Apprenticeship.EmploymentEndDate);
             return this;
         }
 

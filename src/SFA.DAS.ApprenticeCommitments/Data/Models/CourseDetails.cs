@@ -37,7 +37,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         {
             if (o == null) throw new ArgumentNullException(nameof(o));
             return Name == o.Name && Level == o.Level && Option == o.Option &&
-                PlannedStartDate == o.PlannedStartDate && PlannedEndDate == o.PlannedEndDate;
+                PlannedStartDate == o.PlannedStartDate && PlannedEndDate == o.PlannedEndDate &&
+                EmploymentEndDate == o.EmploymentEndDate;
         }
     }
 }

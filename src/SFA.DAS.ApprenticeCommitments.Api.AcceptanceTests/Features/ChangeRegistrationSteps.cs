@@ -123,6 +123,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.CourseOption, _revision.Details.Course.Option)
                 .With(x => x.PlannedStartDate, _revision.Details.Course.PlannedStartDate)
                 .With(x => x.PlannedEndDate, _revision.Details.Course.PlannedEndDate)
+                .With(x => x.EmploymentEndDate, _revision.Details.Course.EmploymentEndDate)
+                .With(x => x.DeliveryModel, _revision.Details.DeliveryModel)
                 .Create();
         }
 
