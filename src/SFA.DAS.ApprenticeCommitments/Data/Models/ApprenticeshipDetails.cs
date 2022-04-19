@@ -58,6 +58,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             other.EmployerName == EmployerName &&
             other.TrainingProviderId == TrainingProviderId &&
             other.TrainingProviderName == TrainingProviderName &&
+            other.DeliveryModel == DeliveryModel &&
             Course.IsEquivalent(other.Course);
 
         public override int GetHashCode() =>

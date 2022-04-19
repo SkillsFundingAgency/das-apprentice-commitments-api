@@ -58,6 +58,21 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
             _apprenticeship.Revisions.Last().EmployerCorrect.Should().BeNull();
         }
 
+        [TestCase(DeliveryModel.PortableFlexiJob, DeliveryModel.Regular)]
+        [TestCase(DeliveryModel.Regular, DeliveryModel.PortableFlexiJob)]
+        public void When_employer_section_confirmation_status_is_set_And_a_change_to_deliveryModel_has_occurred_Then_employer_section_is_not_confirmed(DeliveryModel current, DeliveryModel change)
+        {
+            _existingRevision.Details.SetProperty(x=>x.DeliveryModel, current);
+            _existingRevision.Confirm(new Confirmations { EmployerCorrect = true }, DateTime.UtcNow);
+
+            var newDetails = _existingRevision.Details.Clone();
+            newDetails.SetProperty(p => p.DeliveryModel, change);
+
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, newDetails, DateTime.Now);
+
+            _apprenticeship.Revisions.Last().EmployerCorrect.Should().BeNull();
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void When_employer_section_confirmation_is_set_And_a_change_to_employer_id_has_occurred_Then_employer_section_is_not_confirmed(bool confirmationStatus)

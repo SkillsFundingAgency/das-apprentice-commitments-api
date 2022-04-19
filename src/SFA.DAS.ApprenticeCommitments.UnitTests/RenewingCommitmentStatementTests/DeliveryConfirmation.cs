@@ -40,14 +40,30 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
         [TestCase(true, false)]
         [TestCase(false, true)]
         [TestCase(false, false)]
-        public void When_delivery_section_confirmation_status_is_set_Then_delivery_section_does_not_change_status_regardless_of_data_changes(bool confirmationStatus, bool withSameData)
+        public void When_delivery_section_confirmation_status_is_set_Then_delivery_section_does_not_change_status_regardless_of_data_changes_as_long_as_delivery_is_the_same(bool confirmationStatus, bool withSameData)
         {
             _existingRevision.SetProperty(p => p.HowApprenticeshipDeliveredCorrect, confirmationStatus);
             var details = withSameData ? _existingRevision.Details.Clone() : _f.Create<ApprenticeshipDetails>();
+            details.SetProperty(p => p.DeliveryModel, _existingRevision.Details.DeliveryModel);
 
             _apprenticeship.Revise(_commitmentsApprenticeshipId, details, DateTime.Now);
             
             _apprenticeship.Revisions.Last().HowApprenticeshipDeliveredCorrect.Should().Be(confirmationStatus);
         }
+
+        [TestCase(DeliveryModel.Regular, DeliveryModel.PortableFlexiJob)]
+        [TestCase(DeliveryModel.PortableFlexiJob, DeliveryModel.Regular)]
+        public void When_delivery_section_confirmation_status_is_set_Then_delivery_section_confirmation_does_change_when_delivery_model_is_changed(DeliveryModel existingDeliveryModel, DeliveryModel newDeliveryModel)
+        {
+            _existingRevision.SetProperty(p => p.HowApprenticeshipDeliveredCorrect, true);
+            _existingRevision.Details.SetProperty(p => p.DeliveryModel, existingDeliveryModel);
+            var details = _existingRevision.Details.Clone();
+            details.SetProperty(p => p.DeliveryModel, newDeliveryModel);
+
+            _apprenticeship.Revise(_commitmentsApprenticeshipId, details, DateTime.Now);
+
+            _apprenticeship.Revisions.Last().HowApprenticeshipDeliveredCorrect.Should().BeNull();
+        }
+
     }
 }

@@ -69,5 +69,14 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
 
             _course.IsEquivalent(newCourse).Should().BeFalse();
         }
+
+        [Test]
+        public void When_employment_end_date_is_different_Then_new_course_is_not_equivalent()
+        {
+            var newCourse = _course.Clone();
+            newCourse.SetProperty(x => x.EmploymentEndDate, _f.Create<DateTime>());
+
+            _course.IsEquivalent(newCourse).Should().BeFalse();
+        }
     }
 }
