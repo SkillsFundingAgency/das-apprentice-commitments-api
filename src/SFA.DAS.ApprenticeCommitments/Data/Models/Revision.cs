@@ -103,7 +103,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
             if (EmployerIsEquivalent() && DeliveryModelIsEquivalent())  revision.EmployerCorrect = EmployerCorrect;
             if (ProviderIsEquivalent()) revision.TrainingProviderCorrect = TrainingProviderCorrect;
-            if (ApprenticeshipIsEquivalent()) revision.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
+            if (ApprenticeshipIsEquivalent() && DeliveryModelIsEquivalent()) revision.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             if (DeliveryModelIsEquivalent()) revision.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
             if (DeliveryModelIsEquivalent()) revision.RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations;
 
