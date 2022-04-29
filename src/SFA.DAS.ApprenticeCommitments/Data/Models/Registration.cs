@@ -129,6 +129,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 throw new DomainException("Cannot update registration as user has confirmed their identity");
             }
 
+            if (commitmentsApprenticeshipId != CommitmentsApprenticeshipId)
+            {
+                StoppedReceivedOn = null;
+            }
+
             CommitmentsApprenticeshipId = commitmentsApprenticeshipId;
             CommitmentsApprovedOn = commitmentsApprovedOn;
             Approval = apprenticeshipDetails;
