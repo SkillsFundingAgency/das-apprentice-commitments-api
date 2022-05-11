@@ -80,6 +80,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             await _context.DbContext.SaveChangesAsync();
         }
 
+        [Given(@"we do have an unconfirmed registration which is stopped")]
+        public async Task GivenWeDoHaveAnUnconfirmedRegistrationWhichIsStopped()
+        {
+            var registration = _fixture.Create<Registration>();
+            registration.SetProperty(x => x.CommitmentsApprenticeshipId, _commitmentsApprenticeshipId);
+            registration.SetProperty(x=>x.StoppedReceivedOn, DateTime.Now);
+
+            _context.DbContext.Registrations.Add(registration);
+            await _context.DbContext.SaveChangesAsync();
+        }
+
         [Given("we have an update registration request")]
         public void GivenWeHaveAnUpdateApprenticeshipRequest()
         {
@@ -248,6 +259,18 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     _request.DeliveryModel,
                 },
             });
+        }
+
+        [Then(@"stopped date should be removed from registration")]
+        public void ThenStoppedDateShouldBeRemovedFromRegistration()
+        {
+            _context.DbContext.Registrations.First().StoppedReceivedOn.Should().BeNull();
+        }
+
+        [Then(@"stopped date should NOT be removed from registration")]
+        public void ThenStoppedDateShouldNOTBeRemovedFromRegistration()
+        {
+            _context.DbContext.Registrations.First().StoppedReceivedOn.Should().NotBeNull();
         }
 
         [Then(@"a new registration record should exist with the correct information")]

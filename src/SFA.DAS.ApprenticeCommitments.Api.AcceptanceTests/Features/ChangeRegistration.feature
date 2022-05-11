@@ -72,3 +72,15 @@ Scenario: Trying to update registration which doesn't have an email
 	When the update is posted
 	Then the response is bad request
 	And a validation exception is thrown for the field: "Email" 
+
+Scenario: Stopped Date should be removed from registration details when Continuation Id is present and the apprentice has not confirmed his identity 
+	Given we do have an unconfirmed registration which is stopped
+	And we have a update registration continuation request
+	When the update is posted
+	Then stopped date should be removed from registration
+
+Scenario: Stopped Date should NOT be removed from registration details when Continuation Id is NOT present and the apprentice has not confirmed his identity 
+	Given we do have an unconfirmed registration which is stopped
+	And we have an update registration request
+	When the update is posted
+	Then stopped date should NOT be removed from registration
