@@ -20,10 +20,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("registrations/{apprenticeId}")]
-        public async Task<IActionResult> GetRegistration(Guid apprenticeId)
+        [HttpGet("registrations/{registrationId}")]
+        public async Task<IActionResult> GetRegistration(Guid registrationId)
         {
-            var response = await _mediator.Send(new RegistrationQuery { ApprenticeId = apprenticeId });
+            var response = await _mediator.Send(new RegistrationQuery { RegistrationId = registrationId });
 
             if (response == null)
             {

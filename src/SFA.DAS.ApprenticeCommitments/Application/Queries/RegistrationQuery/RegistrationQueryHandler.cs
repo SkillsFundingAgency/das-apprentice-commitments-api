@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery
 
         public async Task<RegistrationResponse?> Handle(RegistrationQuery query, CancellationToken cancellationToken)
         {
-            var model = await _registrations.Find(query.ApprenticeId);
+            var model = await _registrations.Find(query.RegistrationId);
             return Map(model);
         }
 
