@@ -29,7 +29,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
 
             if (apprenticeship == null)
             {
-                _logger.LogInformation("No apprenticeship details found for {commitmentsApprenticeshipId} which need to be stopped", request.CommitmentsApprenticeshipId );
+                _logger.LogInformation("No apprenticeship details found for {commitmentsApprenticeshipId} which has been stopped", request.CommitmentsApprenticeshipId );
             }
             else
             {
