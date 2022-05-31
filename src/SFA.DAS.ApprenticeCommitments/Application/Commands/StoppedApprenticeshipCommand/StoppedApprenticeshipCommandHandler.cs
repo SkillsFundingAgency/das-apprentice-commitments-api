@@ -15,7 +15,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
         private readonly IRegistrationContext _registrations;
         private readonly IRevisionContext _revisions;
         private readonly ITimeProvider _timeProvider;
-        private ILogger<StoppedApprenticeshipCommandHandler> _logger;
+        private readonly ILogger<StoppedApprenticeshipCommandHandler> _logger;
 
         public StoppedApprenticeshipCommandHandler(
             IRegistrationContext registrations, IRevisionContext revisions, ITimeProvider timeProvider, ILogger<StoppedApprenticeshipCommandHandler> logger) =>
@@ -47,10 +47,5 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
             => await _registrations
                 .IncludeApprenticeships()
                 .FindByCommitmentsApprenticeshipId(request.CommitmentsApprenticeshipId);
-
-        private static Exception NotFound(StoppedApprenticeshipCommand request)
-            => new EntityNotFoundException(
-                nameof(Registration),
-                request.CommitmentsApprenticeshipId.ToString());
     }
 }
