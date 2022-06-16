@@ -192,12 +192,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeshipId}");
         }
 
-        [When(@"we try to retrieve the apprenticeship status")]
-        public async Task WhenWeTryToRetrieveTheApprenticeshipStatus()
-        {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeshipId}/status");
-        }
-
         [Then(@"the result should return ok")]
         public void ThenTheResultShouldReturnOk()
         {
@@ -255,9 +249,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenTheResponseShouldShowApprenticeshipHasBeenConfirmedAtLeastOnce()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var a = JsonConvert.DeserializeObject<ApprenticeshipStatusDto>(content);
+            var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
-            a.ApprenticeshipId.Should().Be(_newerRevision.ApprenticeshipId);
             a.HasBeenConfirmedAtLeastOnce.Should().BeTrue();
         }
 
@@ -265,9 +258,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task ThenTheResponseShouldShowApprenticeshipHasNeverBeenConfirmed()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
-            var a = JsonConvert.DeserializeObject<ApprenticeshipStatusDto>(content);
+            var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
-            a.ApprenticeshipId.Should().Be(_newerRevision.ApprenticeshipId);
             a.HasBeenConfirmedAtLeastOnce.Should().BeFalse();
         }
 

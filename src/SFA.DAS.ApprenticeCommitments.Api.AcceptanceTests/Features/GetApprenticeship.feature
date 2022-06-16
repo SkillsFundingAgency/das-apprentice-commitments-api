@@ -35,12 +35,12 @@ Scenario: When an apprenticeship with multiple revisions for a given apprentice 
 
 Scenario: When an apprenticeship with multiple revisions and has previously been confirmed
 	Given the apprenticeships exists, has many revisions, and a previous revision has been confirmed
-	When we try to retrieve the apprenticeship status
+	When we try to retrieve the apprenticeship
 	Then the result should return ok
 	And the response should show apprenticeship has been confirmed at least once
 
 Scenario: When an apprenticeship with multiple revisions and has never been confirmed
 	Given the apprenticeships exists, has many unconfirmed revisions
-	When we try to retrieve the apprenticeship status
+	When we try to retrieve the apprenticeship
 	Then the result should return ok
 	And the response should show apprenticeship has never been confirmed
