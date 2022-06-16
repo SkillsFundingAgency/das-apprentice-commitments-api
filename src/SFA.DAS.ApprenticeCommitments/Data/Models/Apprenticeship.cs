@@ -72,6 +72,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 return notification;
             }
         }
+        public bool ApprenticeshipHasPreviouslyBeenConfirmed
+            => Revisions.Any(r=>r.ConfirmedOn != null);
 
         private void AddRevision(Revision apprenticeship)
             => _revisions.Add(apprenticeship);
