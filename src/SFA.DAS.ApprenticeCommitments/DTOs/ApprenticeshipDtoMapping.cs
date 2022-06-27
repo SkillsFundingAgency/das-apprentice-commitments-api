@@ -13,7 +13,21 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
             if (apprenticeship == null) return null;
 
             var latest = apprenticeship.LatestRevision;
+            return MapApprenticeshipAndRevisionToApprenticeshipDto(apprenticeship, latest);
+        }
 
+        public static ApprenticeshipDto? MapToMyApprenticeshipDto(this Apprenticeship? apprenticeship)
+        {
+            if (apprenticeship == null) return null;
+
+            var latest = apprenticeship.LatestConfirmedRevision;
+            if (latest == null)
+                return null;
+            return MapApprenticeshipAndRevisionToApprenticeshipDto(apprenticeship, latest);
+        }
+
+        private static ApprenticeshipDto MapApprenticeshipAndRevisionToApprenticeshipDto(Apprenticeship apprenticeship, Revision latest)
+        {
             return new ApprenticeshipDto
             {
                 Id = apprenticeship.Id,
