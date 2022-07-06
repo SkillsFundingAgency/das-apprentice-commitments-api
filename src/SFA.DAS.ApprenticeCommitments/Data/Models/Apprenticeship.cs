@@ -69,6 +69,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     notification |= ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged;
                 }
 
+                if (!latest.Details.DeliveryModelIsEquivalent(lastSeen.Details))
+                {
+                    notification = ChangeOfCircumstanceNotifications.DeliveryModelChanged;
+                }
+
                 return notification;
             }
         }
