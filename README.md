@@ -15,12 +15,40 @@ This repo should be used as a template when creating new repos for the Apprentic
 
 ## Introduction
 
-An introduction to the project goes here!
+This repo has the majority of the api endpoints to perform crud operaions on cmad entities.  
+
+The SFA.DAS.ApprenticeCommitments.Api project should be run in kestrel to ensure that the 5501 port is used.
 
 ## Developer Setup
+
+Clone the repository.
+The repo has a database project which should be deployed locally to a database named ‘SFA.DAS.ApprenticeCommitments.Database’
 
 ### Requirements
 
 ### Setup
 
 ### Config
+{
+  "ApplicationSettings": {
+    "DbConnectionString": "Data Source=.;Initial Catalog=SFA.DAS.ApprenticeCommitments.Database;Integrated Security=True;Pooling=False;Connect Timeout=30",
+    "NServiceBusConnectionString": "UseLearningEndpoint=true",
+    "NServiceBusLicense": "",
+    "TimeToWaitBeforeChangeOfApprenticeshipEmail": "24:00:00",
+    "FuzzyMatchingSimilarityThreshold": 49
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "NServiceBusConnectionString": "UseLearningEndpoint=true",
+  "NServiceBusLicense": "",
+  "AzureAd": {
+    "tenant": "citizenazuresfabisgov.onmicrosoft.com",
+    "identifier": "https://citizenazuresfabisgov.onmicrosoft.com/das-at-?????-as-ar"
+  },
+  "DaysUntilCommitmentStatementOverdue": 10
+}
