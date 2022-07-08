@@ -117,7 +117,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [When(@"we try to retrieve the latest confirmed apprenticeship")]
         public async Task WhenWeTryToRetrieveTheLatestConfirmedApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/latest-confirmed-details");
+            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/confirmed/latest");
         }
 
         [Then(@"the result should return ok")]

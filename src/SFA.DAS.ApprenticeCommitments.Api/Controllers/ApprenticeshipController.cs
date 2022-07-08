@@ -53,7 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/latest-confirmed-details")]
+        [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/confirmed/latest")]
         public async Task<IActionResult> MyApprenticeship(Guid apprenticeId, long apprenticeshipId)
         {
             var result = await _mediator.Send(new MyApprenticeshipQuery(apprenticeId, apprenticeshipId));
