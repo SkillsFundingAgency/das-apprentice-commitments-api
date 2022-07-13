@@ -113,7 +113,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 revision.TrainingProviderCorrect = null;
                 revision.ApprenticeshipDetailsCorrect = null;
                 revision.HowApprenticeshipDeliveredCorrect = null;
-                revision.RolesAndResponsibilitiesConfirmations = Models.RolesAndResponsibilitiesConfirmations.None;
+                revision.RolesAndResponsibilitiesConfirmations = null;
                 return revision;
             }
 
