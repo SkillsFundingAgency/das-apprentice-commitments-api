@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Apprentice]
+﻿CREATE TABLE [dbo].Obsolete_Apprentice_DONOTUSE
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL,
 	[FirstName] NVARCHAR(100) NOT NULL,
@@ -13,7 +13,7 @@
 GO
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Apprentice_Email]
-    ON [dbo].[Apprentice]
+    ON [dbo].Obsolete_Apprentice_DONOTUSE
 	(
 		[Email] ASC
 	);
