@@ -18,7 +18,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisi
             CancellationToken cancellationToken)
         {
             var entity = await _revisionRepository
-                .GetById(request.ApprenticeId, request.ApprenticeshipId, request.RevisionId);
+                .FindById(request.ApprenticeId, request.ApprenticeshipId, request.RevisionId);
 
             return entity?.MapToApprenticeshipRevisionDto();
         }
