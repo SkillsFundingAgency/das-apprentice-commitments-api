@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
     {
         private readonly TestContext _context;
         private Fixture _fixture = new Fixture();
-        private Apprentice _apprentice;
+        private Guid _apprenticeId;
         private Revision _revision;
         private Revision _revisionWithoutFullConfirmation;
         private Revision _newerRevision;
@@ -26,9 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public GetMyApprenticeshipSteps(TestContext context)
         {
             _context = context;
-            _apprentice = _fixture.Build<Apprentice>()
-                .With(a => a.TermsOfUseAccepted, true)
-                .Create();
+            _apprenticeId = _fixture.Create<Guid>();
 
             var startDate = new System.DateTime(2000, 01, 01);
             _fixture.Register(() => new CourseDetails(
@@ -60,15 +58,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     HowApprenticeshipDeliveredCorrect = true,
                 }, DateTimeOffset.UtcNow))
                 .Create();
-            _apprenticeship = new Apprenticeship(_revision, _apprentice.Id);
+            _apprenticeship = new Apprenticeship(_revision, _apprenticeId);
         }
 
         [Given(@"the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
             _context.DbContext.Apprenticeships.Add(_apprenticeship);
             await _context.DbContext.SaveChangesAsync();
         }
@@ -88,10 +83,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given(@"the apprenticeship exists, but no revision has been confirmed")]
         public async Task GivenTheApprenticeshipExistsButNoRevisionHasBeenConfirmed()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revisionWithoutFullConfirmation, _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revisionWithoutFullConfirmation, _apprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -100,12 +92,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _fixture.Register((int i) => _revision.CommitmentsApprovedOn.AddDays(-i));
             
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprenticeId));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprenticeId));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -117,7 +106,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [When(@"we try to retrieve the latest confirmed apprenticeship")]
         public async Task WhenWeTryToRetrieveTheLatestConfirmedApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/confirmed/latest");
+            await _context.Api.Get($"apprentices/{_apprenticeId}/apprenticeships/{_revision.ApprenticeshipId}/confirmed/latest");
         }
 
         [Then(@"the result should return ok")]

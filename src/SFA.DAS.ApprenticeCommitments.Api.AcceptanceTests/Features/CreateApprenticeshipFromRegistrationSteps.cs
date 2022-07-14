@@ -10,7 +10,6 @@ using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using System;
 using System.Linq;
 using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -24,7 +23,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private CreateApprenticeshipFromRegistrationCommand _command;
         private Fixture _f;
         private Registration _registration;
-        private Apprentice _apprentice;
+        private Guid _apprenticeId;
+        private string _lastName;
+        private DateTime _dateOfBirth;
 
         public CreateApprenticeshipFromRegistrationSteps(TestContext context)
         {
@@ -44,43 +45,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given("we have a matching account")]
         public void GivenWeHaveAnExistingAccount()
         {
-            _apprentice = new Apprentice(
-                _f.Create<Guid>(),
-                _registration.FirstName,
-                _registration.LastName,
-                _registration.Email,
-                _registration.DateOfBirth);
-
-            _context.DbContext.Apprentices.Add(_apprentice);
-            _context.DbContext.SaveChanges();
-        }
-
-        [Given("we have an account with a non-matching email")]
-        public void GivenWeHaveAnAccountWithANon_MatchingEmail()
-        {
-            _apprentice = new Apprentice(
-                _f.Create<Guid>(),
-                _registration.FirstName,
-                _registration.LastName,
-                new MailAddress("another@email.com"),
-                _registration.DateOfBirth);
-
-            _context.DbContext.Apprentices.Add(_apprentice);
-            _context.DbContext.SaveChanges();
+            _apprenticeId = _f.Create<Guid>();
+            _lastName = _registration.LastName;
+            _dateOfBirth = _registration.DateOfBirth;
         }
 
         [Given("we have an account with a non-matching date of birth")]
         public void GivenWeHaveAnAccountWithANon_MatchingDateOfBirth()
         {
-            _apprentice = new Apprentice(
-                _f.Create<Guid>(),
-                _registration.FirstName,
-                _registration.LastName,
-                _registration.Email,
-                _registration.DateOfBirth.AddDays(90)
-                                        );
-            _context.DbContext.Apprentices.Add(_apprentice);
-            _context.DbContext.SaveChanges();
+            _dateOfBirth = _registration.DateOfBirth.AddDays(90);
         }
 
         [Given("the request matches registration details")]
@@ -89,22 +62,20 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
                 .With(p => p.RegistrationId, _registration.RegistrationId)
-                .With(p => p.ApprenticeId, _apprentice.Id)
-                .With(p => p.LastName, _apprentice.LastName)
-                .With(p => p.DateOfBirth, _apprentice.DateOfBirth)
+                .With(p => p.ApprenticeId, _apprenticeId)
+                .With(p => p.LastName, _lastName)
+                .With(p => p.DateOfBirth, _dateOfBirth)
                 .Create();
         }
 
         [Given("the request is for a different account")]
         public void GivenTheRequestIsForADifferentAccount()
         {
-            var apprentice = _f.Create<Apprentice>();
-            _context.DbContext.Apprentices.Add(apprentice);
-            _context.DbContext.SaveChanges();
-
             _command = _f.Build<CreateApprenticeshipFromRegistrationCommand>()
-                .With(p => p.ApprenticeId, apprentice.Id)
+                .With(p => p.ApprenticeId, Guid.NewGuid())
                 .With(p => p.RegistrationId, _registration.RegistrationId)
+                .With(p => p.LastName, _registration.LastName)
+                .With(p => p.DateOfBirth, _registration.DateOfBirth)
                 .Create();
         }
 
@@ -114,9 +85,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             GivenWeHaveAnExistingRegistration();
             GivenWeHaveAnExistingAccount();
 
-            _registration.AssociateWithApprentice(_apprentice.Id, _apprentice.LastName, _apprentice.DateOfBirth, FuzzyMatcher.AlwaysMatcher);
-            _context.DbContext.SaveChanges();
-            _registration.AssociateWithApprentice(_apprentice.Id, _apprentice.LastName, _apprentice.DateOfBirth, FuzzyMatcher.AlwaysMatcher);
+            _registration.AssociateWithApprentice(_apprenticeId, _lastName, _dateOfBirth, FuzzyMatcher.AlwaysMatcher);
             _context.DbContext.SaveChanges();
         }
 
@@ -141,18 +110,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         public async Task WhenWeVerifyThatRegistration()
         {
             await _context.Api.Post("apprenticeships", _command);
-        }
-
-        [Then(@"the apprentice record is created")]
-        public void ThenTheApprenticeRecordIsCreated()
-        {
-            var apprentice = _context.DbContext.Apprentices.FirstOrDefault(x => x.Id == _command.ApprenticeId);
-            apprentice.Should().NotBeNull();
-            apprentice.FirstName.Should().Be(_apprentice.FirstName);
-            apprentice.LastName.Should().Be(_apprentice.LastName);
-            apprentice.Email.Should().Be(_apprentice.Email);
-            apprentice.DateOfBirth.Should().Be(_apprentice.DateOfBirth);
-            apprentice.Id.Should().Be(_command.ApprenticeId);
         }
 
         [Then("an apprenticeship record is not yet created")]
@@ -239,7 +196,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             {
                 Event = new ApprenticeshipEmailAddressConfirmedEvent
                 {
-                    ApprenticeId = _context.DbContext.Apprentices.Single().Id,
+                    ApprenticeId = _apprenticeId,
                     CommitmentsApprenticeshipId = _registration.CommitmentsApprenticeshipId,
                 }
             });
