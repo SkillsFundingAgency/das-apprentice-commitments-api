@@ -217,4 +217,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="[AttemptedOn]" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="12125780-a10e-4e03-bfcf-3e44ad7c26e8" ChangeDateTime="07/12/2022 15:38:05">
+    <Property Name="ElementName" Value="[dbo].[Apprentice]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="Obsolete_Apprentice_DONOTUSE" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="fa30641c-15d4-433a-82b3-0d44a9cc1e31" ChangeDateTime="07/12/2022 15:38:37">
+    <Property Name="ElementName" Value="[dbo].[ApprenticeEmailAddressHistory]" />
+    <Property Name="ElementType" Value="SqlTable" />
+    <Property Name="ParentElementName" Value="[dbo]" />
+    <Property Name="ParentElementType" Value="SqlSchema" />
+    <Property Name="NewName" Value="Obsolete_ApprenticeEmailAddressHistory_DONOTUSE" />
+  </Operation>
 </Operations>
