@@ -23,6 +23,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
         private ChangeRegistrationCommand _request = null!;
+        private Guid _existingApprenticeId;
         private Revision _revision;
         private long _newApprenticeshipId;
         private long _commitmentsApprenticeshipId;
@@ -40,12 +41,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an existing registration")]
         public async Task GivenWeHaveAnExistingApprenticeship()
         {
-            var apprentice = _fixture.Create<Apprentice>();
+            _existingApprenticeId = _fixture.Create<Guid>();
 
-            _context.DbContext.Apprentices.Add(apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _existingApprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -345,7 +343,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             {
                 Event = new ApprenticeshipConfirmationCommencedEvent
                 {
-                    ApprenticeId = _context.DbContext.Apprentices.Single().Id,
+                    ApprenticeId = _existingApprenticeId,
                     ApprenticeshipId = _revision.ApprenticeshipId,
                     ConfirmationId = latest.Id,
                     ConfirmationOverdueOn = latest.ConfirmBefore,
@@ -373,7 +371,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 {
                     Event = new
                     {
-                        ApprenticeId = _context.DbContext.Apprentices.Single().Id,
+                        ApprenticeId = _existingApprenticeId,
                         _revision.ApprenticeshipId,
                     }
                 });
