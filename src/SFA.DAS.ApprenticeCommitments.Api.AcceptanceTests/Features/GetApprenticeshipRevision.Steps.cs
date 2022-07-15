@@ -59,9 +59,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
             _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
             await _context.DbContext.SaveChangesAsync();
         }
@@ -69,19 +66,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("there is no apprenticeship revision")]
         public void GivenThereIsNoApprenticeshipRevision()
         {
-        }
-
-        [Given("the apprenticeship exists, but it's associated with another apprentice")]
-        public async Task GivenTheApprenticeshipExistsButItSAssociatedWithAnotherApprentice()
-        {
-            var anotherApprentice = _fixture.Create<Apprentice>();
-
-            _context.DbContext.Apprentices.Add(anotherApprentice);
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, anotherApprentice.Id));
-            await _context.DbContext.SaveChangesAsync();
         }
 
         [When("we try to retrieve the apprenticeship revision")]
