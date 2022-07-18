@@ -47,7 +47,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DateTime? ConfirmedOn { get; private set; }
         public DateTime? LastViewed { get; set; }
         public DateTime? StoppedReceivedOn { get; private set; }
-
+        public DateTime? CreatedOn { get; private set; }
         public void Confirm(Confirmations confirmations, DateTimeOffset time)
         {
             EmployerCorrect = confirmations.EmployerCorrect ?? EmployerCorrect;

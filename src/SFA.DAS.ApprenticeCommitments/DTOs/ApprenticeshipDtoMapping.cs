@@ -1,5 +1,8 @@
-﻿using SFA.DAS.ApprenticeCommitments.Data.Models;
+﻿using MoreLinq;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 #nullable enable
 
@@ -43,7 +46,42 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ApprovedOn = latest.CommitmentsApprovedOn,
                 ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
                 StoppedReceivedOn = latest.StoppedReceivedOn,
+                Revisions = GetRevisions(apprenticeship.Revisions),
             };
+        }
+
+        private static List<RevisionDto> GetRevisions(IReadOnlyCollection<Revision> revisions)
+        { 
+            var ret = new List<RevisionDto>();
+            if (revisions.Count == 1)
+                return ret;
+
+            revisions.ToList().OrderByDescending(x => x.Id).ToList().Pairwise((x, y) =>
+            {
+                if (x.Details.DeliveryModel != y.Details.DeliveryModel)
+                    ret.Add(new RevisionDto("Delivery model changed",                                                
+                         $"Delivery model changed from {y.Details.DeliveryModel} to {x.Details.DeliveryModel}",
+                         x.CreatedOn));
+
+                if (x.Details.EmployerName != y.Details.EmployerName)
+                    ret.Add(new RevisionDto("You started with a new employer",
+                        $"Employer changed from {y.Details.EmployerName} to {x.Details.EmployerName}",
+                        x.CreatedOn));
+
+                if (x.Details.TrainingProviderName != y.Details.TrainingProviderName)
+                    ret.Add(new RevisionDto("You started with a new training provider",
+                        $"Provider changed from {y.Details.TrainingProviderName} to {x.Details.TrainingProviderName}",
+                        x.CreatedOn));
+
+                return x;
+            }).ToList();
+
+            if (ret.Count > 0)
+                ret.Add(new RevisionDto("You started your aaprenticeship",
+                    "You confirmed your apprenticeship details",
+                    revisions.ToList().Where(x => x.ConfirmedOn.HasValue).FirstOrDefault()?.ConfirmedOn));
+
+            return ret;
         }
     }
 }

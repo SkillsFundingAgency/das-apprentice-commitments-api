@@ -1,5 +1,6 @@
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
+using System.Collections.Generic;
 
 #nullable disable
 
@@ -35,5 +36,6 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime? LastViewed { get; set; }
         public DateTime? StoppedReceivedOn { get; set; }
         public bool IsStopped => StoppedReceivedOn != null;
+        public List<RevisionDto> Revisions { get; set; }
     }
 }
