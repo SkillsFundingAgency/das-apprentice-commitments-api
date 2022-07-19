@@ -18,13 +18,20 @@ BEGIN
     CREATE ROLE [Reporter]
 END
 
-GRANT SELECT ON [DashboardReporting].ApprenticeDashboardView TO Reporter
-
 GRANT SELECT ON [DashboardReporting].ApprenticeshipDashboardView TO Reporter
 
 GRANT SELECT ON [DashboardReporting].CommitmentstatementDashboardView TO Reporter
 
 GRANT SELECT ON [DashboardReporting].RegistrationDashboardView TO Reporter
+
+-- ****************** Remove Apprentice dashboard reporting view ******************
+
+if exists(select 1 from sys.views where name='ApprenticeDashboardView' and type='v')
+    drop view [DashboardReporting].ApprenticeDashboardView;
+go
+
+-- ****************** Remove Apprentice dashboard reporting view ******************
+
 
 -- ****************** AddMissingApprenticeIdsToRegistration.sql ******************
 
