@@ -33,6 +33,18 @@ Scenario: When an apprenticeship with multiple revisions for a given apprentice 
 	And the response should match the newer apprenticeship values
 	And all revisions should have the same apprenticeship ID
 
+Scenario: When an apprenticeship with multiple revisions and has previously been confirmed
+	Given the apprenticeships exists, has many revisions, and a previous revision has been confirmed
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the response should show apprenticeship has been confirmed at least once
+
+Scenario: When an apprenticeship with multiple revisions and has never been confirmed
+	Given the apprenticeships exists, has many unconfirmed revisions
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the response should show apprenticeship has never been confirmed
+
 Scenario: When an apprenticeship has a change of employer
 	Given the apprenticeships exists, has a change of employer, and is associated with this apprentice
 	When we try to retrieve the apprenticeship

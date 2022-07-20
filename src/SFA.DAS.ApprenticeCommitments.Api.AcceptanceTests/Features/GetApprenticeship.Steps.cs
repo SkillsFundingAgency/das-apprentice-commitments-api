@@ -20,6 +20,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         private Guid _apprenticeId;
         private Revision _revision;
         private Revision _newerRevision;
+        private long _apprenticeshipId;
 
         public GetApprenticeshipSteps(TestContext context)
         {
@@ -60,8 +61,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [Given(@"the apprenticeship exists and it's associated with this apprentice")]
         public async Task GivenTheApprenticeshipExistsAndItSAssociatedWithThisApprentice()
         {
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprenticeId));
+            var apprenticeship = new Apprenticeship(_revision, _apprenticeId);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
             await _context.DbContext.SaveChangesAsync();
+            _apprenticeshipId = apprenticeship.Id;
         }
 
         [Given("many apprenticeships exists and are associated with this apprentice")]
@@ -71,10 +74,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             // the GetApprenticeship feature finds our one as the latest approval
             _fixture.Register((int i) => _revision.CommitmentsApprovedOn.AddDays(-i));
             
+            var apprenticeship = new Apprenticeship(_revision, _apprenticeId);
             _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprenticeId));
             _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprenticeId));
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprenticeId));
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
             await _context.DbContext.SaveChangesAsync();
+            _apprenticeshipId = apprenticeship.Id;
         }
 
         [Given("the apprenticeships exists, has many revisions, and is associated with this apprentice")]
@@ -99,6 +104,51 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             }, DateTimeOffset.UtcNow);
 
             await _context.DbContext.SaveChangesAsync();
+            _apprenticeshipId = apprenticeship.Id;
+        }
+
+        [Given("the apprenticeships exists, has many revisions, and a previous revision has been confirmed")]
+        public async Task GivenTheApprenticeshipsExistsHasManyRevisionsAndAPreviousRevisionHasBeenConfirmed()
+        {
+            _revision.Confirm(new Confirmations
+            {
+                TrainingProviderCorrect = true,
+                EmployerCorrect = true,
+                ApprenticeshipDetailsCorrect = true,
+                HowApprenticeshipDeliveredCorrect = true
+            }, DateTimeOffset.UtcNow.AddDays(-1));
+
+            var apprenticeship = new Apprenticeship(_revision, _apprenticeId);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
+
+            apprenticeship
+                .Revise(
+                    _revision.CommitmentsApprenticeshipId,
+                    _fixture.Create<ApprenticeshipDetails>(),
+                    _revision.CommitmentsApprovedOn.AddDays(1));
+
+            _newerRevision = apprenticeship.Revisions.Last();
+            await _context.DbContext.SaveChangesAsync();
+            _apprenticeshipId = apprenticeship.Id;
+        }
+
+        [Given(@"the apprenticeships exists, has many unconfirmed revisions")]
+        public async Task GivenTheApprenticeshipsExistsHasManyUnconfirmedRevisions()
+        {
+            var unapprovedRevision = new Revision(_revision.CommitmentsApprenticeshipId, _revision.CommitmentsApprovedOn, _fixture.Create<ApprenticeshipDetails>());
+
+            var apprenticeship = new Apprenticeship(unapprovedRevision, _apprenticeId);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
+
+            apprenticeship
+                .Revise(
+                    _revision.CommitmentsApprenticeshipId,
+                    _fixture.Create<ApprenticeshipDetails>(),
+                    _revision.CommitmentsApprovedOn.AddDays(1));
+
+            _newerRevision = apprenticeship.Revisions.Last();
+            await _context.DbContext.SaveChangesAsync();
+            _apprenticeshipId = apprenticeship.Id;
         }
 
         [Given("the apprenticeships exists, has a change of employer, and is associated with this apprentice")]
@@ -179,7 +229,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When(@"we try to retrieve the apprenticeship")]
         public async Task WhenWeTryToRetrieveTheApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprenticeId}/apprenticeships/{_revision.ApprenticeshipId}");
+            await _context.Api.Get($"apprentices/{_apprenticeId}/apprenticeships/{_apprenticeshipId}");
         }
 
         [Then(@"the result should return ok")]
@@ -235,6 +285,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
         }
 
+        [Then(@"the response should show apprenticeship has been confirmed at least once")]
+        public async Task ThenTheResponseShouldShowApprenticeshipHasBeenConfirmedAtLeastOnce()
+        {
+            var content = await _context.Api.Response.Content.ReadAsStringAsync();
+            var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
+            a.Should().NotBeNull();
+            a.HasBeenConfirmedAtLeastOnce.Should().BeTrue();
+        }
+
         [Then("the apprenticeship revisions collection should indicate a change of employer")]
         public void ThenTheApprenticeshipRevisionsCollectionShouldIndicateAChangeOfEmployer()
         {
@@ -257,6 +316,15 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
 
             responseDto.Revisions.Any(x => x.Heading == "Delivery model changed").Should().BeTrue();
+        }
+
+        [Then(@"the response should show apprenticeship has never been confirmed")]
+        public async Task ThenTheResponseShouldShowApprenticeshipHasNeverBeenConfirmed()
+        {
+            var content = await _context.Api.Response.Content.ReadAsStringAsync();
+            var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
+            a.Should().NotBeNull();
+            a.HasBeenConfirmedAtLeastOnce.Should().BeFalse();
         }
 
         [Then("all revisions should have the same apprenticeship ID")]
