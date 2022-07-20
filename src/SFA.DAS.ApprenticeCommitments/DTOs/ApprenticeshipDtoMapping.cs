@@ -56,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
             if (revisions.Count == 1)
                 return ret;
 
-            revisions.ToList().OrderByDescending(x => x.Id).ToList().Pairwise((x, y) =>
+            revisions.OrderByDescending(x => x.Id).Pairwise((x, y) =>
             {
                 if (x.Details.DeliveryModel != y.Details.DeliveryModel)
                     ret.Add(new RevisionDto("Delivery model changed",                                                
@@ -76,10 +76,12 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 return x;
             }).ToList();
 
-            if (ret.Count > 0)
+            var confirmedOn = revisions.FirstOrDefault(x => x.ConfirmedOn.HasValue)?.ConfirmedOn;
+
+            if (confirmedOn.HasValue && ret.Count > 0)
                 ret.Add(new RevisionDto("You started your aaprenticeship",
                     "You confirmed your apprenticeship details",
-                    revisions.ToList().Where(x => x.ConfirmedOn.HasValue).FirstOrDefault()?.ConfirmedOn));
+                    confirmedOn));
 
             return ret;
         }
