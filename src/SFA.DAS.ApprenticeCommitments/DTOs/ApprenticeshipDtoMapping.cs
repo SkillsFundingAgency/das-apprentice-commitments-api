@@ -26,10 +26,10 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
             var latest = apprenticeship.LatestConfirmedRevision;
             if (latest == null)
                 return null;
-            return MapApprenticeshipAndRevisionToApprenticeshipDto(apprenticeship, latest);
+            return MapApprenticeshipAndRevisionToApprenticeshipDto(apprenticeship, latest, true);
         }
 
-        private static ApprenticeshipDto MapApprenticeshipAndRevisionToApprenticeshipDto(Apprenticeship apprenticeship, Revision latest)
+        private static ApprenticeshipDto MapApprenticeshipAndRevisionToApprenticeshipDto(Apprenticeship apprenticeship, Revision latest, bool includeTimeline = false)
         {
             return new ApprenticeshipDto
             {
@@ -61,40 +61,44 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
                 StoppedReceivedOn = latest.StoppedReceivedOn,
                 HasBeenConfirmedAtLeastOnce = apprenticeship.ApprenticeshipHasPreviouslyBeenConfirmed,
-                Revisions = GetRevisions(apprenticeship.Revisions),
+                Timelines = includeTimeline ? GetTimeline(apprenticeship.Revisions, latest) : null,
             };
         }
 
-        private static List<RevisionDto> GetRevisions(IReadOnlyCollection<Revision> revisions)
+        private static List<TimelineDto> GetTimeline(IReadOnlyCollection<Revision> revisions, Revision latest)
         { 
-            var ret = new List<RevisionDto>();
+            var ret = new List<TimelineDto>();
             if (revisions.Count == 1)
                 return ret;
 
-            var rev = revisions.OrderByDescending(x => x.Id).Pairwise((x, y) =>
+            var confirmedRevisions = revisions.Where(x => x.ConfirmedOn.HasValue).ToList();
+            if (confirmedRevisions.Count() <= 1)
+                return ret;
+
+            var rev = confirmedRevisions.OrderByDescending(x => x.Id).Pairwise((newer, older) =>
             {
-                if (x.Details.DeliveryModel != y.Details.DeliveryModel)
-                    ret.Add(new RevisionDto("Delivery model changed",                                                
-                         $"Delivery model changed from {y.Details.DeliveryModel} to {x.Details.DeliveryModel}",
-                         x.CreatedOn));
+                if (newer.Details.DeliveryModel != older.Details.DeliveryModel)
+                    ret.Add(new TimelineDto("Delivery model changed",                                                
+                         $"Delivery model changed from {older.Details.DeliveryModel} to {newer.Details.DeliveryModel}",
+                         newer.CreatedOn));
 
-                if (x.Details.EmployerName != y.Details.EmployerName)
-                    ret.Add(new RevisionDto("You started with a new employer",
-                        $"Employer changed from {y.Details.EmployerName} to {x.Details.EmployerName}",
-                        x.CreatedOn));
+                if (newer.Details.EmployerName != older.Details.EmployerName)
+                    ret.Add(new TimelineDto("You started with a new employer",
+                        $"Employer changed from {older.Details.EmployerName} to {newer.Details.EmployerName}",
+                        newer.CreatedOn));
 
-                if (x.Details.TrainingProviderName != y.Details.TrainingProviderName)
-                    ret.Add(new RevisionDto("You started with a new training provider",
-                        $"Provider changed from {y.Details.TrainingProviderName} to {x.Details.TrainingProviderName}",
-                        x.CreatedOn));
+                if (newer.Details.TrainingProviderName != older.Details.TrainingProviderName)
+                    ret.Add(new TimelineDto("You started with a new training provider",
+                        $"Provider changed from {older.Details.TrainingProviderName} to {newer.Details.TrainingProviderName}",
+                        newer.CreatedOn));
 
-                return x;
+                return newer;
             }).ToList();
 
-            var confirmedOn = revisions.FirstOrDefault(x => x.ConfirmedOn.HasValue)?.ConfirmedOn;
+            var confirmedOn = confirmedRevisions.OrderBy(x => x.Id).FirstOrDefault().ConfirmedOn;
 
-            if (confirmedOn.HasValue && ret.Count > 0)
-                ret.Add(new RevisionDto("You started your apprenticeship",
+            if (ret.Count > 0)
+                ret.Add(new TimelineDto("You started your apprenticeship",
                     "You confirmed your apprenticeship details",
                     confirmedOn));
 

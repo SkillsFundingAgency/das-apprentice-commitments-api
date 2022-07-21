@@ -2,11 +2,11 @@
 
 namespace SFA.DAS.ApprenticeCommitments.DTOs
 {
-    public class RevisionDto
+    public class TimelineDto
     {
-        public RevisionDto() { }
+        public TimelineDto() { }
 
-        public RevisionDto(string heading, string description, DateTime? revisionDate) =>
+        public TimelineDto(string heading, string description, DateTime? revisionDate) =>
             (Heading, Description, RevisionDate) = (heading, description, revisionDate);
 
         public string Heading { get; set; } = "";

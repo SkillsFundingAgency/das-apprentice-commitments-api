@@ -299,7 +299,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
 
-            responseDto.Revisions.Any(x => x.Heading == "You started with a new employer").Should().BeTrue();
+            responseDto.Timelines.Any(x => x.Heading == "You started with a new employer").Should().BeTrue();
         }
 
         [Then("the apprenticeship revisions collection should indicate a change of provider")]
@@ -307,7 +307,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
 
-            responseDto.Revisions.Any(x => x.Heading == "You started with a new training provider").Should().BeTrue();
+            responseDto.Timelines.Any(x => x.Heading == "You started with a new training provider").Should().BeTrue();
         }
 
         [Then("the apprenticeship revisions collection should indicate a change of delivery model")]
@@ -315,7 +315,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         {
             var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
 
-            responseDto.Revisions.Any(x => x.Heading == "Delivery model changed").Should().BeTrue();
+            responseDto.Timelines.Any(x => x.Heading == "Delivery model changed").Should().BeTrue();
         }
 
         [Then(@"the response should show apprenticeship has never been confirmed")]
