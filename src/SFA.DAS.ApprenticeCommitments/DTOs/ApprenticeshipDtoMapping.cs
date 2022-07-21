@@ -61,11 +61,11 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
                 StoppedReceivedOn = latest.StoppedReceivedOn,
                 HasBeenConfirmedAtLeastOnce = apprenticeship.ApprenticeshipHasPreviouslyBeenConfirmed,
-                Timelines = includeTimeline ? GetTimeline(apprenticeship.Revisions, latest) : null,
+                Timelines = includeTimeline ? GetTimeline(apprenticeship.Revisions) : null,
             };
         }
 
-        private static List<TimelineDto> GetTimeline(IReadOnlyCollection<Revision> revisions, Revision latest)
+        private static List<TimelineDto> GetTimeline(IReadOnlyCollection<Revision> revisions)
         { 
             var ret = new List<TimelineDto>();
             if (revisions.Count == 1)
