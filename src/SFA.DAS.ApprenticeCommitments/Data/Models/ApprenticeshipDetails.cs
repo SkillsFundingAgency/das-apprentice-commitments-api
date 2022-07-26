@@ -46,6 +46,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => other != null &&
             Course.IsEquivalent(other.Course);
 
+        internal bool DeliveryModelIsEquivalent(ApprenticeshipDetails other)
+            => other != null &&
+            DeliveryModel == other.DeliveryModel;
+
         public override bool Equals(object? obj) => obj switch
         {
             ApprenticeshipDetails other => Equals(other),
