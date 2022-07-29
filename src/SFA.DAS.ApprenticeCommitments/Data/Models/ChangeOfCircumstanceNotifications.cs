@@ -8,6 +8,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         None = 0,
         EmployerDetailsChanged = 1,
         ProviderDetailsChanged = 2,
-        ApprenticeshipDetailsChanged = 4
+        ApprenticeshipDetailsChanged = 4,
+        DeliveryModelChanged = 5
     }
 }
