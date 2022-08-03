@@ -29,6 +29,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data
             return revision;
         }
 
+        internal async Task<Revision> FindById(Guid apprenticeId, long apprenticeshipId, long revisionId)
+            => await Entities.Include(e => e.Apprenticeship)
+                .Where(e => e.Id == revisionId && e.Apprenticeship.Id == apprenticeshipId &&
+                            e.Apprenticeship.ApprenticeId == apprenticeId).SingleOrDefaultAsync();
+
         internal async Task<Revision?> FindLatestByCommitmentsApprenticeshipId(long apprenticeshipId)
             => await Entities
                 .Include(x => x.Apprenticeship)
