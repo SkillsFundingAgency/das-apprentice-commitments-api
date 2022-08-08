@@ -1,11 +1,10 @@
 ﻿using MediatR;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
-using SFA.DAS.ApprenticeCommitments.Exceptions;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticeshipCommand
 {
@@ -14,19 +13,26 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
         private readonly IRegistrationContext _registrations;
         private readonly IRevisionContext _revisions;
         private readonly ITimeProvider _timeProvider;
+        private readonly ILogger<StoppedApprenticeshipCommandHandler> _logger;
 
         public StoppedApprenticeshipCommandHandler(
-            IRegistrationContext registrations, IRevisionContext revisions, ITimeProvider timeProvider) =>
-            (_registrations, _revisions, _timeProvider) = (registrations, revisions, timeProvider);
+            IRegistrationContext registrations, IRevisionContext revisions, ITimeProvider timeProvider, ILogger<StoppedApprenticeshipCommandHandler> logger) =>
+            (_registrations, _revisions, _timeProvider, _logger) = (registrations, revisions, timeProvider, logger);
 
         public async Task<Unit> Handle(StoppedApprenticeshipCommand request, CancellationToken cancellationToken)
         {
             var apprenticeship
                 = await FindRevision(request)
-                ?? await FindRegistration(request)
-                ?? throw NotFound(request);
+                ?? await FindRegistration(request);
 
-            apprenticeship.Stop(_timeProvider.Now);
+            if (apprenticeship == null)
+            {
+                _logger.LogInformation("No apprenticeship details found for {commitmentsApprenticeshipId} which has been stopped", request.CommitmentsApprenticeshipId );
+            }
+            else
+            {
+                apprenticeship.Stop(_timeProvider.Now);
+            }
 
             return Unit.Value;
         }
@@ -39,10 +45,5 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
             => await _registrations
                 .IncludeApprenticeships()
                 .FindByCommitmentsApprenticeshipId(request.CommitmentsApprenticeshipId);
-
-        private static Exception NotFound(StoppedApprenticeshipCommand request)
-            => new EntityNotFoundException(
-                nameof(Registration),
-                request.CommitmentsApprenticeshipId.ToString());
     }
 }

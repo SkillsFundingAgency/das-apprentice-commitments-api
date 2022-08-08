@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Apprentice]
+﻿CREATE TABLE [dbo].Obsolete_Apprentice_DONOTUSE
 (
 	[Id] UNIQUEIDENTIFIER NOT NULL,
 	[FirstName] NVARCHAR(100) NOT NULL,
@@ -7,14 +7,13 @@
     [DateOfBirth] DATETIME2 NOT NULL,
 	[CreatedOn] DATETIME2 NOT NULL DEFAULT current_timestamp, 
     [TermsOfUseAcceptedOn] DATETIME2 NULL, 
-	[IsPrivateBetaUser] BIT NOT NULL DEFAULT 0, 
     CONSTRAINT PK_Apprentice_Id PRIMARY KEY ([Id])
 )
 
 GO
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Apprentice_Email]
-    ON [dbo].[Apprentice]
+    ON [dbo].Obsolete_Apprentice_DONOTUSE
 	(
 		[Email] ASC
 	);

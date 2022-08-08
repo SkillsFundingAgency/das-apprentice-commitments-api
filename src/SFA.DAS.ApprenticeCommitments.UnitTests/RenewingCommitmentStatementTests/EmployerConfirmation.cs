@@ -59,7 +59,11 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
         }
 
         [TestCase(DeliveryModel.PortableFlexiJob, DeliveryModel.Regular)]
+        [TestCase(DeliveryModel.PortableFlexiJob, DeliveryModel.FlexiJobAgency)]
         [TestCase(DeliveryModel.Regular, DeliveryModel.PortableFlexiJob)]
+        [TestCase(DeliveryModel.Regular, DeliveryModel.FlexiJobAgency)]
+        [TestCase(DeliveryModel.FlexiJobAgency, DeliveryModel.Regular)]
+        [TestCase(DeliveryModel.FlexiJobAgency, DeliveryModel.PortableFlexiJob)]
         public void When_employer_section_confirmation_status_is_set_And_a_change_to_deliveryModel_has_occurred_Then_employer_section_is_not_confirmed(DeliveryModel current, DeliveryModel change)
         {
             _existingRevision.Details.SetProperty(x=>x.DeliveryModel, current);
