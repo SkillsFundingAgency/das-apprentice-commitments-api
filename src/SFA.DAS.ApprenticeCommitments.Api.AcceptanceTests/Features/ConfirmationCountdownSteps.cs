@@ -6,7 +6,6 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationComma
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.DTOs;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -17,14 +16,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
     {
         private readonly TestContext _context;
         private readonly Fixture _fixture = new Fixture();
-        private readonly Apprentice _apprentice;
+        private Guid _apprenticeId;
         private Revision _apprenticeship;
 
         public ConfirmationCountdownSteps(TestContext context)
         {
             _context = context;
 
-            _apprentice = _fixture.Create<Apprentice>();
+            _apprenticeId = Guid.NewGuid();
         }
 
         [Given("we have an existing apprenticeship that was approved on (.*)")]
@@ -37,11 +36,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                              typeof(DateTime),
                              "approvedOn")));
 
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
             _apprenticeship = _fixture.Create<Revision>();
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_apprenticeship, _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_apprenticeship, _apprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -60,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [When("retrieving the apprenticeship")]
         public async Task WhenRetrievingTheApprenticeship()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships/{_apprenticeship.ApprenticeshipId}");
+            await _context.Api.Get($"apprentices/{_apprenticeId}/apprenticeships/{_apprenticeship.ApprenticeshipId}");
         }
 
         [Then("the response should contain confirmation dealine (.*)")]

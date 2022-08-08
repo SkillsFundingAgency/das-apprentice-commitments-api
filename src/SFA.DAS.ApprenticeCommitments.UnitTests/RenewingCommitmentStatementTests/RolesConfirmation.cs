@@ -71,7 +71,11 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
         }
 
         [TestCase(DeliveryModel.Regular, DeliveryModel.PortableFlexiJob)]
+        [TestCase(DeliveryModel.Regular, DeliveryModel.FlexiJobAgency)]
         [TestCase(DeliveryModel.PortableFlexiJob, DeliveryModel.Regular)]
+        [TestCase(DeliveryModel.PortableFlexiJob, DeliveryModel.FlexiJobAgency)]
+        [TestCase(DeliveryModel.FlexiJobAgency, DeliveryModel.Regular)]
+        [TestCase(DeliveryModel.FlexiJobAgency, DeliveryModel.PortableFlexiJob)]
         public void When_roles_section_confirmation_status_is_fully_confirmed_Then_roles_section_does_change_status_when_delivery_model_is_changed(DeliveryModel existingDeliveryModel, DeliveryModel newDeliveryModel)
         {
             var fullConfirmation = RolesAndResponsibilitiesConfirmations.ApprenticeRolesAndResponsibilitiesConfirmed |
@@ -87,5 +91,6 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.RenewingRevisionTests
 
             _apprenticeship.Revisions.Last().RolesAndResponsibilitiesConfirmations.Should().Be(null);
         }
+
     }
 }

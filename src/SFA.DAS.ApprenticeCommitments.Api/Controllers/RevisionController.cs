@@ -6,6 +6,7 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Threading.Tasks;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateRevisionCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipRevisionQuery;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
@@ -37,6 +38,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             [FromBody] Confirmations confirmations)
         {
             await _mediator.Send(new ConfirmCommand(apprenticeId, apprenticeshipId, revisionId, confirmations));
+        }
+
+        [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions/{revisionId}")]
+        public async Task<IActionResult> GetApprenticeshipRevisions(Guid apprenticeId, long apprenticeshipId, long revisionId)
+        {
+            var result = await _mediator.Send(new ApprenticeshipRevisionQuery(apprenticeId, apprenticeshipId, revisionId));
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
     }
 }

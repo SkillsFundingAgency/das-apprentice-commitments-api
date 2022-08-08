@@ -16,15 +16,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
-        private readonly Apprentice _apprentice;
         private readonly Revision _revision;
+        private Guid _apprenticeId;
+
         private bool ApprenticeshipConfirmed { get; set; }
 
         public ConfirmApprenticeshipSteps(TestContext context)
         {
             _context = context;
 
-            _apprentice = _fixture.Create<Apprentice>();
+            _apprenticeId = _fixture.Create<Guid>();
             _revision = _fixture.Create<Revision>();
         }
 
@@ -48,10 +49,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         [Given("we have an apprenticeship not ready to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipNotReadyToBeConfirmed()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -70,7 +68,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Post(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/ApprenticeshipConfirmation",
+                $"apprentices/{_apprenticeId}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/ApprenticeshipConfirmation",
                 command);
         }
 
@@ -115,7 +113,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             {
                 Event = new
                 {
-                    ApprenticeId = _apprentice.Id,
+                    ApprenticeId = _apprenticeId,
                     latest.ApprenticeshipId,
                     ConfirmationId = latest.Id,
                     latest.ConfirmedOn,
