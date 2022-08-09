@@ -26,13 +26,19 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateApprenticeshi
 
         public async Task<IResult> Handle(CreateApprenticeshipFromRegistrationCommand request, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"Create apprenticeship for apprentice {request.ApprenticeId} from registration {request.RegistrationId}");
+            _logger.LogInformation("Create apprenticeship for apprentice {ApprenticeId} from registration {RegistrationId}",
+                request.ApprenticeId, request.RegistrationId);
 
             var registration = await _registrations.GetById(request.RegistrationId);
 
-            var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold); 
+            var matcher = new FuzzyMatcher(_applicationSettings.FuzzyMatchingSimilarityThreshold);
 
-            return registration.AssociateWithApprentice(request.ApprenticeId, request.LastName, request.DateOfBirth, matcher);
+            var result = registration.AssociateWithApprentice(request.ApprenticeId, request.LastName, request.DateOfBirth, matcher);
+
+            _logger.LogInformation("Create apprenticeship for apprentice {ApprenticeId} from registration {RegistrationId} result: {Result}",
+                request.ApprenticeId, request.RegistrationId, result);
+            
+            return result;
         }
     }
 }
