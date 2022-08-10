@@ -151,6 +151,67 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _apprenticeshipId = apprenticeship.Id;
         }
 
+        [Given("the apprenticeships exists, has a change of employer, and is associated with this apprentice")]
+        public async Task GivenTheApprenticeshipsExistsHasChangeOfEmployerAndIsAssociatedWithThisApprentice()
+        {
+            var apprenticeship = new Apprenticeship(_revision, _apprenticeId);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
+
+            var details = new ApprenticeshipDetails(_fixture.Create<long>(), "New Employer", _fixture.Create<long>(), _fixture.Create<string>(), DeliveryModel.Regular, _fixture.Create<CourseDetails>());
+
+            apprenticeship
+                .Revise(
+                _revision.CommitmentsApprenticeshipId,
+                details,
+                _revision.CommitmentsApprovedOn.AddDays(1));
+
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given("the apprenticeships exists, has a change of provider, and is associated with this apprentice")]
+        public async Task GivenTheApprenticeshipsExistsHasChangeOfProviderAndIsAssociatedWithThisApprentice()
+        {
+            var apprenticeship = new Apprenticeship(_revision, _apprenticeId);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
+
+            var details = new ApprenticeshipDetails(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<long>(), "New Provider", DeliveryModel.Regular, _fixture.Create<CourseDetails>());
+
+            apprenticeship
+                .Revise(
+                _revision.CommitmentsApprenticeshipId,
+                details,
+                _revision.CommitmentsApprovedOn.AddDays(1));
+
+            await _context.DbContext.SaveChangesAsync();
+        }
+
+        [Given("the apprenticeships exists, has a change of delivery model, and is associated with this apprentice")]
+        public async Task GivenTheApprenticeshipsExistsHasChangeOfDeliveryModelAndIsAssociatedWithThisApprentice()
+        {
+            var apprenticeship = new Apprenticeship(_revision, _apprenticeId);
+            _context.DbContext.Apprenticeships.Add(apprenticeship);
+
+            var details = new ApprenticeshipDetails(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<long>(), "New Provider", DeliveryModel.Regular, _fixture.Create<CourseDetails>());
+
+            apprenticeship
+                .Revise(
+                _revision.CommitmentsApprenticeshipId,
+                details,
+                _revision.CommitmentsApprovedOn.AddDays(1));
+
+            await _context.DbContext.SaveChangesAsync();
+
+            var newdetails = new ApprenticeshipDetails(_fixture.Create<long>(), _fixture.Create<string>(), _fixture.Create<long>(), "New Provider", DeliveryModel.PortableFlexiJob, _fixture.Create<CourseDetails>());
+
+            apprenticeship
+                .Revise(
+                _revision.CommitmentsApprenticeshipId,
+                newdetails,
+                _revision.CommitmentsApprovedOn.AddDays(1));
+
+            await _context.DbContext.SaveChangesAsync();
+        }
+
         [Given(@"there is no apprenticeship")]
         public void GivenThereIsNoApprenticeship()
         {
@@ -231,6 +292,30 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var a = JsonConvert.DeserializeObject<ApprenticeshipDto>(content);
             a.Should().NotBeNull();
             a.HasBeenConfirmedAtLeastOnce.Should().BeTrue();
+        }
+
+        [Then("the apprenticeship revisions collection should indicate a change of employer")]
+        public void ThenTheApprenticeshipRevisionsCollectionShouldIndicateAChangeOfEmployer()
+        {
+            var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
+
+            responseDto.Timelines.Any(x => x.Heading == "You started with a new employer").Should().BeTrue();
+        }
+
+        [Then("the apprenticeship revisions collection should indicate a change of provider")]
+        public void ThenTheApprenticeshipRevisionsCollectionShouldIndicateAChangeOfProvider()
+        {
+            var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
+
+            responseDto.Timelines.Any(x => x.Heading == "You started with a new training provider").Should().BeTrue();
+        }
+
+        [Then("the apprenticeship revisions collection should indicate a change of delivery model")]
+        public void ThenTheApprenticeshipRevisionsCollectionShouldIndicateAChangeOfDeliveryModel()
+        {
+            var responseDto = JsonConvert.DeserializeObject<ApprenticeshipDto>(_context.Api.ResponseContent);
+
+            responseDto.Timelines.Any(x => x.Heading == "Delivery model changed").Should().BeTrue();
         }
 
         [Then(@"the response should show apprenticeship has never been confirmed")]

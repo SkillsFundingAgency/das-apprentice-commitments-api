@@ -44,3 +44,21 @@ Scenario: When an apprenticeship with multiple revisions and has never been conf
 	When we try to retrieve the apprenticeship
 	Then the result should return ok
 	And the response should show apprenticeship has never been confirmed
+
+Scenario: When an apprenticeship has a change of employer
+	Given the apprenticeships exists, has a change of employer, and is associated with this apprentice
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the apprenticeship revisions collection should indicate a change of employer
+
+Scenario: When an apprenticeship has a change of provider
+	Given the apprenticeships exists, has a change of provider, and is associated with this apprentice
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the apprenticeship revisions collection should indicate a change of provider
+
+Scenario: When an apprenticeship has a change of delivery model
+	Given the apprenticeships exists, has a change of delivery model, and is associated with this apprentice
+	When we try to retrieve the apprenticeship
+	Then the result should return ok
+	And the apprenticeship revisions collection should indicate a change of delivery model
