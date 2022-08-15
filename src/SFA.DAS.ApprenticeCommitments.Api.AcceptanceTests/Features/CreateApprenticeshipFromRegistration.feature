@@ -11,21 +11,9 @@ Scenario: A registration account is created
 	And the request matches registration details
 	When we verify that registration
 	Then the response is OK
-	And an apprenticeship record is created
 	And the registration has been marked as completed
 	And the registration CreatedOn field is unchanged
 	And the apprenticeship email address confirmed event is published
-	And do not send a Change of Circumstance email to the user
-
-Scenario: A registration is submitted with a different email
-	Given we have an existing registration
-	And we have an account with a non-matching email
-	And the request is for the account
-	When we verify that registration
-	Then the response is OK
-	And an apprenticeship record is created
-	And the registration has been marked as completed
-	And the registration CreatedOn field is unchanged
 	And do not send a Change of Circumstance email to the user
 
 Scenario: A registration is submitted with the wrong Date of birth

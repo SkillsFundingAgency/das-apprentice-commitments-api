@@ -5,17 +5,17 @@ namespace SFA.DAS.ApprenticeCommitments
     public static class Result
     {
         public static SuccessResult Success() => new SuccessResult();
-        
+
         public static SuccessResult<T> Success<T>(T value) => new SuccessResult<T>(value);
 
         public static ErrorResult Error() => new ErrorResult();
 
         public static ErrorResult<T> Error<T>() => new ErrorResult<T>();
-        
+
         public static ErrorResult<T, string> Error<T>(string message) => new ErrorResult<T, string>(message);
 
         public static ExceptionResult Exception(Exception exception) => new ExceptionResult(exception);
-        
+
         public static ExceptionResult<T> Exception<T>(Exception exception) => new ExceptionResult<T>(exception);
 
         public static SuccessStatusResult<TStatus> SuccessStatus<TStatus>(TStatus status)
@@ -39,6 +39,8 @@ namespace SFA.DAS.ApprenticeCommitments
     public class SuccessResult : IResult
     {
         public bool IsSuccess => true;
+
+        public override string ToString() => "Success";
     }
 
     public class SuccessResult<T> : SuccessResult, IResult<T>
@@ -46,11 +48,15 @@ namespace SFA.DAS.ApprenticeCommitments
         public SuccessResult(T data) => Data = data;
 
         public T Data { get; }
+
+        public override string ToString() => Data?.ToString() ?? $"Success<{typeof(T).Name}>";
     }
 
     public class ErrorResult : IResult
     {
         public bool IsSuccess => false;
+
+        public override string ToString() => "Error";
     }
 
     public class ErrorResult<T> : ErrorResult, IResult<T>
@@ -63,6 +69,8 @@ namespace SFA.DAS.ApprenticeCommitments
         public ErrorResult(E error) => Error = error;
 
         public E Error { get; }
+
+        public override string ToString() => $"Error ({Error})";
     }
 
     public class ExceptionResult : ErrorResult
@@ -70,6 +78,8 @@ namespace SFA.DAS.ApprenticeCommitments
         public Exception Exception { get; }
 
         public ExceptionResult(Exception exception) => Exception = exception;
+
+        public override string ToString() => Exception.ToString();
     }
 
     public class ExceptionResult<T> : ErrorResult<T>
@@ -77,6 +87,8 @@ namespace SFA.DAS.ApprenticeCommitments
         public Exception Exception { get; }
 
         public ExceptionResult(Exception exception) => Exception = exception;
+
+        public override string ToString() => Exception.ToString();
     }
 
     public interface IStatusResult<out TStatus> : IResult
@@ -84,11 +96,13 @@ namespace SFA.DAS.ApprenticeCommitments
         public TStatus Status { get; }
     }
 
-    public class SuccessStatusResult<TStatus> : SuccessResult, IStatusResult<TStatus>
+    public class SuccessStatusResult<TStatus> : SuccessResult<TStatus>, IStatusResult<TStatus>
     {
-        public TStatus Status { get; }
+        public TStatus Status => Data;
 
-        public SuccessStatusResult(TStatus status) => Status = status;
+        public SuccessStatusResult(TStatus status) : base(status)
+        {
+        }
     }
 
     public class ExceptionStatusResult<TStatus> : ExceptionResult, IStatusResult<TStatus>
@@ -99,6 +113,12 @@ namespace SFA.DAS.ApprenticeCommitments
             : base(exception)
         {
             Status = status;
+        }
+
+        public override string ToString()
+        {
+            if (Status == null) return typeof(TStatus).Name;
+            return $"{Status} ({base.ToString()})";
         }
     }
 }

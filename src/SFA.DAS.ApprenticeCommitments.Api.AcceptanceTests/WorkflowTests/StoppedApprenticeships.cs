@@ -113,10 +113,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
         }
 
         [Test, AutoData]
-        public async Task Stopped_unknown_approval(long id, DateTime stoppedOn)
+        public async Task Stopped_unknown_approval_should_consume_call(long id, DateTime stoppedOn)
         {
             var response = await PostStopped(id, stoppedOn);
-            response.Should().Be404NotFound();
+            response.Should().Be200Ok();
         }
 
         [Test, AutoData]

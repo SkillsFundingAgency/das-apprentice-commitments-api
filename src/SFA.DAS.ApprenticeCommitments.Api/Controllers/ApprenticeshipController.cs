@@ -10,6 +10,7 @@ using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.MyApprenticeshipQuery;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
 {
@@ -52,6 +53,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/confirmed/latest")]
+        public async Task<IActionResult> MyApprenticeship(Guid apprenticeId, long apprenticeshipId)
+        {
+            var result = await _mediator.Send(new MyApprenticeshipQuery(apprenticeId, apprenticeshipId));
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
+        
         [HttpGet("apprentices/{apprenticeId}/apprenticeships/{apprenticeshipId}/revisions")]
         public async Task<IActionResult> GetApprenticeshipRevisions(Guid apprenticeId, long apprenticeshipId)
         {

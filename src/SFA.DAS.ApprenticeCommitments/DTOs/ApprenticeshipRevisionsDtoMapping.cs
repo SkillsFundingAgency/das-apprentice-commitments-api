@@ -38,6 +38,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 CourseDuration = revision.Details.Course.CourseDuration,
                 PlannedStartDate = revision.Details.Course.PlannedStartDate,
                 PlannedEndDate = revision.Details.Course.PlannedEndDate,
+                DeliveryModel = revision.Details.DeliveryModel,
                 TrainingProviderCorrect = revision.TrainingProviderCorrect,
                 EmployerCorrect = revision.EmployerCorrect,
                 ApprenticeshipDetailsCorrect = revision.ApprenticeshipDetailsCorrect,
