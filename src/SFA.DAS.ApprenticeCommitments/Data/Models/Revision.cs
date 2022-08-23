@@ -110,7 +110,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (!DeliveryModelIsEquivalent())
             {
                 revision.EmployerCorrect = null;
-                revision.TrainingProviderCorrect = null;
                 revision.ApprenticeshipDetailsCorrect = null;
                 revision.HowApprenticeshipDeliveredCorrect = null;
                 revision.RolesAndResponsibilitiesConfirmations = null;
