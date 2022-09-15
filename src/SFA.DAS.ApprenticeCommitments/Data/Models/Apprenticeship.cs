@@ -37,6 +37,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn).FirstOrDefault()
                 ?? throw new DomainException($"No revisions found in apprenticeship {Id}");
 
+        public Revision? LatestConfirmedRevision => Revisions.OrderByDescending(x => x.CommitmentsApprovedOn)
+            .FirstOrDefault(x => x.ConfirmedOn != null);
+
         public ChangeOfCircumstanceNotifications ChangeOfCircumstanceNotifications
         {
             get
@@ -69,9 +72,16 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     notification |= ChangeOfCircumstanceNotifications.ApprenticeshipDetailsChanged;
                 }
 
+                if (!latest.Details.DeliveryModelIsEquivalent(lastSeen.Details))
+                {
+                    notification = ChangeOfCircumstanceNotifications.DeliveryModelChanged;
+                }
+
                 return notification;
             }
         }
+        public bool ApprenticeshipHasPreviouslyBeenConfirmed
+            => Revisions.Any(r=>r.ConfirmedOn != null);
 
         private void AddRevision(Revision apprenticeship)
             => _revisions.Add(apprenticeship);

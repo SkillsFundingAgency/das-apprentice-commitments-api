@@ -3,6 +3,7 @@ using FluentAssertions;
 using Newtonsoft.Json;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.ApprenticeshipsQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -16,22 +17,19 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
     {
         private readonly TestContext _context;
         private readonly Fixture _fixture = new Fixture();
-        private readonly Apprentice _apprentice;
+        private readonly Guid _apprenticeId;
 
         public GetApprenticeshipsSteps(TestContext context)
         {
             _context = context;
 
-            _apprentice = _fixture.Create<Apprentice>();
+            _apprenticeId = _fixture.Create<Guid>();
         }
 
         [Given("there is one apprenticeship")]
         public async Task GivenThereIsOneApprenticeship()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_fixture.Create<Revision>(), _apprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -43,7 +41,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         [When("we try to retrieve the apprenticeships")]
         public async Task WhenWeTryToRetrieveTheApprenticeships()
         {
-            await _context.Api.Get($"apprentices/{_apprentice.Id}/apprenticeships");
+            await _context.Api.Get($"apprentices/{_apprenticeId}/apprenticeships");
         }
 
         [Then("the result should return ok")]
@@ -58,7 +56,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
             var response = JsonConvert.DeserializeObject<ApprenticeshipsResponse>(content);
-            var apprenticeship = _context.DbContext.Apprenticeships.Where(x => x.ApprenticeId == _apprentice.Id);
+            var apprenticeship = _context.DbContext.Apprenticeships.Where(x => x.ApprenticeId == _apprenticeId);
             response.Apprenticeships.Should().BeEquivalentTo(apprenticeship.Select(a => new
             {
                 a.Id,

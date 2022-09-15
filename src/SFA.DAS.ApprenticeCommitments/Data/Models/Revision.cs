@@ -95,7 +95,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             bool EmployerIsEquivalent() => details.EmployerIsEquivalent(Details);
             bool ProviderIsEquivalent() => details.ProviderIsEquivalent(Details);
             bool ApprenticeshipIsEquivalent() => details.ApprenticeshipIsEquivalent(Details);
-            bool DeliveryModelIsEquivalent() => Details.DeliveryModel == details.DeliveryModel;
+            bool DeliveryModelIsEquivalent() => details.DeliveryModelIsEquivalent(Details);
 
             if (Details.Equals(details)) return null;
 
@@ -106,6 +106,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             if (ApprenticeshipIsEquivalent() && DeliveryModelIsEquivalent()) revision.ApprenticeshipDetailsCorrect = ApprenticeshipDetailsCorrect;
             if (DeliveryModelIsEquivalent()) revision.HowApprenticeshipDeliveredCorrect = HowApprenticeshipDeliveredCorrect;
             if (DeliveryModelIsEquivalent()) revision.RolesAndResponsibilitiesConfirmations = RolesAndResponsibilitiesConfirmations;
+
+            if (!DeliveryModelIsEquivalent())
+            {
+                revision.EmployerCorrect = null;
+                revision.ApprenticeshipDetailsCorrect = null;
+                revision.HowApprenticeshipDeliveredCorrect = null;
+                revision.RolesAndResponsibilitiesConfirmations = null;
+                return revision;
+            }
 
             return revision;
         }

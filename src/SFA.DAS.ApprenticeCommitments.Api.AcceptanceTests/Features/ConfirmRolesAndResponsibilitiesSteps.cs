@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
     {
         private readonly Fixture _fixture = new Fixture();
         private readonly TestContext _context;
-        private readonly Apprentice _apprentice;
+        private readonly Guid _apprenticeId;
         private readonly Revision _revision;
 
         private RolesAndResponsibilitiesConfirmations _rolesAndResponsibilitiesConfirmations; 
@@ -22,17 +22,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         {
             _context = context;
 
-            _apprentice = _fixture.Create<Apprentice>();
+            _apprenticeId = _fixture.Create<Guid>();
             _revision = _fixture.Create<Revision>();
         }
 
         [Given("we have an apprenticeship waiting to be confirmed")]
         public async Task GivenWeHaveAnApprenticeshipWaitingToBeConfirmed()
         {
-            _context.DbContext.Apprentices.Add(_apprentice);
-            await _context.DbContext.SaveChangesAsync();
-
-            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprentice.Id));
+            _context.DbContext.Apprenticeships.Add(new Apprenticeship(_revision, _apprenticeId));
             await _context.DbContext.SaveChangesAsync();
         }
 
@@ -89,7 +86,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             };
 
             await _context.Api.Patch(
-                $"apprentices/{_apprentice.Id}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/confirmations",
+                $"apprentices/{_apprenticeId}/apprenticeships/{_revision.ApprenticeshipId}/revisions/{_revision.Id}/confirmations",
                 command);
         }
 
