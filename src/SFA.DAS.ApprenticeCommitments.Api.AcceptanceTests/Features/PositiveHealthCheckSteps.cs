@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Io.Cucumber.Messages;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps

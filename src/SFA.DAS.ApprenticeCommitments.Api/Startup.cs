@@ -98,11 +98,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                     {
                         o.Filters.Add(new AuthorizeFilter(PolicyNames.Default));
                     }
-                }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
 
             services.AddControllersWithViews()
-                .AddNewtonsoftJson()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateRegistrationCommandValidator>());
+                .AddNewtonsoftJson();
+
+            services.AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<CreateRegistrationCommandValidator>();
 
             services.AddProblemDetails(ConfigureProblemDetails);
 

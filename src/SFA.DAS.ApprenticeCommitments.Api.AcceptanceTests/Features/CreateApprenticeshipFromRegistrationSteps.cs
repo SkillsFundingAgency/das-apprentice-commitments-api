@@ -214,7 +214,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
             errors.Errors.Should().ContainKey("PersonalDetails")
-                .WhichValue.Should().Contain("Sorry, your identity has not been verified, please check your details");
+                .WhoseValue.Should().Contain("Sorry, your identity has not been verified, please check your details");
         }
 
         [Then(@"an identity mismatch domain error is returned")]
@@ -223,7 +223,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
             errors.Errors.Should().ContainKey("PersonalDetails")
-                .WhichValue.Should().Contain("Sorry, your identity has not been verified, please check your details");
+                .WhoseValue.Should().Contain("Sorry, your identity has not been verified, please check your details");
         }
 
         [Then(@"an 'already verified' domain error is returned")]
@@ -240,7 +240,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var errors = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
 
             errors.Errors.Should().ContainKey("")
-                .WhichValue.Should().Contain("A non-empty request body is required.");
+                .WhoseValue.Should().Contain("A non-empty request body is required.");
         }
 
         [Then(@"response contains the not found error message")]

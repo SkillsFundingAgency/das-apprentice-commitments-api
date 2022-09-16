@@ -98,7 +98,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             content.Should().NotBeNull();
             var response = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
             response.Errors.Should().ContainKey("ApprenticeId")
-                .WhichValue.Should().Contain("The Apprentice Id must be valid");
+                .WhoseValue.Should().Contain("The Apprentice Id must be valid");
         }
     }
 }
