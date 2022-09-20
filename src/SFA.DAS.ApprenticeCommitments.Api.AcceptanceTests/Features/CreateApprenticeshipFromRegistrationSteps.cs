@@ -250,7 +250,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             var errors = JsonConvert.DeserializeObject<ProblemDetails>(content);
             errors.Should().BeEquivalentTo(new
             {
-                Detail = $"Registration for Apprentice {_command.RegistrationId} not found",
+                Detail = $"Registration {_command.RegistrationId} not found",
             });
         }
 

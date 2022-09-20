@@ -15,9 +15,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data
     {
         public IQueryable<Registration> IncludeApprenticeships() => Entities.IncludeApprenticeships();
 
-        internal Task<Registration> GetById(Guid apprenticeId) => Entities.GetById(apprenticeId);
+        internal Task<Registration> GetById(Guid registrationId) => Entities.GetById(registrationId);
 
-        internal Task<Registration?> Find(Guid apprenticeId) => Entities.FindById(apprenticeId);
+        internal Task<Registration?> Find(Guid registrationId) => Entities.FindById(registrationId);
 
         internal Task<Registration?> FindByCommitmentsApprenticeshipId(long commitmentsApprenticeshipId)
             => Entities.FindByCommitmentsApprenticeshipId(commitmentsApprenticeshipId);
@@ -66,7 +66,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
             return registration
                 ?? throw new DomainException(
-                    $"Registration for Apprentice {registrationId} not found");
+                    $"Registration {registrationId} not found");
         }
 
         public static async Task<Registration?> FindById(this IQueryable<Registration> registrations,Guid registrationId)

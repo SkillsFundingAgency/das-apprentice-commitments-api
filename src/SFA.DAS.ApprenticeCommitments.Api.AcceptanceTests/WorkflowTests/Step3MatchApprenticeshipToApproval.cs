@@ -17,7 +17,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.WorkflowTests
 
             response
                 .Should().Be400BadRequest()
-                .And.MatchInContent("*\"Registration for Apprentice * not found\"*");
+                .And.MatchInContent("*\"Registration * not found\"*");
         }
 
         [Test]

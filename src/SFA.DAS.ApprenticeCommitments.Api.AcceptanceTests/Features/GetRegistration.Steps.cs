@@ -46,7 +46,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             return _context.Api.Get($"registrations/{_registration.RegistrationId}");
         }
 
-        [Given("there is an empty apprentice id")]
+        [Given("there is an empty registration id")]
         public void GivenThereIsAnEmptyRegistration()
         {
             _fixture.Inject(Guid.Empty);
@@ -91,14 +91,14 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             _context.Api.Response.Should().Be400BadRequest();
         }
 
-        [Then("the error must be say apprentice id must be valid")]
+        [Then("the error must say registration id must be valid")]
         public async Task ThenTheErrorMustBeSayRegistrationMustBeValid()
         {
             var content = await _context.Api.Response.Content.ReadAsStringAsync();
             content.Should().NotBeNull();
             var response = JsonConvert.DeserializeObject<ValidationProblemDetails>(content);
-            response.Errors.Should().ContainKey("ApprenticeId")
-                .WhoseValue.Should().Contain("The Apprentice Id must be valid");
+            response.Errors.Should().ContainKey("RegistrationId")
+                .WhoseValue.Should().Contain("The Registration Id must be valid");
         }
     }
 }
