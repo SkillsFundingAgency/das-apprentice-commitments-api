@@ -17,12 +17,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         }
 
         [Given(@"the api has started")]
-        public void GivenTheApiHasStarted()
+        public static void GivenTheApiHasStarted()
         {
         }
 
         [Given(@"the database is offline")]
-        public void GivenTheDatabaseIsOffline()
+        public static void GivenTheDatabaseIsOffline()
         {
         }
 

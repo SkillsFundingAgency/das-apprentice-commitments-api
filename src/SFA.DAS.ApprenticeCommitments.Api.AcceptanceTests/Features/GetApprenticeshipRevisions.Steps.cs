@@ -99,7 +99,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Given("there is no apprenticeship")]
-        public void GivenThereIsNoApprenticeship()
+        public static void GivenThereIsNoApprenticeship()
         {
         }
 

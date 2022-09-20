@@ -37,6 +37,6 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
             }
         }
 
-        private bool ShouldHandleRequest(TRequest request) => request is IUnitOfWorkCommandMarker;
+        private static bool ShouldHandleRequest(TRequest request) => request is IUnitOfWorkCommandMarker;
     }
 }

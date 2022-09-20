@@ -96,7 +96,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         }
 
         [Given(@"we do NOT have an existing registration")]
-        public void GivenWeDoNOTHaveAnExistingRegistration()
+        public static void GivenWeDoNOTHaveAnExistingRegistration()
         {
         }
 

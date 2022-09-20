@@ -27,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         }
 
         [Given("there is no registration")]
-        public void GivenThereIsNoRegistration()
+        public static void GivenThereIsNoRegistration()
         {
         }
 
