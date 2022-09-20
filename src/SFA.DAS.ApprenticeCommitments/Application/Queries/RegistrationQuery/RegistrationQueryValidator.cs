@@ -6,7 +6,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery
     {
         public RegistrationQueryValidator()
         {
-            RuleFor(model => model.ApprenticeId).Must(id => id != default).WithMessage("The Apprentice Id must be valid");
+            RuleFor(model => model.RegistrationId).Must(id => id != default).WithMessage("The Registration Id must be valid");
         }
     }
 }
