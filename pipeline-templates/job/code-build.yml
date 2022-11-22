@@ -14,7 +14,7 @@ jobs:
 
   - template: azure-pipelines-templates/build/step/app-build.yml@das-platform-building-blocks
     parameters:
-        SonarCloudProjectKey: SkillsFundingAgency_das-apprentice-commitments-api
+      RunAcceptanceTests: false
 
   - task: DotNetCoreCLI@2
     displayName: Publish Apprentice Commitments Api
