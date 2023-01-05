@@ -20,8 +20,6 @@ using SFA.DAS.NServiceBus.Configuration.NewtonsoftJsonSerializer;
 using SFA.DAS.NServiceBus.Hosting;
 using SFA.DAS.NServiceBus.SqlServer.Configuration;
 using SFA.DAS.NServiceBus.SqlServer.Data;
-using SFA.DAS.UnitOfWork.Context;
-using SFA.DAS.UnitOfWork.NServiceBus.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -52,33 +50,15 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
         {
             return services.AddScoped(p =>
             {
-                var unitOfWorkContext = p.GetRequiredService<IUnitOfWorkContext>();
                 var connectionFactory = p.GetRequiredService<IConnectionFactory>();
                 var loggerFactory = p.GetRequiredService<ILoggerFactory>();
 
                 ApprenticeCommitmentsDbContext dbContext;
-                try
-                {
-                    var synchronizedStorageSession = unitOfWorkContext.Get<SynchronizedStorageSession>();
-                    var sqlStorageSession = synchronizedStorageSession.GetSqlStorageSession();
-                    var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>()
-                        .UseDataStorage(connectionFactory, sqlStorageSession.Connection)
-                        .UseLocalSqlLogger(loggerFactory, config);
-                    if (config.IsLocalAcceptanceOrDev())
-                    {
-                        optionsBuilder.EnableSensitiveDataLogging().UseLoggerFactory(loggerFactory);
-                    }
-                    dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options, p.GetRequiredService<EventDispatcher>());
-                    dbContext.Database.UseTransaction(sqlStorageSession.Transaction);
-                }
-                catch (KeyNotFoundException)
-                {
-                    var settings = p.GetRequiredService<IOptions<ApplicationSettings>>().Value;
-                    var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>()
-                        .UseDataStorage(connectionFactory, settings.DbConnectionString)
-                        .UseLocalSqlLogger(loggerFactory, config);
-                    dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options, p.GetRequiredService<EventDispatcher>());
-                }
+                var settings = p.GetRequiredService<IOptions<ApplicationSettings>>().Value;
+                var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>()
+                    .UseDataStorage(connectionFactory, settings.DbConnectionString)
+                    .UseLocalSqlLogger(loggerFactory, config);
+                dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options, p.GetRequiredService<EventDispatcher>());
 
                 return dbContext;
             });
@@ -91,10 +71,11 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.ApprenticeCommitments.Api")
                 .UseMessageConventions()
                 .UseNewtonsoftJsonSerializer()
-                .UseOutbox(true)
+                //.UseOutbox(true)
                 .UseServicesBuilder(serviceProvider)
-                .UseSqlServerPersistence(() => connectionFactory.CreateConnection(configuration["ApplicationSettings:DbConnectionString"]))
-                .UseUnitOfWork();
+                //.UseSqlServerPersistence(() => connectionFactory.CreateConnection(configuration["ApplicationSettings:DbConnectionString"]))
+                //.UseUnitOfWork()
+                ;
 
             if (UseLearningTransport(configuration))
             {

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.NServiceBus.Services;
 
@@ -9,10 +10,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
 {
     internal class PublishApprenticeshipChangedEvent : INotificationHandler<ApprenticeshipChanged>
     {
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IMessageSession _eventPublisher;
         private readonly ILogger<PublishApprenticeshipChangedEvent> _logger;
 
-        public PublishApprenticeshipChangedEvent(IEventPublisher eventPublisher, ILogger<PublishApprenticeshipChangedEvent> logger)
+        public PublishApprenticeshipChangedEvent(IMessageSession eventPublisher, ILogger<PublishApprenticeshipChangedEvent> logger)
         {
             _eventPublisher = eventPublisher;
             _logger = logger;

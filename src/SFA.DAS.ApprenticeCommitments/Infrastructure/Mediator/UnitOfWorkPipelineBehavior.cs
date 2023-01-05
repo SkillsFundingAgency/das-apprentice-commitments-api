@@ -1,19 +1,20 @@
 ﻿using MediatR;
-using SFA.DAS.UnitOfWork.Managers;
+using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
 {
-    public class UnitOfWorkPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+    public class UnitOfWorkPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
-        private readonly IUnitOfWorkManager _unitOfWorkManager;
+        private readonly ApprenticeCommitmentsDbContext _dbContext;
 
-        public UnitOfWorkPipelineBehavior(IUnitOfWorkManager unitOfWorkManager)
+        public UnitOfWorkPipelineBehavior(ApprenticeCommitmentsDbContext dbContext)
         {
-            _unitOfWorkManager = unitOfWorkManager;
+            _dbContext = dbContext;
         }
+
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
@@ -22,21 +23,22 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
                 return await next();
             }
 
-            await _unitOfWorkManager.BeginAsync();
+            var transaction = await _dbContext.Database.BeginTransactionAsync(CancellationToken.None);
 
             try
             {
                 var response = await next();
-                await _unitOfWorkManager.EndAsync();
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(CancellationToken.None);
                 return response;
             }
-            catch (Exception e)
+            catch
             {
-                await _unitOfWorkManager.EndAsync(e);
+                await transaction.RollbackAsync(CancellationToken.None);
                 throw;
             }
         }
 
-        private bool ShouldHandleRequest(TRequest request) => request is IUnitOfWorkCommandMarker;
+        private static bool ShouldHandleRequest(TRequest request) => request is IUnitOfWorkCommandMarker;
     }
 }

@@ -99,7 +99,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         }
 
         [Given("there is no apprenticeship")]
-        public void GivenThereIsNoApprenticeship()
+        public static void GivenThereIsNoApprenticeship()
         {
         }
 
@@ -154,7 +154,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                         x.TrainingProviderCorrect,
                         x.ApprenticeshipDetailsCorrect,
                         x.HowApprenticeshipDeliveredCorrect,
-                        x.RolesAndResponsibilitiesConfirmations,
+                        RolesAndResponsibilitiesConfirmations.None,
                         CourseDuration = 32 + 1, // Duration is inclusive of start and end months
                     }
                     ),

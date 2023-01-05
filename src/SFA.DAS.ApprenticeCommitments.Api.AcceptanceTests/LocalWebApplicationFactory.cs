@@ -9,7 +9,6 @@ using NServiceBus;
 using NServiceBus.Testing;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using SFA.DAS.NServiceBus.Services;
-using SFA.DAS.UnitOfWork.Managers;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
 {
@@ -30,10 +29,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests
         {
             builder.ConfigureServices(s =>
             {
-                s.AddTransient<IUnitOfWorkManager, FakeUnitOfWorkManager>();
                 s.AddTransient<IConnectionFactory, TestsDbConnectionFactory>();
                 s.AddTransient((_) => _timeProvider());
-                s.AddTransient<IEventPublisher>((_) => new TestEventPublisher(_events.Invoke()));
+                s.AddTransient<IMessageSession>((_) => new TestEventPublisher(_events.Invoke()));
             });
 
             builder.ConfigureAppConfiguration(a =>
