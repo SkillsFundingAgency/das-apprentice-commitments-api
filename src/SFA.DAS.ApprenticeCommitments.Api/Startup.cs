@@ -21,8 +21,6 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using SFA.DAS.ApprenticeCommitments.Extensions;
 using SFA.DAS.ApprenticeCommitments.Infrastructure;
 using SFA.DAS.Configuration.AzureTableStorage;
-using SFA.DAS.UnitOfWork.EntityFrameworkCore.DependencyResolution.Microsoft;
-using SFA.DAS.UnitOfWork.NServiceBus.Features.ClientOutbox.DependencyResolution.Microsoft;
 using System;
 using System.Data;
 using System.IO;
@@ -82,9 +80,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
             services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
             services.AddSingleton(s => s.GetRequiredService<IOptions<ApplicationSettings>>().Value);
 
-            services.AddEntityFrameworkForApprenticeCommitments(Configuration)
-                .AddEntityFrameworkUnitOfWork<ApprenticeCommitmentsDbContext>()
-                .AddNServiceBusClientUnitOfWork();
+            services.AddEntityFrameworkForApprenticeCommitments(Configuration);
 
             services.AddServicesForApprenticeCommitments();
 
@@ -98,11 +94,13 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                     {
                         o.Filters.Add(new AuthorizeFilter(PolicyNames.Default));
                     }
-                }).SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                });
 
             services.AddControllersWithViews()
-                .AddNewtonsoftJson()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateRegistrationCommandValidator>());
+                .AddNewtonsoftJson();
+
+            services.AddFluentValidationClientsideAdapters();
+            services.AddValidatorsFromAssemblyContaining<CreateRegistrationCommandValidator>();
 
             services.AddProblemDetails(ConfigureProblemDetails);
 

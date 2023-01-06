@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -51,12 +52,12 @@ namespace SFA.DAS.ApprenticeCommitments.UnitTests.Infrastructure.MediatorTests
         {
             Func<Task> action = () => _sut.Handle(request, CancellationToken.None, () => throw new Exception("failed"));
 
-            action.Should().Throw<Exception>().WithMessage("failed");
+            action.Should().ThrowAsync<Exception>().WithMessage("failed");
 
             _loggerMock.VerifyLog(LogLevel.Error, Times.Once(), $"Error handling '{typeof(SimpleRequest)}'");
         }
 
-        public class SimpleRequest
+        public class SimpleRequest : IRequest<SimpleResponse>
         {
         }
 

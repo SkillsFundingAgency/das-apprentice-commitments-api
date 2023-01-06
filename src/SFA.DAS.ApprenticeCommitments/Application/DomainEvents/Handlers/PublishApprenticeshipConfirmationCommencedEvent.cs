@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.NServiceBus.Services;
@@ -12,11 +13,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
         : INotificationHandler<RegistrationAdded>
         , INotificationHandler<RevisionAdded>
     {
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IMessageSession _eventPublisher;
         private readonly ILogger<PublishApprenticeshipConfirmationCommencedEvent> _logger;
 
         public PublishApprenticeshipConfirmationCommencedEvent(
-            IEventPublisher eventPublisher,
+            IMessageSession eventPublisher,
             ILogger<PublishApprenticeshipConfirmationCommencedEvent> logger)
         {
             _eventPublisher = eventPublisher;

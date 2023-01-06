@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using NServiceBus;
 using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.NServiceBus.Services;
 
@@ -9,10 +10,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
 {
     internal class RegistrationMatchedHandler : INotificationHandler<RegistrationMatched>
     {
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IMessageSession _eventPublisher;
         private readonly ILogger<RegistrationMatchedHandler> _logger;
 
-        public RegistrationMatchedHandler(IEventPublisher eventPublisher, ILogger<RegistrationMatchedHandler> logger)
+        public RegistrationMatchedHandler(IMessageSession eventPublisher, ILogger<RegistrationMatchedHandler> logger)
         {
             _eventPublisher = eventPublisher;
             _logger = logger;

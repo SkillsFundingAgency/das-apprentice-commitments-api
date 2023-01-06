@@ -4,15 +4,16 @@ using SFA.DAS.ApprenticeCommitments.Messages.Events;
 using SFA.DAS.NServiceBus.Services;
 using System.Threading;
 using System.Threading.Tasks;
+using NServiceBus;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
 {
     internal class PublishApprenticeshipStoppedEvent : INotificationHandler<RegistrationStopped>, INotificationHandler<RevisionStopped>
     {
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IMessageSession _eventPublisher;
         private readonly ILogger<PublishApprenticeshipStoppedEvent> _logger;
 
-        public PublishApprenticeshipStoppedEvent(IEventPublisher eventPublisher, ILogger<PublishApprenticeshipStoppedEvent> logger)
+        public PublishApprenticeshipStoppedEvent(IMessageSession eventPublisher, ILogger<PublishApprenticeshipStoppedEvent> logger)
         {
             _eventPublisher = eventPublisher;
             _logger = logger;

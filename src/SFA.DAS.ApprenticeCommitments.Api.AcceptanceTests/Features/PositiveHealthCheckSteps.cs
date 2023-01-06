@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Io.Cucumber.Messages;
-using NUnit.Framework;
 using TechTalk.SpecFlow;
 
 namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
@@ -19,12 +17,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
         }
 
         [Given(@"the api has started")]
-        public void GivenTheApiHasStarted()
+        public static void GivenTheApiHasStarted()
         {
         }
         
         [Given(@"the database is online")]
-        public void GivenTheDatabaseIsOnline()
+        public static void GivenTheDatabaseIsOnline()
         {
         }
         
