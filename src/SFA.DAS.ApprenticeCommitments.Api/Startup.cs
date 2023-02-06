@@ -48,10 +48,9 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                     options.EnvironmentName = configuration["EnvironmentName"];
                     options.PreFixConfigurationKeys = false;
                 });
-#if DEBUG
-                config.AddJsonFile($"appsettings.Development.json", optional: true);
-#endif
             }
+
+            config.AddJsonFile($"appsettings.Development.json", optional: true);
 
             Configuration = config.Build();
         }
