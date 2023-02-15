@@ -23,6 +23,7 @@ using SFA.DAS.NServiceBus.SqlServer.Data;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using NServiceBus.Persistence.Sql;
 
 namespace SFA.DAS.ApprenticeCommitments.Infrastructure
 {
@@ -50,12 +51,14 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
         {
             return services.AddScoped(p =>
             {
+                //var session = p.Build<ISqlStorageSession>();
                 var connectionFactory = p.GetRequiredService<IConnectionFactory>();
                 var loggerFactory = p.GetRequiredService<ILoggerFactory>();
 
                 ApprenticeCommitmentsDbContext dbContext;
                 var settings = p.GetRequiredService<IOptions<ApplicationSettings>>().Value;
                 var optionsBuilder = new DbContextOptionsBuilder<ApprenticeCommitmentsDbContext>()
+                    //.UseSqlServer(session.Connection);
                     .UseDataStorage(connectionFactory, settings.DbConnectionString)
                     .UseLocalSqlLogger(loggerFactory, config);
                 dbContext = new ApprenticeCommitmentsDbContext(optionsBuilder.Options, p.GetRequiredService<EventDispatcher>());
@@ -67,6 +70,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
         public static async Task<UpdateableServiceProvider> StartNServiceBus(this UpdateableServiceProvider serviceProvider, IConfiguration configuration)
         {
             var connectionFactory = serviceProvider.GetRequiredService<IConnectionFactory>();
+            var settings = serviceProvider.GetRequiredService<IOptions<ApplicationSettings>>().Value;
 
             var endpointConfiguration = new EndpointConfiguration("SFA.DAS.ApprenticeCommitments.Api")
                 .UseMessageConventions()
@@ -76,6 +80,32 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
                 //.UseSqlServerPersistence(() => connectionFactory.CreateConnection(configuration["ApplicationSettings:DbConnectionString"]))
                 //.UseUnitOfWork()
                 ;
+
+            //var persistence = endpointConfiguration.UseSqlServerPersistence(() =>  )UsePersistence<SqlPersistence>();
+            //var persistence = endpointConfiguration.UsePersistence<SqlPersistence>();
+            //persistence.SqlDialect<SqlDialect.MsSqlServer>();
+            //persistence.ConnectionBuilder(() => connectionFactory.CreateConnection(settings.DbConnectionString));
+
+
+            //endpointConfiguration.RegisterComponents(c =>
+            //{
+            //    c.ConfigureComponent(b =>
+            //    {
+            //        var session = b.Build<ISqlStorageSession>();
+            //        var context = new ReceiverDataContext(new DbContextOptionsBuilder<ReceiverDataContext>()
+            //        //    .UseSqlServer(session.Connection)
+            //        //    .Options);
+
+            //        ////Use the same underlying ADO.NET transaction
+            //        //context.Database.UseTransaction(session.Transaction);
+
+            //        ////Ensure context is flushed before the transaction is committed
+            //        //session.OnSaveChanges(s => context.SaveChangesAsync());
+
+            //        return b;
+            //    });
+            //});
+
 
             if (UseLearningTransport(configuration))
             {
