@@ -27,5 +27,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         public DateTime PlannedStartDate { get; set; }
         public DateTime PlannedEndDate { get; set; }
         public DateTime? EmploymentEndDate { get; set; }
+        public bool? RecognisePriorLearning { get; set; }
+        public int? DurationReducedByHours { get; set; }
+        public int? DurationReducedBy { get; set; }
+
     }
 }

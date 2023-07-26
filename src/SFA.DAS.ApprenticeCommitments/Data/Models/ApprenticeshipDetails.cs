@@ -14,23 +14,30 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public ApprenticeshipDetails(
             long employerAccountLegalEntityId, string employerName,
             long trainingProviderId, string trainingProviderName,
-            DeliveryModel deliveryModel, CourseDetails course)
+            DeliveryModel deliveryModel,
+            int? durationReducedByHours,
+            int? durationReducedBy,
+            CourseDetails course)
         {
             EmployerAccountLegalEntityId = employerAccountLegalEntityId;
             EmployerName = employerName;
             TrainingProviderId = trainingProviderId;
             TrainingProviderName = trainingProviderName;
             DeliveryModel = deliveryModel;
+            DurationReducedByHours = durationReducedByHours;
+            DurationReducedBy = durationReducedBy;
             Course = course;
         }
 
-        public long EmployerAccountLegalEntityId { get; private set; }
-        public string EmployerName { get; private set; } = null!;
+        public long EmployerAccountLegalEntityId { get; }
+        public string EmployerName { get; } = null!;
 
-        public long TrainingProviderId { get; private set; }
-        public string TrainingProviderName { get; private set; } = null!;
-        public DeliveryModel DeliveryModel { get; private set; }
-        public CourseDetails Course { get; private set; } = null!;
+        public long TrainingProviderId { get; }
+        public string TrainingProviderName { get; } = null!;
+        public DeliveryModel DeliveryModel { get; }
+        public CourseDetails Course { get; } = null!;
+        public int? DurationReducedByHours { get; }
+        public int? DurationReducedBy { get; }
 
         public bool EmployerIsEquivalent(ApprenticeshipDetails? other)
             => other != null &&
@@ -63,6 +70,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             other.TrainingProviderId == TrainingProviderId &&
             other.TrainingProviderName == TrainingProviderName &&
             other.DeliveryModel == DeliveryModel &&
+            other.DurationReducedByHours == DurationReducedByHours &&
+            other.DurationReducedBy == DurationReducedBy &&
             Course.IsEquivalent(other.Course);
 
         public override int GetHashCode() =>
