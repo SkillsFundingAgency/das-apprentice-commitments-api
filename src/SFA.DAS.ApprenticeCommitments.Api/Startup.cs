@@ -50,7 +50,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                 });
             }
 
-            config.AddJsonFile($"appsettings.Development.json", optional: true);
+            if (!Configuration.IsAcceptanceTest())
+            {
+                config.AddJsonFile($"appsettings.Development.json", optional: true);
+            }
 
             Configuration = config.Build();
         }
