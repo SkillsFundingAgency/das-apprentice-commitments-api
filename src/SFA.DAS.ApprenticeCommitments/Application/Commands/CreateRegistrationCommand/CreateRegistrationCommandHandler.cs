@@ -40,8 +40,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
                     request.TrainingProviderId,
                     request.TrainingProviderName,
                     request.DeliveryModel,
-                    request.DurationReducedByHours,
-                    request.DurationReducedBy,
+                    new RplDetails(request.RecognisePriorLearning,
+                        request.DurationReducedByHours,
+                        request.DurationReducedBy),
                     new CourseDetails(
                         request.CourseName,
                         request.CourseLevel,

@@ -134,9 +134,27 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.PlannedEndDate, _revision.Details.Course.PlannedEndDate)
                 .With(x => x.EmploymentEndDate, _revision.Details.Course.EmploymentEndDate)
                 .With(x => x.DeliveryModel, _revision.Details.DeliveryModel)
+                .With(x => x.RecognisePriorLearning, _revision.Details.Rpl.RecognisePriorLearning)
+                .With(x => x.DurationReducedByHours, _revision.Details.Rpl.DurationReducedByHours)
+                .With(x => x.DurationReducedBy, _revision.Details.Rpl.DurationReducedBy)
                 .Create();
         }
 
+        [Given("we have an update registration request with no material change except for the rpl reduction values")]
+        public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequestExceptRpl()
+        {
+            GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest();
+            _request.DurationReducedByHours= _fixture.Create<int>();
+            _request.DurationReducedBy= _fixture.Create<int>();
+        }
+
+        [Given("we have an update registration request with no material change except for the has rpl flag")]
+        public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequestExceptTheHasRplFlag()
+        {
+            GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest();
+            _request.RecognisePriorLearning = !_revision.Details.Rpl.RecognisePriorLearning;
+        }
+        
         [Given("we have a update registration continuation request")]
         public void GivenWeHaveANewApprenticeshipRequest()
         {
@@ -210,6 +228,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                     _request.EmployerName,
                     _request.TrainingProviderId,
                     _request.TrainingProviderName,
+                    Rpl = new 
+                    {
+                        _request.RecognisePriorLearning,
+                        _request.DurationReducedByHours,
+                        _request.DurationReducedBy
+                    },
                     Course = new
                     {
                         Name = _request.CourseName,
