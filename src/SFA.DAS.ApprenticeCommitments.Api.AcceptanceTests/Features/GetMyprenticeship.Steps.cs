@@ -142,7 +142,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
             a.PlannedEndDate.Should().Be(revision.Details.Course.PlannedEndDate);
             a.CourseDuration.Should().Be(32 + 1); // Duration is inclusive of start and end months
             a.EmploymentEndDate.Should().Be(revision.Details.Course.EmploymentEndDate);
-            a.RecognisePriorLearning.Should().Be(revision.Details.Rpl.RecognisePriorLearning);
+            a.PriorLearningHasBeenRecognised.Should().Be(revision.Details.Rpl.RecognisePriorLearning);
         }
 
         [Then(@"the result should return NotFound")]
