@@ -58,7 +58,9 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 ChangeOfCircumstanceNotifications = apprenticeship.ChangeOfCircumstanceNotifications,
                 StoppedReceivedOn = latest.StoppedReceivedOn,
                 HasBeenConfirmedAtLeastOnce = apprenticeship.ApprenticeshipHasPreviouslyBeenConfirmed,
-                PriorLearningHasBeenRecognised = latest.Details.Rpl.RecognisePriorLearning
+                RecognisePriorLearning = latest.Details.Rpl.RecognisePriorLearning,
+                DurationReducedByHours = latest.Details.Rpl.DurationReducedByHours,
+                DurationReducedBy = latest.Details.Rpl.DurationReducedBy
             };
         }
     }
