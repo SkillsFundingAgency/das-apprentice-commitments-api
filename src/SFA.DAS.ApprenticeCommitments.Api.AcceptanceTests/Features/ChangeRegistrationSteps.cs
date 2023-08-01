@@ -144,8 +144,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
         public void GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequestExceptRpl()
         {
             GivenWeHaveAnInconsequenticalUpdateApprenticeshipRequest();
-            _request.DurationReducedByHours= _fixture.Create<int>();
-            _request.DurationReducedBy= _fixture.Create<int>();
+            _request.DurationReducedByHours= _fixture.Create<short>();
+            _request.DurationReducedBy= _fixture.Create<short>();
         }
 
         [Given("we have an update registration request with no material change except for the has rpl flag")]

@@ -11,7 +11,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             // Private constructor for entity framework
         }
 
-        public RplDetails(bool? recognisePriorLearning, int? durationReducedByHours, int? durationReducedBy)
+        public RplDetails(bool? recognisePriorLearning, short? durationReducedByHours, short? durationReducedBy)
         {
             RecognisePriorLearning = recognisePriorLearning;
             DurationReducedByHours = durationReducedByHours;
@@ -19,8 +19,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         }
 
         public bool? RecognisePriorLearning { get; }
-        public int? DurationReducedByHours { get; }
-        public int? DurationReducedBy { get; }
+        public short? DurationReducedByHours { get; }
+        public short? DurationReducedBy { get; }
 
         public bool IsEquivalent(RplDetails o)
         {
