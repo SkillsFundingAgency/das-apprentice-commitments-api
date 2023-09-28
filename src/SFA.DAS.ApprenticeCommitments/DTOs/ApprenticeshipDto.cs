@@ -36,5 +36,9 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public DateTime? StoppedReceivedOn { get; set; }
         public bool IsStopped => StoppedReceivedOn != null;
         public bool HasBeenConfirmedAtLeastOnce { get; set; }
+        public bool? RecognisePriorLearning { get; set; }
+        public int? DurationReducedByHours { get; set; }
+        public int? DurationReducedBy { get; set; }
+
     }
 }

@@ -84,3 +84,19 @@ Scenario: Stopped Date should NOT be removed from registration details when Cont
 	And we have an update registration request
 	When the update is posted
 	Then stopped date should NOT be removed from registration
+
+Scenario: Update an registration with a new revision if only the has RPL flag changes
+	Given we have an existing registration
+	And we have an update registration request with no material change except for the has rpl flag
+	When the update is posted
+	Then the result should return OK
+	And the new revision exists in database
+	And the Confirmation Commenced event is published
+
+Scenario: Update an registration with a new revision if RPL values change
+	Given we have an existing registration
+	And we have an update registration request with no material change except for the rpl reduction values
+	When the update is posted
+	Then the result should return OK
+	And the new revision exists in database
+	And the Confirmation Commenced event is published

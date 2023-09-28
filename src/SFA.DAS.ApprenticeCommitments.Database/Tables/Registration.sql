@@ -26,6 +26,9 @@ CREATE TABLE [dbo].[Registration]
     [StoppedReceivedOn] DATETIME2 NULL, 
     [DeliveryModel] INT NOT NULL DEFAULT 0, 
     [EmploymentEndDate] DATETIME2 NULL, 
+    [RecognisePriorLearning] BIT NULL,
+    [DurationReducedByHours] SMALLINT NULL,
+    [DurationReducedBy] SMALLINT NULL,
     CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([RegistrationId]),
     CONSTRAINT [FK_Registration_Apprenticeship_ApprenticeshipId] FOREIGN KEY ([ApprenticeshipId]) REFERENCES [dbo].[Apprenticeship] ([Id]) ON DELETE CASCADE
 )

@@ -26,6 +26,9 @@ CREATE TABLE [dbo].Revision
     [StoppedReceivedOn] DATETIME2 NULL, 
     [DeliveryModel] INT NOT NULL DEFAULT 0, 
     [EmploymentEndDate] DATETIME2 NULL, 
+    [RecognisePriorLearning] BIT NULL,
+    [DurationReducedByHours] SMALLINT NULL,
+    [DurationReducedBy] SMALLINT NULL,
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
     CONSTRAINT FK_CommitmentStatement_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )

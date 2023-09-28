@@ -79,6 +79,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     details.Property(p => p.TrainingProviderId).HasColumnName("TrainingProviderId");
                     details.Property(p => p.TrainingProviderName).HasColumnName("TrainingProviderName");
                     details.Property(p => p.DeliveryModel).HasColumnName("DeliveryModel");
+                    details.OwnsOne(e => e.Rpl, rpl =>
+                    {
+                        rpl.Property(p => p.RecognisePriorLearning).HasColumnName("RecognisePriorLearning");
+                        rpl.Property(p => p.DurationReducedByHours).HasColumnName("DurationReducedByHours");
+                        rpl.Property(p => p.DurationReducedBy).HasColumnName("DurationReducedBy");
+                    });
+
                     details.OwnsOne(e => e.Course, course =>
                     {
                         course.Property(p => p.Name).HasColumnName("CourseName");
@@ -112,6 +119,12 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                     apprenticeship.Property(p => p.TrainingProviderId).HasColumnName("TrainingProviderId");
                     apprenticeship.Property(p => p.TrainingProviderName).HasColumnName("TrainingProviderName");
                     apprenticeship.Property(p => p.DeliveryModel).HasColumnName("DeliveryModel");
+                    apprenticeship.OwnsOne(e => e.Rpl, rpl =>
+                    {
+                        rpl.Property(p => p.RecognisePriorLearning).HasColumnName("RecognisePriorLearning");
+                        rpl.Property(p => p.DurationReducedByHours).HasColumnName("DurationReducedByHours");
+                        rpl.Property(p => p.DurationReducedBy).HasColumnName("DurationReducedBy");
+                    });
                     apprenticeship.OwnsOne(e => e.Course, course =>
                     {
                         course.Property(p => p.Name).HasColumnName("CourseName");

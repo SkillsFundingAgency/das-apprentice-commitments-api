@@ -26,7 +26,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
 
         public async Task<Unit> Handle(ChangeRegistrationCommand command, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("ChangeRegistrationCommand for Approval {Approval} (continuning {PreviousApproval})", command?.CommitmentsApprenticeshipId, command.CommitmentsContinuedApprenticeshipId);
+            _logger.LogInformation("ChangeRegistrationCommand for Approval {Approval} (continuning {PreviousApproval})", command.CommitmentsApprenticeshipId, command.CommitmentsContinuedApprenticeshipId);
 
             var apprenticeshipId = command.CommitmentsContinuedApprenticeshipId ?? command.CommitmentsApprenticeshipId;
 
@@ -82,6 +82,9 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
                 command.TrainingProviderId,
                 command.TrainingProviderName,
                 command.DeliveryModel,
+                new RplDetails(command.RecognisePriorLearning,
+                    command.DurationReducedByHours,
+                    command.DurationReducedBy),
                 new CourseDetails(
                     command.CourseName,
                     command.CourseLevel,
