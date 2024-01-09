@@ -21,7 +21,7 @@
 	<PackageReference Include="SFA.DAS.NServiceBus" Version="17.0.49" />
 	<PackageReference Include="SFA.DAS.NServiceBus.SqlServer" Version="17.0.49" />
     <PackageReference Include="String.Similarity" Version="3.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.34.0" />
   </ItemGroup>
 
   <ItemGroup>
