@@ -36,5 +36,6 @@ CREATE TABLE [dbo].Revision
 GO
 
 CREATE INDEX [IX_CommitmentStatement_ApprenticeshipId] ON Revision ([ApprenticeshipId]);
+GO
 CREATE INDEX [IX_CommitmentStatement_CommitmentsApprenticeshipId] ON Revision ([CommitmentsApprenticeshipId]);
 GO
