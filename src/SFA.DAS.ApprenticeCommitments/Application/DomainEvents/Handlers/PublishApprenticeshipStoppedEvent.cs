@@ -34,6 +34,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
                 ApprenticeId = notification.Registration.ApprenticeId,
                 CourseName = notification.Registration.Approval.Course.Name,
                 EmployerName = notification.Registration.Approval.EmployerName,
+                TrainingProviderName = notification.Registration.Approval.TrainingProviderName
             });
         }
 
@@ -52,6 +53,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.DomainEvents.Handlers
                 ApprenticeshipId = notification.Revision.Apprenticeship.Id,
                 CourseName = notification.Revision.Details.Course.Name,
                 EmployerName = notification.Revision.Details.EmployerName,
+                TrainingProviderName = notification.Revision.Details.TrainingProviderName
             });
         }
     }

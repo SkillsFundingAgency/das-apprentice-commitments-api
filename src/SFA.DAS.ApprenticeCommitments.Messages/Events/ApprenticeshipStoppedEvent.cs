@@ -10,5 +10,6 @@ namespace SFA.DAS.ApprenticeCommitments.Messages.Events
         public long? ApprenticeshipId { get; set; }
         public string CourseName { get; set; }
         public string EmployerName { get; set; }
+        public string TrainingProviderName { get; set; }
     }
 }
