@@ -10,8 +10,7 @@ Post-Deployment Script Template
 --------------------------------------------------------------------------------------
 */
 
-
-/* Reporter Role Access */
+/* Reporter Role Access
 
 IF DATABASE_PRINCIPAL_ID('Reporter') IS NULL
 BEGIN
@@ -70,3 +69,5 @@ begin
 end
 
 -- ****************** AddMissingApprenticeIdsToRegistration.sql ******************
+
+*/
