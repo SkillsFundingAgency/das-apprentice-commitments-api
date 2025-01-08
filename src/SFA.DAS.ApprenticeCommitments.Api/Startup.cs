@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
@@ -64,9 +65,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging()
-                .AddTelemetryRegistration(Configuration)
-                .AddApplicationInsightsTelemetry();
+            services.AddLogging((options) =>
+            {
+                options.SetMinimumLevel(LogLevel.Trace);
+            })
+            .AddTelemetryRegistration(Configuration)
+            .AddApplicationInsightsTelemetry();
 
             services.AddSwaggerGen();
 
