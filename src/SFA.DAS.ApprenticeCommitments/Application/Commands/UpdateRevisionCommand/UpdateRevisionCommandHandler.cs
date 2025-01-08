@@ -18,12 +18,11 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateRevisionComma
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(UpdateRevisionCommand request, CancellationToken cancellationToken)
+        async Task IRequestHandler<UpdateRevisionCommand>.Handle(UpdateRevisionCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Updating revision {request.RevisionId} for apprenticeship {request.ApprenticeshipId} on apprentice {request.ApprenticeId} - {JsonConvert.SerializeObject(request.Updates)}");
             var app = await _revisions.GetById(request.ApprenticeId, request.ApprenticeshipId, request.RevisionId);
             request.Updates.ApplyTo(app);
-            return Unit.Value;
         }
     }
 }

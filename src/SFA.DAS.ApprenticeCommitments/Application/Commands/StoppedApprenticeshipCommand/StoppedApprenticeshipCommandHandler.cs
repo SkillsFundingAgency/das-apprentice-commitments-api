@@ -19,23 +19,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
             IRegistrationContext registrations, IRevisionContext revisions, ITimeProvider timeProvider, ILogger<StoppedApprenticeshipCommandHandler> logger) =>
             (_registrations, _revisions, _timeProvider, _logger) = (registrations, revisions, timeProvider, logger);
 
-        public async Task<Unit> Handle(StoppedApprenticeshipCommand request, CancellationToken cancellationToken)
-        {
-            var apprenticeship
-                = await FindRevision(request)
-                ?? await FindRegistration(request);
-
-            if (apprenticeship == null)
-            {
-                _logger.LogInformation("No apprenticeship details found for {commitmentsApprenticeshipId} which has been stopped", request.CommitmentsApprenticeshipId );
-            }
-            else
-            {
-                apprenticeship.Stop(_timeProvider.Now);
-            }
-
-            return Unit.Value;
-        }
 
         private async Task<IStoppable?> FindRevision(StoppedApprenticeshipCommand request)
             => await _revisions
@@ -45,5 +28,21 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.StoppedApprenticesh
             => await _registrations
                 .IncludeApprenticeships()
                 .FindByCommitmentsApprenticeshipId(request.CommitmentsApprenticeshipId);
+
+        async Task IRequestHandler<StoppedApprenticeshipCommand>.Handle(StoppedApprenticeshipCommand request, CancellationToken cancellationToken)
+        {
+            var apprenticeship
+                = await FindRevision(request)
+                ?? await FindRegistration(request);
+
+            if (apprenticeship == null)
+            {
+                _logger.LogInformation("No apprenticeship details found for {commitmentsApprenticeshipId} which has been stopped", request.CommitmentsApprenticeshipId);
+            }
+            else
+            {
+                apprenticeship.Stop(_timeProvider.Now);
+            }
+        }
     }
 }

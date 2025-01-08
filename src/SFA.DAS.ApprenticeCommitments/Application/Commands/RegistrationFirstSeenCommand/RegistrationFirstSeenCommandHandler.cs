@@ -14,11 +14,10 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSe
             _registrations = registrations;
         }
 
-        public async Task<Unit> Handle(RegistrationFirstSeenCommand request, CancellationToken cancellationToken)
+        async Task IRequestHandler<RegistrationFirstSeenCommand>.Handle(RegistrationFirstSeenCommand request, CancellationToken cancellationToken)
         {
             var registration = await _registrations.GetById(request.ApprenticeId);
             registration.ViewedByUser(request.SeenOn);
-            return Unit.Value;
         }
     }
 }

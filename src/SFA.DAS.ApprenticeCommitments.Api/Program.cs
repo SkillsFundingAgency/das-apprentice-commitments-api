@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using NLog.Web;
 using SFA.DAS.NServiceBus.Configuration.MicrosoftDependencyInjection;
 using System;
 
@@ -10,15 +9,12 @@ namespace SFA.DAS.ApprenticeCommitments.Api
     {
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
             try
             {
-                logger.Info("Starting up host");
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "Could not start host");
                 throw;
             }
         }
@@ -29,7 +25,6 @@ namespace SFA.DAS.ApprenticeCommitments.Api
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseNServiceBusContainer()
-                .UseNLog();
+                .UseNServiceBusContainer();
     }
 }
