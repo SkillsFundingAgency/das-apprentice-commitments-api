@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using NServiceBus;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
 using NServiceBus.Persistence;
+using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Configuration;
 using SFA.DAS.ApprenticeCommitments.Data;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
@@ -30,10 +31,11 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure
     {
         public static IServiceCollection AddServicesForApprenticeCommitments(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(UnitOfWorkPipelineBehavior<,>).Assembly);
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
+            services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssemblyContaining<CreateRegistrationCommand>();
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkPipelineBehavior<,>));
+            });
             services.AddFluentValidation(new[] { typeof(UnitOfWorkPipelineBehavior<,>).Assembly });
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnitOfWorkPipelineBehavior<,>));
 
             services.AddTransient<ITimeProvider, UtcTimeProvider>();
             services.AddSingleton<IManagedIdentityTokenProvider, ManagedIdentityTokenProvider>();

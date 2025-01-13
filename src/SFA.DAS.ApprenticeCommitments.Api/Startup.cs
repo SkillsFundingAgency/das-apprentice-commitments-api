@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Converters;
 using NServiceBus.ObjectBuilder.MSDependencyInjection;
+using SFA.DAS.ApprenticeCommitments.Api.AppStart;
 using SFA.DAS.ApprenticeCommitments.Api.Authentication;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationCommand;
 using SFA.DAS.ApprenticeCommitments.Configuration;
@@ -63,7 +64,10 @@ namespace SFA.DAS.ApprenticeCommitments.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry();
+            services
+                .AddTelemetryRegistration(Configuration)
+                .AddApplicationInsightsTelemetry();
+
             services.AddSwaggerGen();
 
             services.Configure<AzureActiveDirectoryConfiguration>(Configuration.GetSection("AzureAd"));
@@ -84,8 +88,8 @@ namespace SFA.DAS.ApprenticeCommitments.Api
 
             services.AddEntityFrameworkForApprenticeCommitments(Configuration);
 
-            services.AddServicesForApprenticeCommitments();
-
+           services.AddServicesForApprenticeCommitments();
+            
             services.AddHealthChecks()
                 .AddCheck<ApprenticeCommitmentsHealthCheck>(nameof(ApprenticeCommitmentsHealthCheck));
 
@@ -110,7 +114,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api
             if (overdueDays > 0) Revision.DaysBeforeOverdue = overdueDays.Value;
         }
 
-        private void ConfigureProblemDetails(ProblemDetailsOptions o)
+        private void ConfigureProblemDetails(Hellang.Middleware.ProblemDetails.ProblemDetailsOptions o)
         {
             o.ValidationProblemStatusCode = StatusCodes.Status400BadRequest;
             o.Map<ValidationException>(ex => ex.ToProblemDetails());

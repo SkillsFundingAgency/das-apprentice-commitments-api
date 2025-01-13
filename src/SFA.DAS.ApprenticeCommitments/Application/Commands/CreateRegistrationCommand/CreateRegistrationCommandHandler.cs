@@ -16,13 +16,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         public CreateRegistrationCommandHandler(IRegistrationContext registrations, ILogger<CreateRegistrationCommandHandler> logger)
             => (_registrations, _logger) = (registrations, logger);
 
-        public async Task<Unit> Handle(CreateRegistrationCommand request, CancellationToken cancellationToken)
+        async Task IRequestHandler<CreateRegistrationCommand>.Handle(CreateRegistrationCommand request, CancellationToken cancellationToken)
         {
             var exists = await _registrations.FindByCommitmentsApprenticeshipId(request.CommitmentsApprenticeshipId);
             if (exists != null)
             {
                 _logger.LogInformation("Registration with commitmentsApprenticeshipID {commitmentsApprenticeshipId} already exists", request.CommitmentsApprenticeshipId);
-                return Unit.Value;
             }
 
             await _registrations.AddAsync(new Registration(
@@ -52,7 +51,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
                         request.CourseDuration,
                         request.EmploymentEndDate))));
 
-            return Unit.Value;
         }
     }
 }

@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
 {
-    public class UnitOfWorkPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
+    public class UnitOfWorkPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : notnull
     {
         private readonly ApprenticeCommitmentsDbContext _dbContext;
 
@@ -15,8 +16,7 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
             _dbContext = dbContext;
         }
 
-
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             if (!ShouldHandleRequest(request))
             {
@@ -40,5 +40,6 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
         }
 
         private static bool ShouldHandleRequest(TRequest request) => request is IUnitOfWorkCommandMarker;
+
     }
 }
