@@ -30,5 +30,21 @@ namespace SFA.DAS.ApprenticeCommitments.Infrastructure.Mediator
                 throw;
             }
         }
+
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogInformation("Start handling '{Request}'", typeof(TRequest));
+                var response = await next();
+                _logger.LogInformation("End handling '{Request}'", typeof(TRequest));
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error handling '{Request}'", typeof(TRequest));
+                throw;
+            }
+        }
     }
 }

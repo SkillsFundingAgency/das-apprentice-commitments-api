@@ -36,12 +36,12 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.UpdateApprenticeshi
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(UpdateApprenticeshipCommand request, CancellationToken cancellationToken)
+        async Task IRequestHandler<UpdateApprenticeshipCommand>.Handle(UpdateApprenticeshipCommand request, CancellationToken cancellationToken)
         {
             _logger.LogInformation($"Updating {request.ApprenticeId}/{request.ApprenticeshipId} - {JsonConvert.SerializeObject(request.Updates)}");
             var app = await _apprenticeships.GetById(request.ApprenticeId, request.ApprenticeshipId);
             request.Updates.ApplyTo(app);
-            return Unit.Value;
         }
+
     }
 }

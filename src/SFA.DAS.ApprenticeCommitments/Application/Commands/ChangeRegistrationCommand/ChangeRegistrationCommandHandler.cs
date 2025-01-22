@@ -24,27 +24,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
             _logger = logger;
         }
 
-        public async Task<Unit> Handle(ChangeRegistrationCommand command, CancellationToken cancellationToken)
-        {
-            _logger.LogInformation("ChangeRegistrationCommand for Approval {Approval} (continuning {PreviousApproval})", command.CommitmentsApprenticeshipId, command.CommitmentsContinuedApprenticeshipId);
-
-            var apprenticeshipId = command.CommitmentsContinuedApprenticeshipId ?? command.CommitmentsApprenticeshipId;
-
-            var apprenticeship = await _apprenticeships.FindByCommitmentsApprenticeshipId(apprenticeshipId);
-
-            if (apprenticeship == null)
-            {
-                _logger.LogWarning("No confirmed apprenticeship {apprenticeshipId} found", apprenticeshipId);
-                await UpdateOrCreateRegistration(command, apprenticeshipId);
-            }
-            else
-            {
-                _logger.LogInformation("Updating apprenticeship {apprenticeshipId}", apprenticeshipId);
-                apprenticeship.Revise(command.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(command), command.CommitmentsApprovedOn);
-            }
-
-            return Unit.Value;
-        }
 
         private async Task UpdateOrCreateRegistration(ChangeRegistrationCommand command, long apprenticeshipId)
         {
@@ -94,6 +73,26 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
                     command.CourseDuration,
                     command.EmploymentEndDate));
             return details;
+        }
+
+        async Task IRequestHandler<ChangeRegistrationCommand>.Handle(ChangeRegistrationCommand request, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("ChangeRegistrationCommand for Approval {Approval} (continuning {PreviousApproval})", request.CommitmentsApprenticeshipId, request.CommitmentsContinuedApprenticeshipId);
+
+            var apprenticeshipId = request.CommitmentsContinuedApprenticeshipId ?? request.CommitmentsApprenticeshipId;
+
+            var apprenticeship = await _apprenticeships.FindByCommitmentsApprenticeshipId(apprenticeshipId);
+
+            if (apprenticeship == null)
+            {
+                _logger.LogWarning("No confirmed apprenticeship {apprenticeshipId} found", apprenticeshipId);
+                await UpdateOrCreateRegistration(request, apprenticeshipId);
+            }
+            else
+            {
+                _logger.LogInformation("Updating apprenticeship {apprenticeshipId}", apprenticeshipId);
+                apprenticeship.Revise(request.CommitmentsApprenticeshipId, BuildApprenticeshipDetails(request), request.CommitmentsApprovedOn);
+            }
         }
     }
 }
