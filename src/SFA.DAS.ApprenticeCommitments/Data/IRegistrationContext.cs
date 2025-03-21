@@ -4,6 +4,7 @@ using SFA.DAS.ApprenticeCommitments.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data
         internal Task<Registration> GetById(Guid registrationId) => Entities.GetById(registrationId);
 
         internal Task<Registration?> Find(Guid registrationId) => Entities.FindById(registrationId);
+
+        internal Task<Registration?> FindByEmail(MailAddress email) => Entities.FindByEmail(email);
 
         internal Task<Registration?> FindByCommitmentsApprenticeshipId(long commitmentsApprenticeshipId)
             => Entities.FindByCommitmentsApprenticeshipId(commitmentsApprenticeshipId);
@@ -72,6 +75,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data
         public static async Task<Registration?> FindById(this IQueryable<Registration> registrations,Guid registrationId)
         {
             return await registrations.FirstOrDefaultAsync(x => x.RegistrationId == registrationId);
+        }
+
+        public static async Task<Registration?> FindByEmail(this IQueryable<Registration> registrations, MailAddress email)
+        {
+            return await registrations.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }
