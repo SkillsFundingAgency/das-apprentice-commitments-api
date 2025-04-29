@@ -29,6 +29,7 @@ CREATE TABLE [dbo].Revision
     [RecognisePriorLearning] BIT NULL,
     [DurationReducedByHours] SMALLINT NULL,
     [DurationReducedBy] SMALLINT NULL,
+    [ApprenticeshipType] INT NOT NULL DEFAULT 0,
     CONSTRAINT PK_CommitmentStatement_Id PRIMARY KEY CLUSTERED ([Id]),
     CONSTRAINT FK_CommitmentStatement_ApprenticeshipId FOREIGN KEY ([ApprenticeshipId]) REFERENCES [Apprenticeship] ([Id])
 )

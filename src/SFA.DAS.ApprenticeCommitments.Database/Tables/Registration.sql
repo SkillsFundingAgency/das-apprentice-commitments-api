@@ -29,6 +29,7 @@ CREATE TABLE [dbo].[Registration]
     [RecognisePriorLearning] BIT NULL,
     [DurationReducedByHours] SMALLINT NULL,
     [DurationReducedBy] SMALLINT NULL,
+    [ApprenticeshipType] INT NOT NULL DEFAULT 0,
     CONSTRAINT PK_Registration_ApprenticeId PRIMARY KEY CLUSTERED ([RegistrationId]),
     CONSTRAINT [FK_Registration_Apprenticeship_ApprenticeshipId] FOREIGN KEY ([ApprenticeshipId]) REFERENCES [dbo].[Apprenticeship] ([Id]) ON DELETE CASCADE
 )

@@ -46,7 +46,8 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 RolesAndResponsibilitiesConfirmations = revision.RolesAndResponsibilitiesConfirmations ?? RolesAndResponsibilitiesConfirmations.None,
                 ConfirmBefore = revision.ConfirmBefore,
                 ConfirmedOn = revision.ConfirmedOn,
-                LastViewed = revision.LastViewed
+                LastViewed = revision.LastViewed,
+                ApprenticeshipType = revision.Details.ApprenticeshipType
             };
         }
     }

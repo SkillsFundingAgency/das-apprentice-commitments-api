@@ -13,7 +13,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
 
         public ApprenticeshipDetails(
             long employerAccountLegalEntityId, string employerName,
-            long trainingProviderId, string trainingProviderName,
+            long trainingProviderId, string trainingProviderName, int? apprenticeshipType,
             DeliveryModel deliveryModel,
             RplDetails rpl,
             CourseDetails course)
@@ -23,6 +23,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             TrainingProviderId = trainingProviderId;
             TrainingProviderName = trainingProviderName;
             DeliveryModel = deliveryModel;
+            ApprenticeshipType = apprenticeshipType;
+            
             Rpl = rpl;
             Course = course;
         }
@@ -35,6 +37,8 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public DeliveryModel DeliveryModel { get; private set; }
         public CourseDetails Course { get; private set; } = null!;
         public RplDetails Rpl { get; private set; } = null!;
+        
+        public int? ApprenticeshipType { get; private set; } = null!;
 
         public bool EmployerIsEquivalent(ApprenticeshipDetails? other)
             => other != null &&
@@ -65,6 +69,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             other.EmployerAccountLegalEntityId == EmployerAccountLegalEntityId &&
             other.EmployerName == EmployerName &&
             other.TrainingProviderId == TrainingProviderId &&
+            other.ApprenticeshipType == ApprenticeshipType &&
             other.TrainingProviderName == TrainingProviderName &&
             other.DeliveryModel == DeliveryModel &&
             Rpl.IsEquivalent(other.Rpl) &&

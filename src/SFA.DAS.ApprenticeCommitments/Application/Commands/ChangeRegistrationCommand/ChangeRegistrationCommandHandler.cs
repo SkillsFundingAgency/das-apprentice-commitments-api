@@ -60,6 +60,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.ChangeRegistrationC
                 command.EmployerName,
                 command.TrainingProviderId,
                 command.TrainingProviderName,
+                command.ApprenticeshipType,
                 command.DeliveryModel,
                 new RplDetails(command.RecognisePriorLearning,
                     command.DurationReducedByHours,
