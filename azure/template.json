@@ -72,6 +72,10 @@
         "configurationStorageConnectionString": {
             "type": "securestring"
         },
+        "utcValue": {
+            "type": "string",
+            "defaultValue": "[utcNow('yyMMddHHmmss')]"
+        },
         "sharedServiceBusName": {
             "type": "string"
         },
