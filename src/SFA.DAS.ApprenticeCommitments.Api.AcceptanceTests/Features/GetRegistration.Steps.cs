@@ -6,6 +6,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Data.Models;
 using System;
 using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using TechTalk.SpecFlow;
 
@@ -100,5 +101,27 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
             response.Errors.Should().ContainKey("RegistrationId")
                 .WhoseValue.Should().Contain("The Registration Id must be valid");
         }
+
+        [Given("there is a registration with a valid email of (.*)")]
+        public Task GivenThereIsARegistrationWithAValidEmailOf(string email)
+        {
+            MailAddress emailAddress = new MailAddress(email);
+            _registration.SetProperty(x => x.Email, emailAddress);
+            _context.DbContext.Registrations.Add(_registration);
+            return _context.DbContext.SaveChangesAsync();
+        }
+
+        [When("we search registration by email address")]
+        public Task WhenWeSearchRegistrationByEmailAddress()
+        {
+            return _context.Api.Get($"registrations/{_registration.Email}/search");
+        }
+
+        [When("we search registration by invalid email address")]
+        public Task WhenWeSearchRegistrationByInvalidEmailAddress()
+        {
+            return _context.Api.Get($"registrations/noemail@nothing.com/search");
+        }
+
     }
 }

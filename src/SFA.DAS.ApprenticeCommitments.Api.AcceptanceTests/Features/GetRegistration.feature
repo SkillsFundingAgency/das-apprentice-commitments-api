@@ -32,3 +32,18 @@ Scenario: Trying to get a registration with an empty Id
 	When we try to retrieve the registration
 	Then the result should return bad request
 	And the error must say registration id must be valid
+
+Scenario: Trying to get a registration with a valid email
+	Given there is a registration with a valid email of <EmailAddress>
+	When we search registration by email address
+	Then the result should return ok
+	
+	Examples: 
+	| EmailAddress  |
+	| test@test.com |
+
+Scenario: Trying to get a registration with an invalid email
+	Given there is no registration
+	When we search registration by invalid email address
+	Then the result should return not found
+	
