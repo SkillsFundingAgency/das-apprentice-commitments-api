@@ -36,11 +36,9 @@ BEGIN TRY
     -- Perform updates
     UPDATE [Revision] 
     SET [ApprenticeshipType] = 0
-    WHERE [ApprenticeshipType] IS NOT NULL  -- Skip NULL values if any
     
     UPDATE [Registration] 
     SET [ApprenticeshipType] = 0
-    WHERE [ApprenticeshipType] IS NOT NULL  -- Skip NULL values if any
 
     -- Verify counts
     DECLARE @RevCount INT = @@ROWCOUNT
