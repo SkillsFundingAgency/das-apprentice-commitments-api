@@ -39,6 +39,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public bool? RecognisePriorLearning { get; set; }
         public int? DurationReducedByHours { get; set; }
         public int? DurationReducedBy { get; set; }
+        public int? ApprenticeshipType { get; set; }
 
     }
 }

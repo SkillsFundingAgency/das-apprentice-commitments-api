@@ -27,7 +27,7 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
         public bool? HowApprenticeshipDeliveredCorrect { get; set; }
         public DateTime ConfirmBefore { get; set; }
         public DateTime? ConfirmedOn { get; set; }
-
         public DateTime? LastViewed { get; set; }
+        public int? ApprenticeshipType { get; set; }
     }
 }

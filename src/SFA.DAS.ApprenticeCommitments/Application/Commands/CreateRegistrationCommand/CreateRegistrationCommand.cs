@@ -30,6 +30,6 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Commands.CreateRegistrationC
         public bool? RecognisePriorLearning { get; set; }
         public short? DurationReducedByHours { get; set; }
         public short? DurationReducedBy { get; set; }
-
+        public int? ApprenticeshipType { get; set; }
     }
 }

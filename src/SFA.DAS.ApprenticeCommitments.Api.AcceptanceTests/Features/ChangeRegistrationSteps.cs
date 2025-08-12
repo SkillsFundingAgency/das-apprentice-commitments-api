@@ -137,6 +137,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Features
                 .With(x => x.RecognisePriorLearning, _revision.Details.Rpl.RecognisePriorLearning)
                 .With(x => x.DurationReducedByHours, _revision.Details.Rpl.DurationReducedByHours)
                 .With(x => x.DurationReducedBy, _revision.Details.Rpl.DurationReducedBy)
+                .With(x => x.ApprenticeshipType, _revision.Details.ApprenticeshipType)
                 .Create();
         }
 

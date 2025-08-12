@@ -60,7 +60,8 @@ namespace SFA.DAS.ApprenticeCommitments.DTOs
                 HasBeenConfirmedAtLeastOnce = apprenticeship.ApprenticeshipHasPreviouslyBeenConfirmed,
                 RecognisePriorLearning = latest.Details.Rpl.RecognisePriorLearning,
                 DurationReducedByHours = latest.Details.Rpl.DurationReducedByHours,
-                DurationReducedBy = latest.Details.Rpl.DurationReducedBy
+                DurationReducedBy = latest.Details.Rpl.DurationReducedBy,
+                ApprenticeshipType = latest.Details.ApprenticeshipType
             };
         }
     }

@@ -133,6 +133,7 @@ namespace SFA.DAS.ApprenticeCommitments.Api.AcceptanceTests.Steps
                     Details = new
                     {
                         _registration.Approval.EmployerName,
+                        _registration.Approval.ApprenticeshipType,
                         _registration.Approval.EmployerAccountLegalEntityId,
                         _registration.Approval.TrainingProviderId,
                         _registration.Approval.TrainingProviderName,
