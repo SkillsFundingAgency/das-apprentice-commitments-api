@@ -12,5 +12,7 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery
         public string FirstName { get; set; }
         public bool HasViewedVerification { get; set; }
         public bool HasCompletedVerification { get; set; }
+        public string CourseName { get; set; }
+        public string TrainingProviderName { get; set; }
     }
 }
