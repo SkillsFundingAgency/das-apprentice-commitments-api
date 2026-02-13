@@ -30,6 +30,11 @@ namespace SFA.DAS.ApprenticeCommitments.Data
 
         public Task<bool> RegistrationsExist()
             => Entities.AnyAsync();
+
+        internal Task<List<Registration?>> FindByAccountDetails(string firstName, string lastName, DateTime dateOfBirth)
+            => Entities.Where(r =>
+            r.FirstName == firstName && r.LastName == lastName && r.DateOfBirth == dateOfBirth)
+            .ToListAsync();
     }
 
     public static class RegistrationContextExtensions
