@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationsByAccountDetails
 {
-    public class GetRegistrationByAccountDetailsQueryHandler : IRequestHandler<GetRegistrationByAccountDetailsQuery, List<Registration?>>
+    public class GetRegistrationByAccountDetailsQueryHandler : IRequestHandler<GetRegistrationByAccountDetailsQuery, List<Registration>>
     {
         private readonly IRegistrationContext _registrationContext;
 
