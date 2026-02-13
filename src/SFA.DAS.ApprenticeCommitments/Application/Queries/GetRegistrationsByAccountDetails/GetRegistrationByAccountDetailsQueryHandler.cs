@@ -14,14 +14,16 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationsByAc
         public GetRegistrationByAccountDetailsQueryHandler(IRegistrationContext registrationContext)
             => _registrationContext = registrationContext;
 
-        public async Task<List<Registration?>> Handle(
+        public async Task<List<Registration>> Handle(
             GetRegistrationByAccountDetailsQuery request,
             CancellationToken cancellationToken)
         {
             var entity = await _registrationContext.FindByAccountDetails(
                 request.FirstName,
                 request.LastName,
-                request.DateOfBirth);            
+                request.DateOfBirth);
+
+            if (entity == null) return new List<Registration>();
 
             return entity;
         }

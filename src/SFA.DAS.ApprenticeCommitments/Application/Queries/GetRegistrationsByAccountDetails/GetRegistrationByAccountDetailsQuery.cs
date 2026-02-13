@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationsByAccountDetails
 {
-    public class GetRegistrationByAccountDetailsQuery : IRequest<List<Registration?>>
+    public class GetRegistrationByAccountDetailsQuery : IRequest<List<Registration>>
     {
         public GetRegistrationByAccountDetailsQuery(string firstName, string lastName, DateTime dateOfBirth)
         {
