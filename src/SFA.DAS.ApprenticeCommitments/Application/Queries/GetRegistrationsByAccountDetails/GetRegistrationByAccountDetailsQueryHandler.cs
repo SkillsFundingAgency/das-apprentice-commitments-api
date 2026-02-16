@@ -21,7 +21,8 @@ namespace SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationsByAc
             var entity = await _registrationContext.FindByAccountDetails(
                 request.FirstName,
                 request.LastName,
-                request.DateOfBirth);
+                request.DateOfBirth,
+                cancellationToken);
 
             if (entity == null) return new List<Registration>();
 
