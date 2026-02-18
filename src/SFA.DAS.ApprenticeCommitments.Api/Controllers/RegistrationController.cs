@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SFA.DAS.ApprenticeCommitments.Api.Types;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationsByAccountDetails;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
 using System;
@@ -36,6 +37,17 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
         public async Task<IActionResult> GetRegistrationsNeedingReminders(DateTime invitationCutOffTime)
         {
             var response = await _mediator.Send(new RegistrationRemindersQuery { CutOffDateTime = invitationCutOffTime });
+            return Ok(response);
+        }
+
+        [HttpGet("registrations")]
+        public async Task<IActionResult> GetRegistrationsByAccountDetails(string firstName, string lastName, DateTime dateOfBirth)
+        {
+            var response = await _mediator.Send(new GetRegistrationByAccountDetailsQuery(
+                firstName, lastName, dateOfBirth));
+
+            if (response.Count == 0) return NotFound();
+
             return Ok(response);
         }
 
