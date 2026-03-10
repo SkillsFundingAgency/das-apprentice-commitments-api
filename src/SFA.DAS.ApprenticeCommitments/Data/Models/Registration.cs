@@ -43,10 +43,10 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public string LastName { get; private set; } = null!;
         public DateTime DateOfBirth { get; private set; }
         [Column("Email")]
-        public string EmailAddress { get; private set; } = null!;
+        public string? EmailAddress { get; private set; } = null!;
 
         [NotMapped]
-        public MailAddress Email 
+        public MailAddress? Email 
         { 
             get => string.IsNullOrWhiteSpace(EmailAddress) ? null : new MailAddress(EmailAddress);
             private set => EmailAddress = value?.Address;
