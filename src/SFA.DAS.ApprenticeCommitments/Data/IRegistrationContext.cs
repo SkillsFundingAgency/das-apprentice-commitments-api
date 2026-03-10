@@ -35,6 +35,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data
             => Entities.Where(r =>
             r.FirstName == firstName && r.LastName == lastName && r.DateOfBirth == dateOfBirth)
             .ToListAsync(cancellationToken);
+
+        internal Task<List<Registration>> FindByEmail(string email, CancellationToken cancellationToken)
+            => Entities.Where(r => r.EmailAddress == email).ToListAsync(cancellationToken);
     }
 
     public static class RegistrationContextExtensions
