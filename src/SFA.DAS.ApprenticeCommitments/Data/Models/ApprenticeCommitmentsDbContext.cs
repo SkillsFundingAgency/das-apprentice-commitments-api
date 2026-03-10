@@ -103,10 +103,9 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             {
                 entity.HasKey(e => e.RegistrationId);
                 entity.Property(e => e.CreatedOn).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
-                entity.Property(e => e.Email)
-                    .HasConversion(
-                        v => v.ToString(),
-                        v => new MailAddress(v));
+                entity.Ignore(e => e.Email);
+                entity.Property(e => e.EmailAddress)
+                    .HasColumnName("Email");
             });
 
             modelBuilder.Entity<Registration>(entity =>

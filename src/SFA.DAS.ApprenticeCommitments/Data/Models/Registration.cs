@@ -42,7 +42,15 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
         public string FirstName { get; private set; } = null!;
         public string LastName { get; private set; } = null!;
         public DateTime DateOfBirth { get; private set; }
-        public MailAddress Email { get; private set; } = null!;
+        [Column("Email")]
+        public string? EmailAddress { get; private set; } = null!;
+
+        [NotMapped]
+        public MailAddress? Email 
+        { 
+            get => string.IsNullOrWhiteSpace(EmailAddress) ? null : new MailAddress(EmailAddress);
+            private set => EmailAddress = value?.Address;
+        }
         public Guid? ApprenticeId { get; private set; }
         public ApprenticeshipDetails Approval { get; private set; } = null!;
         public DateTime CommitmentsApprovedOn { get; private set; }
