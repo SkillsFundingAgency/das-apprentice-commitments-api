@@ -70,7 +70,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 CheckAlreadyCompletedByApprentice(apprenticeId)
                 ?? EnsureNotAlreadyCompleted()
                 ?? EnsureApprenticeDateOfBirthMatchesApproval(apprenticeId, dateOfBirth)
-                ?? EnsureApprenticeNameMatchesApproval(apprenticeId, lastName, matcher)
                 ?? AssociateWithApprentice(apprenticeId);
 
             MatchAttempts.Add(
@@ -96,13 +95,6 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
                 ? Result.ExceptionStatus(
                     ApprenticeshipMatchAttemptStatus.MismatchedDateOfBirth,
                     new RegistrationMismatchDateOfBirthException(apprenticeId, RegistrationId))
-                : default;
-
-        private IStatusResult<ApprenticeshipMatchAttemptStatus>? EnsureApprenticeNameMatchesApproval(Guid apprenticeId, string lastName, FuzzyMatcher matcher)
-            => !matcher.IsSimilar(LastName, lastName)
-                ? Result.ExceptionStatus(
-                    ApprenticeshipMatchAttemptStatus.MismatchedLastName,
-                    new RegistrationMismatchLastNameException(apprenticeId, RegistrationId))
                 : default;
 
         private SuccessStatusResult<ApprenticeshipMatchAttemptStatus> AssociateWithApprentice(Guid apprenticeId)
