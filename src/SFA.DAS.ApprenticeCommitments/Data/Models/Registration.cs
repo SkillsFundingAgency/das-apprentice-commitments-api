@@ -52,6 +52,7 @@ namespace SFA.DAS.ApprenticeCommitments.Data.Models
             private set => EmailAddress = value?.Address;
         }
         public Guid? ApprenticeId { get; private set; }
+        public long? ApprenticeshipId { get; set; }
         public ApprenticeshipDetails Approval { get; private set; } = null!;
         public DateTime CommitmentsApprovedOn { get; private set; }
         public DateTime? CreatedOn { get; private set; } = DateTime.UtcNow;
