@@ -5,6 +5,7 @@ using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationFirstSeenCo
 using SFA.DAS.ApprenticeCommitments.Application.Commands.RegistrationReminderSentCommand;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationByEmailQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.GetRegistrationsByAccountDetails;
+using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationByIdQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationQuery;
 using SFA.DAS.ApprenticeCommitments.Application.Queries.RegistrationRemindersQuery;
 using System;
@@ -31,6 +32,16 @@ namespace SFA.DAS.ApprenticeCommitments.Api.Controllers
             {
                 return NotFound();
             }
+            return Ok(response);
+        }
+
+        [HttpGet("registration/registration-details/{registrationId}")]
+        public async Task<IActionResult> GetRegistrationById(Guid registrationId)
+        {
+            var response = await _mediator.Send(new RegistrationByIdQuery { RegistrationId = registrationId });
+
+            if (response == null) return NotFound();
+
             return Ok(response);
         }
 
