@@ -35,15 +35,13 @@ namespace SFA.DAS.ApprenticeCommitments.Data
            => Entities.Where(r =>
            r.FirstName == firstName &&
            r.LastName == lastName &&
-           r.DateOfBirth == dateOfBirth &&
-           r.Approval.Course.PlannedStartDate >= DateTime.Today.AddYears(-1) &&
+           r.DateOfBirth == dateOfBirth &&           
            r.Approval.Course.PlannedEndDate >= DateTime.Now)           
            .ToListAsync(cancellationToken);
 
         internal Task<Registration?> FindByEmail(string email, CancellationToken cancellationToken)
             => Entities.Where(r =>
-            r.EmailAddress == email &&
-            r.Approval.Course.PlannedStartDate >= DateTime.Today.AddYears(-1) &&
+            r.EmailAddress == email &&            
             r.Approval.Course.PlannedEndDate >= DateTime.Now)
             .OrderByDescending(r => r.CreatedOn)
             .FirstOrDefaultAsync(cancellationToken);
